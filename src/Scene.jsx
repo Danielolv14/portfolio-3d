@@ -1,7 +1,9 @@
 // Canvas 3D + câmera. Cada seção tem um "ponto de vista"; navegar = mover a câmera.
 import { CameraControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
+import { Bloom, EffectComposer, N8AO, ToneMapping } from '@react-three/postprocessing';
 import CameraControlsImpl from 'camera-controls';
+import { ToneMappingMode } from 'postprocessing';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
@@ -9,10 +11,10 @@ import Room from './Room';
 
 // Posição da câmera e ponto para onde ela olha, por seção
 const SPOTS = {
-    projects: { pos: [-1.6, 3.3, 1.6], target: [-2.1, 2.45, -4.45] },
-    experience: { pos: [0.6, 3.25, 0.4], target: [-4.95, 3.15, 0.2] },
-    about: { pos: [0.7, 3.0, 4.6], target: [-4.95, 2.45, 3.45] },
-    contact: { pos: [4.8, 3.7, 4.6], target: [1.4, 1.3, 1.0] }
+    projects: { pos: [-0.5, 4.5, -1.2], target: [-4.35, 2.45, -2.85] },
+    experience: { pos: [0.9, 4.0, -1.6], target: [-4.8, 4.1, -2.8] },
+    about: { pos: [-1.46, 2.78, 4.39], target: [-4.66, 2.1, 3.4] },
+    contact: { pos: [4.6, 4.5, 0.6], target: [2.55, 1.0, -2.75] }
 };
 
 const OVERVIEW_TARGET = new THREE.Vector3(0, 1.6, 0);
@@ -88,6 +90,21 @@ function CameraRig({ focus, panel, reducedMotion }) {
         c.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z, animate);
     }, [focus, aspect, panel.side, panel.frac, camera, reducedMotion]);
 
+    // Só em desenvolvimento: window.__view([x, y, z], [alvo]) posiciona a câmera livremente,
+    // para tirar capturas de qualquer ângulo e comparar com as fotos do quarto
+    useEffect(() => {
+        if (!import.meta.env.DEV) return undefined;
+        window.__view = (pos, target) => {
+            const c = controls.current;
+            Object.assign(c, LIMITS_FREE);
+            c.setFocalOffset(0, 0, 0, false);
+            c.setLookAt(...pos, ...target, false);
+        };
+        return () => {
+            delete window.__view;
+        };
+    }, []);
+
     const limits = focus ? LIMITS_FREE : LIMITS_OVERVIEW;
 
     return (
@@ -102,11 +119,23 @@ function CameraRig({ focus, panel, reducedMotion }) {
     );
 }
 
+// Brilho nas luzes (RGB, lâmpadas, telas) e sombra de contato entre os objetos.
+// No celular fica só o brilho, para não pesar.
+function Effects({ compact }) {
+    return (
+        <EffectComposer multisampling={compact ? 0 : 4} disableNormalPass>
+            {!compact && <N8AO halfRes aoRadius={0.55} intensity={1.8} distanceFalloff={0.6} />}
+            <Bloom mipmapBlur luminanceThreshold={1} luminanceSmoothing={0.2} intensity={0.75} />
+            <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+        </EffectComposer>
+    );
+}
+
 export default function Scene({ t, night, focus, onSelect, onClose, panel, onReady, reducedMotion, compact }) {
     const showLabels = !focus;
     return (
         <Canvas
-            shadows
+            shadows="soft"
             dpr={[1, 2]}
             camera={{ fov: 35, near: 0.1, far: 200, position: [34, 30, 34] }}
             onCreated={onReady}
@@ -121,6 +150,7 @@ export default function Scene({ t, night, focus, onSelect, onClose, panel, onRea
                 onBackgroundClick={() => focus && onClose()}
             />
             <CameraRig focus={focus} panel={panel} reducedMotion={reducedMotion} />
+            <Effects compact={compact} />
         </Canvas>
     );
 }

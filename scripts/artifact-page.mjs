@@ -6,7 +6,7 @@ const css = readFileSync('dist/index.css', 'utf8');
 const fonts =
     'https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@500;600&display=swap';
 
-const page = `<title>Quarto Portfólio 3D</title>
+const page = `<title>Daniel Oliveira · Portfólio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${fonts}">

@@ -7,7 +7,7 @@
   <tr>
     <td width="800px">
       <div align="justify">
-        Este repositório contém o <b>LAB01 – Portfólio Profissional</b> da disciplina <i>Desenvolvimento e Integração de Aplicações Web (DIAW)</i> do curso de <b>Engenharia de Software da PUC Minas</b>, com o <a href="https://github.com/joaopauloaramuni">Prof. Dr. João Paulo Aramuni</a>. Em vez de uma página de rolagem tradicional, o portfólio é um <b>quarto em 3D</b> feito com <i>React</i> e <i>Three.js</i>: o porta-retrato abre o <b>Sobre mim</b>, o monitor abre os <b>Projetos</b>, o mural de cortiça abre as <b>Experiências</b> e o celular abre o <b>Contato</b>. O globo troca o idioma (português/inglês) e a luminária alterna entre dia e noite. O site é <b>responsivo</b> e oferece um <b>modo sem 3D</b> para celulares mais fracos e para acessibilidade.
+        Este repositório contém o <b>LAB01 – Portfólio Profissional</b> da disciplina <i>Desenvolvimento e Integração de Aplicações Web (DIAW)</i> do curso de <b>Engenharia de Software da PUC Minas</b>, com o <a href="https://github.com/joaopauloaramuni">Prof. Dr. João Paulo Aramuni</a>. Em vez de uma página de rolagem tradicional, o portfólio é uma <b>recriação em 3D do meu quarto de verdade</b>, feita com <i>React</i> e <i>Three.js</i> a partir de fotos: o porta-retrato no nicho abre o <b>Sobre mim</b>, o monitor abre os <b>Projetos</b>, a TV abre as <b>Experiências</b> e o celular em cima da cama abre o <b>Contato</b>. A luminária "&" do nicho alterna entre dia e noite, e à noite o quarto fica iluminado pelo RGB rosa do gabinete. O site é <b>responsivo</b> e oferece um <b>modo sem 3D</b> para celulares mais fracos e para acessibilidade.
       </div>
     </td>
     <td>
@@ -22,13 +22,14 @@
 
 ## 🚧 Status do Projeto
 
-[![Versão](https://img.shields.io/badge/Versão-v0.1.0-blue?style=for-the-badge)](#-status-do-projeto) ![React](https://img.shields.io/badge/React-18.3.1-007ec6?style=for-the-badge&logo=react&logoColor=white) ![Vite](https://img.shields.io/badge/Vite-5.4.10-007ec6?style=for-the-badge&logo=vite&logoColor=white) ![Three.js](https://img.shields.io/badge/Three.js-0.164.1-007ec6?style=for-the-badge&logo=threedotjs&logoColor=white) ![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-8.16.6-007ec6?style=for-the-badge) ![Licença](https://img.shields.io/badge/Licença-MIT-007ec6?style=for-the-badge&logo=opensourceinitiative&logoColor=white)
+[![Versão](https://img.shields.io/badge/Versão-v0.2.0-blue?style=for-the-badge)](#-status-do-projeto) ![React](https://img.shields.io/badge/React-18.3.1-007ec6?style=for-the-badge&logo=react&logoColor=white) ![Vite](https://img.shields.io/badge/Vite-5.4.10-007ec6?style=for-the-badge&logo=vite&logoColor=white) ![Three.js](https://img.shields.io/badge/Three.js-0.164.1-007ec6?style=for-the-badge&logo=threedotjs&logoColor=white) ![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-8.16.6-007ec6?style=for-the-badge) ![Licença](https://img.shields.io/badge/Licença-MIT-007ec6?style=for-the-badge&logo=opensourceinitiative&logoColor=white)
 
-| Sprint | Entrega | Situação |
-| :--- | :--- | :---: |
-| **Lab01S01** | README inicial, wireframes no Figma, protótipo do front-end, navegação e layout base | 🟡 Em andamento |
-| **Lab01S02** | Conteúdo real em PT/EN, linha do tempo de projetos, experiências, formulário enviando e-mail, preview na Vercel | ⏳ A fazer |
-| **Lab01S03** | Deploy final, iluminação "assada" no Blender, GIFs dos projetos, README final e apresentação | ⏳ A fazer |
+| Sprint | Prazo | Entrega | Situação |
+| :--- | :---: | :--- | :---: |
+| **Lab01S01** | 12/10/2026 | README inicial, wireframes, protótipo do front-end, navegação e layout base | 🟡 Falta o link do Figma |
+| **Lab01S02** | 19/10/2026 | Conteúdo real em PT/EN, linha do tempo de projetos, experiências, formulário enviando e-mail, preview na Vercel | 🟡 Em andamento |
+| **Lab01S03** | 26/10/2026 | Deploy final, quarto personalizado, GIFs dos projetos, README final | ⏳ A fazer |
+| **Apresentação** | 02/11/2026 | Design, arquitetura e funcionalidades | ⏳ A fazer |
 
 ---
 
@@ -79,13 +80,13 @@ O conceito foi inspirado em portfólios 3D conhecidos (ver [Agradecimentos](#-ag
 ## ✨ Funcionalidades Principais
 
 - 🧭 **Menu de navegação:** no topo no computador e em abas embaixo no celular; cada item leva a câmera até o objeto da seção.
-- 🛋️ **Quarto 3D interativo:** arrastar para girar, rolar para aproximar e clicar (ou tocar) nos objetos. Cada objeto clicável tem uma etiqueta que também funciona pelo teclado.
+- 🛋️ **Quarto 3D interativo:** recriado a partir das fotos do meu quarto: o setup (gabinete camuflado com LED rosa, monitor no braço, TV com light bar, cadeira de tela e um relógio LCD que mostra a hora, o dia e a data reais), a porta, o nicho com a luminária "&", a JBL, o Stormtrooper e as pelúcias, a cama com cabeceira de madeira, o criado-mudo com a luminária de cobre, o tapete felpudo e os pôsteres dos meus filmes favoritos. Dá para arrastar para girar, rolar para aproximar e clicar (ou tocar) nos objetos. Cada objeto clicável tem uma etiqueta que também funciona pelo teclado.
 - 👤 **Sobre mim em PT/EN:** formação, área, interesses e objetivos, com botão Português/English.
 - 🗂️ **Projetos em linha do tempo:** do mais antigo ao mais recente, com descrição, tecnologias, link do GitHub e espaço para o GIF do projeto funcionando.
 - 💼 **Experiências:** empresa/instituição, cargo/atividade, período e descrição.
-- ✉️ **Contato:** ícones clicáveis (e-mail, WhatsApp, LinkedIn, GitHub) e formulário com validação de nome, e-mail e mensagem. _O envio real por e-mail (EmailJS) entra na Sprint 2._
-- 🌐 **Internacionalização:** o site inteiro alterna entre português e inglês (pelo menu ou pelo globo do quarto).
-- 🌗 **Dia e noite:** começa conforme o tema do sistema; a luminária ou o botão do menu trocam as luzes do quarto, o céu da janela e as cores do site.
+- ✉️ **Contato:** ícones clicáveis (e-mail, LinkedIn, GitHub e Instagram) e formulário com validação de nome, e-mail e mensagem. A mensagem chega por e-mail pelo **EmailJS**, e quem escreveu recebe uma confirmação automática.
+- 🌐 **Internacionalização:** o site inteiro alterna entre português e inglês, pelo menu ou pelo botão dentro do Sobre mim.
+- 🌗 **Dia e noite:** começa conforme o tema do sistema. A luminária "&" ou o botão do menu trocam as luzes do quarto, o céu da janela e as cores do site: tons de madeira de dia e o rosa do RGB à noite.
 - 📄 **Modo sem 3D:** as mesmas seções como página comum. Liga sozinho se o navegador não tiver WebGL.
 - ♿ **Acessibilidade:** respeita `prefers-reduced-motion`, a tecla ESC fecha o painel e o foco vai para o título da seção aberta.
 
@@ -98,15 +99,17 @@ O conceito foi inspirado em portfólios 3D conhecidos (ver [Agradecimentos](#-ag
 * **Biblioteca de interface:** [React](https://react.dev/) 18.3.1
 * **3D:** [Three.js](https://threejs.org/) 0.164.1, [React Three Fiber](https://r3f.docs.pmnd.rs/) 8.16.6 (Three.js em componentes React) e [Drei](https://drei.docs.pmnd.rs/) 9.106.0 (componentes prontos: etiquetas HTML, caixas arredondadas, controle de câmera)
 * **Câmera:** [camera-controls](https://github.com/yomotsu/camera-controls) 2.10.1
+* **Pós-processamento:** [@react-three/postprocessing](https://github.com/pmndrs/react-postprocessing) 2.16.3 e [postprocessing](https://github.com/pmndrs/postprocessing) 6.36.0 (brilho nas luzes e sombra de contato entre os objetos)
 * **Linguagem:** JavaScript (ES2022+) e JSX
-* **Estilização:** CSS puro com variáveis (tokens de cor para dia e noite)
+* **Estilização:** CSS puro com variáveis (tokens de cor para dia e noite, tirados das cores do quarto)
 * **Gerenciamento de estado:** estado do próprio React (`useState`), sem biblioteca extra
 * **Build tool:** [Vite](https://vitejs.dev/) 5.4.10 com `@vitejs/plugin-react` 4.3.1
+* **Envio de e-mail:** [EmailJS](https://www.emailjs.com/) com `@emailjs/browser` 4.4.1
 * **Fontes:** Unbounded, Figtree e JetBrains Mono (Google Fonts)
 
 ### 🖥️ Back-end
 
-* Não há servidor próprio. O envio do formulário será feito pelo **[EmailJS](https://www.emailjs.com/)** direto do navegador _(planejado para a Sprint 2)_.
+* Não há servidor próprio. O formulário envia os e-mails pelo **[EmailJS](https://www.emailjs.com/)**, direto do navegador.
 
 ### ⚙️ Infraestrutura & DevOps
 
@@ -123,7 +126,8 @@ Decisões importantes:
 
 - **Navegar = mover a câmera.** Cada seção tem um "ponto de vista" (posição da câmera e ponto para onde ela olha). Ao abrir uma seção, a câmera voa até lá e desloca a imagem para o objeto não ficar escondido atrás do painel.
 - **Um conteúdo, duas telas.** Os mesmos componentes de seção (`Sections.jsx`) são usados no painel do modo 3D e no modo sem 3D. Assim o conteúdo nunca fica diferente entre os dois.
-- **Quarto feito no código.** Nesta versão o quarto é montado com formas simples (caixas, cilindros, esferas) e texturas desenhadas em `<canvas>`, sem arquivos de terceiros. Na Sprint 3 ele será refeito no Blender com a iluminação "assada" em imagens, para ficar mais bonito sem pesar no celular.
+- **Quarto feito no código, a partir de fotos.** Cada móvel é montado com formas simples (caixas arredondadas, cilindros, esferas, texto em 3D) e texturas desenhadas em `<canvas>` (madeira, camuflado, porcelanato, edredom, pôsteres), sem modelos de terceiros. O quarto fica dividido por área em `src/room/`.
+- **Luz que muda com o modo.** Um valor de 0 (dia) a 1 (noite) é animado aos poucos e controla todas as luzes, telas e lâmpadas. O pós-processamento faz as luzes brilharem (Bloom) e escurece os cantos onde os objetos se encostam (N8AO). No celular, só o brilho fica ligado.
 - **Carregamento sob demanda.** A cena 3D é carregada com `lazy()`; o modo sem 3D não precisa dela.
 
 ```mermaid
@@ -132,8 +136,9 @@ flowchart TD
     app --> scene["Scene.jsx<br/>Canvas 3D + câmera"]
     app --> panel["Painel da seção<br/>(modo 3D)"]
     app --> flat["Página comum<br/>(modo sem 3D)"]
-    scene --> room["Room.jsx<br/>quarto, luzes e objetos clicáveis"]
+    scene --> room["Room.jsx + src/room/<br/>estrutura · mesa · nicho · cama · luzes"]
     scene --> rig["CameraRig<br/>voo da câmera até cada seção"]
+    scene --> fx["Pós-processamento<br/>Bloom · N8AO"]
     room --> tex["textures.js<br/>texturas desenhadas em canvas"]
     panel --> sections["Sections.jsx<br/>Sobre mim · Projetos · Experiências · Contato"]
     flat --> sections
@@ -155,13 +160,16 @@ flowchart TD
 
 ### 🔑 Variáveis de Ambiente
 
-Nenhuma variável é necessária por enquanto. Quando o envio de e-mail for implementado (Sprint 2), será preciso criar um arquivo **`.env.local`** na raiz do projeto:
+O formulário de contato usa o EmailJS. Copie o arquivo **`.env.example`** para **`.env.local`** na raiz do projeto e preencha:
 
 | Variável | Descrição | Exemplo |
 | :--- | :--- | :--- |
-| `VITE_EMAILJS_SERVICE_ID` | ID do serviço de e-mail no EmailJS. | `service_xxxxxxx` |
-| `VITE_EMAILJS_TEMPLATE_ID` | ID do modelo de e-mail no EmailJS. | `template_xxxxxxx` |
+| `VITE_EMAILJS_SERVICE_ID` | ID do serviço de e-mail (a conta Gmail ligada ao EmailJS). | `service_xxxxxxx` |
+| `VITE_EMAILJS_TEMPLATE_ID_FOR_ME` | Modelo do e-mail que chega para mim com a mensagem. | `template_xxxxxxx` |
+| `VITE_EMAILJS_TEMPLATE_ID_FOR_SENDER` | Modelo da confirmação enviada para quem escreveu (opcional). | `template_yyyyyyy` |
 | `VITE_EMAILJS_PUBLIC_KEY` | Chave pública da conta EmailJS. | `sua_public_key_aqui` |
+
+Os modelos recebem as variáveis `{{from_name}}`, `{{from_email}}`, `{{reply_to}}` e `{{message}}`. Sem essas variáveis o site funciona normalmente, e o formulário avisa que o envio ainda não está configurado.
 
 > **Obs:** no Vite, só as variáveis que começam com `VITE_` ficam disponíveis no código do navegador. Na Vercel, as mesmas variáveis são cadastradas em _Project Settings > Environment Variables_.
 
@@ -172,8 +180,8 @@ Nenhuma variável é necessária por enquanto. Quando o envio de e-mail for impl
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/Danielolv14/portfolio.git
-cd portfolio
+git clone https://github.com/Danielolv14/portfolio-3d.git
+cd portfolio-3d
 ```
 
 2. **Instale as dependências:**
@@ -220,6 +228,7 @@ O deploy será feito na **Vercel** (plano gratuito), que detecta projetos Vite a
 
 ```
 .
+├── .env.example               # 🧩 Variáveis do EmailJS (sem valores).
 ├── .gitignore                 # 🧹 Ignora node_modules, dist, .env etc.
 ├── LICENSE                    # ⚖️ Licença MIT.
 ├── README.md                  # 📘 Este arquivo.
@@ -227,22 +236,40 @@ O deploy será feito na **Vercel** (plano gratuito), que detecta projetos Vite a
 ├── package.json               # 📦 Dependências e scripts (dev, build, preview).
 ├── vite.config.js             # ⚙️ Configuração do Vite.
 │
+├── /public
+│   └── favicon.svg            # 🏷️ Ícone da aba do navegador.
+│
 ├── /docs                      # 📚 Documentação
 │   ├── logo.svg               # 🏷️ Logo do projeto.
-│   └── /prototipos            # 🖼️ Capturas do protótipo usadas neste README.
+│   ├── /prototipos            # 🖼️ Capturas do protótipo usadas neste README.
+│   └── /wireframes            # ✏️ Wireframes: .svg para importar no Figma e .png para o README.
 │
 ├── /scripts
-│   └── artifact-page.mjs      # 📜 Gera uma versão de página única do build (usada para compartilhar o protótipo).
+│   ├── artifact-page.mjs      # 📜 Gera uma versão de página única do build (usada para compartilhar o protótipo).
+│   └── wireframes.mjs         # ✏️ Gera os wireframes em docs/wireframes.
 │
 └── /src                       # 📂 Código-fonte React
     ├── main.jsx               # 🚪 Ponto de entrada: monta o <App />.
     ├── App.jsx                # 🧠 Estado global, menu, painel das seções e modo sem 3D.
     ├── Scene.jsx              # 🎥 Canvas 3D e câmera (pontos de vista de cada seção).
-    ├── Room.jsx               # 🛋️ O quarto: paredes, móveis, luzes e objetos clicáveis.
-    ├── textures.js            # 🎨 Texturas desenhadas em <canvas> (chão, tela do monitor, cortiça...).
+    ├── Room.jsx               # 🛋️ Junta as partes do quarto.
+    ├── /room                  # 🧱 O quarto, dividido por área
+    │   ├── shared.jsx         #    Peças básicas, cores do quarto e o objeto clicável (Hotspot).
+    │   ├── Lights.jsx         #    Luzes de dia e de noite e os reflexos.
+    │   ├── Shell.jsx          #    Piso, paredes, rodapé de granito, janela com persiana, porta e pôster do CS.
+    │   ├── Desk.jsx           #    Painel, TV, mesa, gabinete, monitor, periféricos e cadeira.
+    │   ├── Niche.jsx          #    Nicho com luminária "&", JBL, robô, troféu, Stormtrooper, porta-retrato e pelúcias.
+    │   ├── Bed.jsx            #    Cama com cabeceira, criado-mudo, celular, pôsteres, tapete felpudo e bola de futevôlei.
+    │   ├── Floor.jsx          #    Mochila e tênis no chão.
+    │   ├── wallTextures.js    #    Texturas da parede, da porta, do granito e do nicho.
+    │   └── bedTextures.js     #    Texturas da cama, do criado-mudo e do tapete.
+    ├── /assets
+    │   └── foto.jpg           # 📷 Minha foto (Sobre mim e porta-retrato).
+    ├── textures.js            # 🎨 Texturas desenhadas em <canvas> (madeira, camuflado, porcelanato, pôsteres...).
     ├── Sections.jsx           # 🧱 As quatro seções (usadas no painel e no modo sem 3D).
     ├── Icons.jsx              # 💡 Ícones em SVG.
-    ├── content.js             # 🌎 Todo o texto do site em português e inglês.
+    ├── content.js             # 🌎 Todo o texto e os dados do site, em português e inglês.
+    ├── email.js               # ✉️ Envio do formulário pelo EmailJS.
     └── styles.css             # 🎨 Estilos globais e tokens de cor (dia e noite).
 ```
 
@@ -250,22 +277,25 @@ O deploy será feito na **Vercel** (plano gratuito), que detecta projetos Vite a
 
 ## 🎥 Demonstração
 
-> [!WARNING]
-> O conteúdo das capturas abaixo ainda é **de exemplo** ("Seu Nome", projetos e experiências fictícios) e será trocado pelos dados reais na Sprint 2.
-
 ### 🎨 Wireframes (Figma)
 
-_Os wireframes de média fidelidade serão adicionados aqui, com o link do Figma em [Links Úteis](#-links-úteis)._
+Wireframes de média fidelidade, em tons de cinza, com anotações numeradas explicando cada interação. Os arquivos `.svg` em [`docs/wireframes/`](docs/wireframes) podem ser arrastados para o Figma, onde viram formas e textos editáveis. Eles são gerados pelo script [`scripts/wireframes.mjs`](scripts/wireframes.mjs).
 
-| Visão do quarto | Painel de uma seção | Versão de celular |
-| :---: | :---: | :---: |
-| _a adicionar_ | _a adicionar_ | _a adicionar_ |
+| Visão geral (computador) | Seção Projetos aberta |
+| :---: | :---: |
+| <img src="docs/wireframes/01-computador-visao-geral.png" alt="Wireframe da visão geral do quarto no computador, com menu, ferramentas e etiquetas nos objetos" width="420px"> | <img src="docs/wireframes/02-computador-projetos.png" alt="Wireframe da câmera no monitor com o painel de Projetos e a linha do tempo" width="420px"> |
+| **Seção Contato aberta** | **Modo sem 3D** |
+| <img src="docs/wireframes/03-computador-contato.png" alt="Wireframe do painel de Contato com os canais e o formulário" width="420px"> | <img src="docs/wireframes/06-computador-sem-3d.png" alt="Wireframe da versão em página comum, sem 3D" width="420px"> |
+
+| Celular: visão geral | Celular: Sobre mim |
+| :---: | :---: |
+| <img src="docs/wireframes/04-celular-visao-geral.png" alt="Wireframe do quarto na tela do celular, com abas embaixo" height="420px"> | <img src="docs/wireframes/05-celular-sobre-mim.png" alt="Wireframe da folha de Sobre mim subindo de baixo, com o botão Português/English" height="420px"> |
 
 ### 💻 Protótipo do Front-end
 
 | Visão geral (dia) | Visão geral (noite) |
 | :---: | :---: |
-| <img src="docs/prototipos/desktop-visao-geral-dia.jpg" alt="Quarto 3D visto de cima, no modo dia, com etiquetas nos objetos clicáveis" width="420px"> | <img src="docs/prototipos/desktop-visao-geral-noite.jpg" alt="O mesmo quarto no modo noite, com a luminária e o neon acesos" width="420px"> |
+| <img src="docs/prototipos/desktop-visao-geral-dia.jpg" alt="Quarto 3D visto de cima, no modo dia, com etiquetas nos objetos clicáveis" width="420px"> | <img src="docs/prototipos/desktop-visao-geral-noite.jpg" alt="O mesmo quarto no modo noite, com a luminária e o RGB rosa do gabinete acesos" width="420px"> |
 | **Projetos (câmera no monitor)** | **Contato (câmera no celular)** |
 | <img src="docs/prototipos/desktop-projetos.jpg" alt="Câmera aproximada do monitor com o painel de Projetos aberto à direita" width="420px"> | <img src="docs/prototipos/desktop-contato.jpg" alt="Câmera aproximada do celular com o painel de Contato e o formulário" width="420px"> |
 | **Sobre mim (noite)** | **Modo sem 3D** |
@@ -305,7 +335,7 @@ Ainda não há testes automatizados. A cada entrega o site é verificado manualm
 
 | 👤 Nome | 🖼️ Foto | :octocat: GitHub | 💼 LinkedIn | 📤 Gmail |
 |---------|----------|-----------------|-------------|-----------|
-| Daniel Oliveira | <div align="center"><img src="https://github.com/Danielolv14.png" width="70px" height="70px"></div> | <div align="center"><a href="https://github.com/Danielolv14"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | <div align="center"><a href="https://www.linkedin.com/"><img src="https://joaopauloaramuni.github.io/image/linkedin2.png" width="50px" height="50px"></a></div> | <div align="center"><a href="mailto:"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
+| Daniel Oliveira de Menezes | <div align="center"><img src="https://github.com/Danielolv14.png" width="70px" height="70px"></div> | <div align="center"><a href="https://github.com/Danielolv14"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | <div align="center"><a href="https://www.linkedin.com/in/daniel-oliveira14/"><img src="https://joaopauloaramuni.github.io/image/linkedin2.png" width="50px" height="50px"></a></div> | <div align="center"><a href="mailto:danieloliveiramenezes4@gmail.com"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
 
 ---
 

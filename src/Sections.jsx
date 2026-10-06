@@ -1,16 +1,25 @@
 // As quatro seções do portfólio. São usadas tanto no painel do modo 3D quanto no modo 2D.
 import { useState } from 'react';
 
-import { channels } from './content';
-import { channelIcon, IconArrow, IconCheck, IconCopy, IconPlay } from './Icons';
+import { channels, profile } from './content';
+import { emailConfigured, sendMessage } from './email';
+import { channelIcon, IconArrow, IconCheck, IconCopy, IconLock, IconPin, IconPlay, IconUsers } from './Icons';
 
-function initials(name) {
-    return name
-        .split(' ')
-        .map((part) => part[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase();
+// '2026-03' -> 'mar 2026' (ou 'Mar 2026' em inglês)
+function monthLabel(iso, t) {
+    const [year, month] = iso.split('-');
+    return `${t.ui.months[Number(month) - 1]} ${year}`;
+}
+
+function Avatar() {
+    if (profile.photo) {
+        return <img className="avatar" src={profile.photo} alt={profile.name} />;
+    }
+    return (
+        <span className="avatar" aria-hidden="true">
+            {profile.initials}
+        </span>
+    );
 }
 
 export function About({ t, lang, setLang }) {
@@ -18,12 +27,13 @@ export function About({ t, lang, setLang }) {
     return (
         <div className="about">
             <div className="about-hero">
-                <span className="avatar" aria-hidden="true">
-                    {initials(a.name)}
-                </span>
-                <div>
-                    <p className="about-name">{a.name}</p>
+                <Avatar />
+                <div className="about-id">
+                    <p className="about-name">{profile.name}</p>
                     <p className="muted">{a.role}</p>
+                    <p className="about-place">
+                        <IconPin /> {a.location}
+                    </p>
                 </div>
             </div>
 
@@ -45,6 +55,25 @@ export function About({ t, lang, setLang }) {
                 <p key={paragraph}>{paragraph}</p>
             ))}
 
+            <h3 className="mini-title">{a.educationTitle}</h3>
+            <ul className="edu">
+                {a.education.map((e) => (
+                    <li key={e.course}>
+                        <span className="edu-course">
+                            {e.course} · {e.school}
+                        </span>
+                        <span className="muted">{e.detail}</span>
+                    </li>
+                ))}
+            </ul>
+
+            <h3 className="mini-title">{a.stackTitle}</h3>
+            <ul className="chips chips-mono">
+                {a.stack.map((item) => (
+                    <li key={item}>{item}</li>
+                ))}
+            </ul>
+
             <h3 className="mini-title">{a.interestsTitle}</h3>
             <ul className="chips">
                 {a.interests.map((item) => (
@@ -54,39 +83,76 @@ export function About({ t, lang, setLang }) {
 
             <h3 className="mini-title">{a.goalTitle}</h3>
             <p>{a.goal}</p>
+
+            <dl className="facts">
+                <div>
+                    <dt className="mini-title">{a.languagesTitle}</dt>
+                    <dd>{a.languages}</dd>
+                </div>
+                <div>
+                    <dt className="mini-title">{a.offTitle}</dt>
+                    <dd>{a.off}</dd>
+                </div>
+            </dl>
         </div>
     );
 }
 
 export function Projects({ t }) {
     const p = t.projects;
+    // A linha do tempo vai do mais antigo ao mais recente
+    const items = [...p.items].sort((a, b) => a.date.localeCompare(b.date));
     return (
         <div>
             <p className="muted">{p.intro}</p>
             <ol className="timeline">
-                {p.items.map((item) => (
-                    <li key={item.name} className="timeline-item">
-                        <time className="timeline-date">{item.date}</time>
+                {items.map((item) => (
+                    <li key={item.id} className="timeline-item">
+                        <time className="timeline-date" dateTime={item.date}>
+                            {monthLabel(item.date, t)}
+                        </time>
                         <article className="project">
-                            <div className="project-media" aria-hidden="true">
-                                <IconPlay />
-                                <span>{p.gif}</span>
+                            {item.media ? (
+                                <img className="project-media" src={item.media} alt="" loading="lazy" />
+                            ) : (
+                                <div className="project-media project-media-empty" aria-hidden="true">
+                                    <IconPlay />
+                                    <span>{p.gif}</span>
+                                </div>
+                            )}
+                            <div className="project-head">
+                                <h3>{item.name}</h3>
+                                {item.team && (
+                                    <span className="badge">
+                                        <IconUsers /> {p.team}
+                                    </span>
+                                )}
                             </div>
-                            <h3>{item.name}</h3>
                             <p>{item.description}</p>
+                            {item.role && <p className="project-role">{item.role}</p>}
                             <ul className="chips chips-mono">
                                 {item.tech.map((tech) => (
                                     <li key={tech}>{tech}</li>
                                 ))}
                             </ul>
-                            <a
-                                className="text-link"
-                                href={item.url}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                {p.repo} <IconArrow />
-                            </a>
+                            <div className="project-links">
+                                {item.links.map((link) => (
+                                    <a
+                                        key={link.url}
+                                        className="text-link"
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        {p.links[link.kind]} <IconArrow />
+                                    </a>
+                                ))}
+                                {item.privateRepo && (
+                                    <span className="badge badge-quiet">
+                                        <IconLock /> {p.privateRepo}
+                                    </span>
+                                )}
+                            </div>
                         </article>
                     </li>
                 ))}
@@ -102,11 +168,33 @@ export function Experience({ t }) {
             <p className="muted">{e.intro}</p>
             <ul className="jobs">
                 {e.items.map((item) => (
-                    <li key={item.org + item.period} className="job">
-                        <span className="job-period">{item.period}</span>
+                    <li key={item.id} className="job">
+                        <span className="job-period">
+                            {monthLabel(item.start, t)} – {item.end ? monthLabel(item.end, t) : t.ui.present}
+                        </span>
                         <h3>{item.role}</h3>
-                        <p className="job-org">{item.org}</p>
+                        {item.url ? (
+                            <a className="job-org" href={item.url} target="_blank" rel="noreferrer">
+                                {item.org} <IconArrow />
+                            </a>
+                        ) : (
+                            <p className="job-org">{item.org}</p>
+                        )}
                         <p>{item.description}</p>
+                        {item.highlights?.length > 0 && (
+                            <ul className="job-highlights">
+                                {item.highlights.map((h) => (
+                                    <li key={h}>{h}</li>
+                                ))}
+                            </ul>
+                        )}
+                        {item.tech?.length > 0 && (
+                            <ul className="chips chips-mono">
+                                {item.tech.map((tech) => (
+                                    <li key={tech}>{tech}</li>
+                                ))}
+                            </ul>
+                        )}
                     </li>
                 ))}
             </ul>
@@ -115,19 +203,22 @@ export function Experience({ t }) {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const EMPTY = { name: '', email: '', message: '' };
 
-export function Contact({ t, idPrefix }) {
+export function Contact({ t, lang, idPrefix }) {
     const c = t.contact;
     const f = c.form;
-    const [values, setValues] = useState({ name: '', email: '', message: '' });
+    const [values, setValues] = useState(EMPTY);
     const [errors, setErrors] = useState({});
     const [status, setStatus] = useState('idle');
     const [copied, setCopied] = useState(false);
 
-    const update = (field) => (event) => {
-        setValues((v) => ({ ...v, [field]: event.target.value }));
-        setErrors((err) => ({ ...err, [field]: undefined }));
-        setStatus('idle');
+    const field = (name) => `${idPrefix}-${name}`;
+
+    const update = (name) => (event) => {
+        setValues((v) => ({ ...v, [name]: event.target.value }));
+        setErrors((err) => ({ ...err, [name]: undefined }));
+        if (status !== 'sending') setStatus('idle');
     };
 
     const validate = () => {
@@ -138,12 +229,38 @@ export function Contact({ t, idPrefix }) {
         return next;
     };
 
-    const onSubmit = (event) => {
+    const onSubmit = async (event) => {
         event.preventDefault();
+        if (status === 'sending') return;
         const next = validate();
         setErrors(next);
-        // Aqui entra o envio real (EmailJS ou rota de API) no projeto final
-        setStatus(Object.keys(next).length ? 'invalid' : 'ok');
+        const firstInvalid = Object.keys(next)[0];
+        if (firstInvalid) {
+            document.getElementById(field(firstInvalid))?.focus();
+            return;
+        }
+        // Campo escondido: só robôs preenchem
+        if (event.currentTarget.elements.company?.value) {
+            setStatus('sent');
+            return;
+        }
+        if (!emailConfigured) {
+            setStatus('offline');
+            return;
+        }
+        setStatus('sending');
+        try {
+            await sendMessage({
+                name: values.name.trim(),
+                email: values.email.trim(),
+                message: values.message.trim(),
+                lang
+            });
+            setValues(EMPTY);
+            setStatus('sent');
+        } catch {
+            setStatus('error');
+        }
     };
 
     const copy = async (text) => {
@@ -156,7 +273,11 @@ export function Contact({ t, idPrefix }) {
         }
     };
 
-    const field = (name) => `${idPrefix}-${name}`;
+    const note = {
+        sent: { text: f.sent, role: 'status' },
+        offline: { text: f.offline, role: 'status' },
+        error: { text: f.failed, role: 'alert' }
+    }[status];
 
     return (
         <div>
@@ -178,7 +299,7 @@ export function Contact({ t, idPrefix }) {
                                     type="button"
                                     className="btn-ghost"
                                     onClick={() => copy(ch.value)}
-                                    aria-label={copied ? c.copied : c.copy}
+                                    aria-label={`${copied ? c.copied : c.copy}: ${ch.label}`}
                                     title={copied ? c.copied : c.copy}
                                 >
                                     {copied ? <IconCheck /> : <IconCopy />}
@@ -189,7 +310,8 @@ export function Contact({ t, idPrefix }) {
                                     href={ch.href}
                                     target="_blank"
                                     rel="noreferrer"
-                                    aria-label={ch.label}
+                                    aria-label={`${c.open}: ${ch.label}`}
+                                    title={c.open}
                                 >
                                     <IconArrow />
                                 </a>
@@ -252,12 +374,18 @@ export function Contact({ t, idPrefix }) {
                         </p>
                     )}
                 </div>
-                <button type="submit" className="btn-primary">
-                    {f.send}
+                <div className="hp" aria-hidden="true">
+                    <label>
+                        Company
+                        <input name="company" tabIndex={-1} autoComplete="off" />
+                    </label>
+                </div>
+                <button type="submit" className="btn-primary" disabled={status === 'sending'}>
+                    {status === 'sending' ? f.sending : f.send}
                 </button>
-                {status === 'ok' && (
-                    <p className="form-note" role="status">
-                        {f.ok}
+                {note && (
+                    <p className={`form-note${status === 'error' ? ' is-error' : ''}`} role={note.role}>
+                        {note.text}
                     </p>
                 )}
             </form>

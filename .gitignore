@@ -8,3 +8,9 @@ publish/
 .DS_Store
 .vercel
 .claude/
+
+# Fotos de referência (setup etc.), não vão para o GitHub
+referencias/
+
+# Capturas de comparação (scripts/captura.mjs)
+capturas/

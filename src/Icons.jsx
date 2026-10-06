@@ -123,11 +123,41 @@ export const IconCheck = () => (
     </svg>
 );
 
+export const IconCamera = () => (
+    <svg {...base}>
+        <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <path d="M17 7h.01" />
+    </svg>
+);
+
+export const IconLock = () => (
+    <svg {...base} width={15} height={15}>
+        <rect x="5" y="11" width="14" height="10" rx="2" />
+        <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </svg>
+);
+
+export const IconUsers = () => (
+    <svg {...base} width={15} height={15}>
+        <circle cx="9" cy="8" r="3.5" />
+        <path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .6 3.2 2.2 3.8 5" />
+    </svg>
+);
+
+export const IconPin = () => (
+    <svg {...base} width={15} height={15}>
+        <path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z" />
+        <circle cx="12" cy="10" r="2.3" />
+    </svg>
+);
+
 export const channelIcon = {
     email: IconMail,
     whatsapp: IconChat,
     linkedin: IconBriefcase,
-    github: IconCode
+    github: IconCode,
+    instagram: IconCamera
 };
 
 export const sectionIcon = {

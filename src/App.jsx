@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { content, SECTIONS } from './content';
+import { content, profile, SECTIONS } from './content';
 import { IconClose, IconCube, IconList, IconMoon, IconSun, sectionIcon } from './Icons';
 import { sectionComponents } from './Sections';
 
@@ -97,14 +97,13 @@ export default function App() {
     const toggleLang = useCallback(() => setLang((l) => (l === 'pt' ? 'en' : 'pt')), []);
     const toggleNight = useCallback(() => setNight((n) => !n), []);
 
-    // Objetos do quarto: seções abrem o painel; globo e luminária são atalhos
+    // Objetos do quarto: seções abrem o painel; a luminária "&" é o atalho de dia/noite
     const onSelect = useCallback(
         (id) => {
-            if (id === 'lang') return toggleLang();
             if (id === 'lamp') return toggleNight();
             setFocus(id);
         },
-        [toggleLang, toggleNight]
+        [toggleNight]
     );
 
     const goTo = (id) => {
@@ -124,7 +123,7 @@ export default function App() {
                     <span className="brand-mark" aria-hidden="true">
                         &lt;/&gt;
                     </span>
-                    <span className="brand-name">{t.about.name}</span>
+                    <span className="brand-name">{profile.name}</span>
                 </button>
 
                 {!mobile && (
@@ -194,7 +193,6 @@ export default function App() {
                     {ActiveSection && (
                         <aside className="panel" role="dialog" aria-labelledby="panel-title" key={focus}>
                             <div className="panel-top">
-                                <p className="sample-note">{t.ui.sample}</p>
                                 <button
                                     type="button"
                                     className="tool"
@@ -216,7 +214,6 @@ export default function App() {
 
             {flat && (
                 <main className="flat">
-                    <p className="sample-note">{t.ui.sample}</p>
                     {SECTIONS.map((id) => {
                         const Section = sectionComponents[id];
                         return (
