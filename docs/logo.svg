@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+    <title>Quarto Portfólio 3D</title>
+    <rect width="120" height="120" rx="28" fill="#0f6f60" />
+    <!-- Quarto em perspectiva isométrica: chão e duas paredes -->
+    <path d="M22 72 L60 50 L98 72 L60 94 Z" fill="#d8a066" />
+    <path d="M22 72 L60 50 L60 14 L22 36 Z" fill="#ece3d4" />
+    <path d="M60 50 L98 72 L98 36 L60 14 Z" fill="#8fbfae" />
+    <!-- Neon </> na parede do fundo -->
+    <g transform="translate(67 41) skewY(30)">
+        <text x="0" y="0" font-family="ui-monospace, Consolas, monospace" font-size="14" font-weight="700" fill="#1b2926">&lt;/&gt;</text>
+    </g>
+    <!-- Tapete -->
+    <ellipse cx="60" cy="74" rx="14" ry="8" fill="#e3a43a" />
+    <ellipse cx="60" cy="74" rx="7" ry="4" fill="#f2dfb5" />
+</svg>
