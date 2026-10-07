@@ -65,7 +65,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   - `ScreenTracker`: fica dentro do Canvas e projeta os cantos da malha a cada quadro.
   - `ScreenOverlay`: a camada HTML.
   - `MonitorScreen`: Projetos dentro do monitor.
-  - Hoje só o monitor tem tela. TV (Experiências) e celular (Contato) ainda abrem no painel.
+  - Hoje só o monitor tem tela. TV (Experiências) e celular (Contato) ainda abrem no painel. O celular é a próxima etapa (E8, decisão 7).
 - **`src/Sections.jsx`:**
   - `About`;
   - `Projects`: linha do tempo ordenada por data, vários links, selos "em equipe" e "repositório privado";
@@ -132,6 +132,13 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 4. **No celular** as seções abrem na folha de baixo, e o modo tela vale só no computador (pelo menos 900×560) e fora do modo sem 3D.
 5. **Iluminação:** é melhorada no navegador até 02/11. O bake no Blender fica para depois da apresentação.
 6. **MinhaReceita** aparece sem link, porque o repositório da disciplina é privado. Os contatos não incluem o WhatsApp.
+7. **Celular (Contato), decidido em 07/10:**
+   - o celular é um iPhone 17 preto com a interface inspirada no iOS 26, sem nenhum recurso da Apple;
+   - ele fica deitado na cama, e a câmera para olhando de cima;
+   - a tela inicial tem relógio, um cartão com a foto, os ícones de LinkedIn, GitHub, Instagram e E-mail, e não tem dock;
+   - o app E-mail é o formulário, no estilo do Mail;
+   - no celular de verdade, a folha de baixo usa o mesmo visual.
+   - A especificação completa está na seção 4 de `docs/planejamento/prompt-continuacao-nuvem.md`.
 
 ## Como verificar
 

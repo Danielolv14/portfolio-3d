@@ -72,7 +72,15 @@ Você vai continuar o desenvolvimento do meu portfólio profissional, que é o t
   - contatos: e-mail, LinkedIn, GitHub e Instagram.
 - **Cores do site** tiradas do quarto: madeira de dia, rosa do RGB à noite. Tema e idioma ficam salvos ao recarregar.
 - **Desempenho (E1 e E2):** sombras desenhadas uma vez só (`BakeShadows`) e menos pixels no celular. Resultado: 848 → 495 draw calls, 137 → 170 fps no computador, 26 → 33 fps no celular com CPU 4x. A meta é passar de 40 fps no celular (E13).
-- **Projetos dentro do monitor (E3 a E6):** a câmera para de frente para a tela e a seção aparece numa camada HTML sobre ela (`src/screens/`). Na última sessão uma rodada estava terminando os detalhes, com revisão adversarial e correções. **Confira com `git log` e testando**: abra Projetos pelo menu, pela etiqueta e clicando no monitor, e feche com Esc, com o X e com "Voltar ao quarto".
+- **Projetos dentro do monitor (E3 a E6):** a câmera para de frente para a tela e a seção aparece numa camada HTML sobre ela (`src/screens/`). Está no GitHub e funciona. Teste: abra Projetos pelo menu, pela etiqueta e clicando no monitor, e feche com Esc, com o X e com "Voltar ao quarto".
+  - Uma revisão adversarial achou 7 problemas, e a sessão caiu no meio das correções. **Já corrigidos:**
+    - duplo clique abria e fechava a seção (`Hotspot` com `active`, em `room/shared.jsx`);
+    - foco quando a janela encolhe durante o voo (`App.jsx`);
+    - letra do HTML menor que a da textura em telas grandes;
+    - "Esc volta ao quarto" aparecendo em tablet;
+    - mídia ocupando a tela toda no menor tamanho.
+  - **Confira:** a câmera atravessando a cadeira no voo até o monitor. O `near` cresce durante o voo, com teto `FLIGHT_NEAR_MAX` em `Scene.jsx`; o último valor testado foi 4. Faça capturas do voo para confirmar.
+  - **Falta:** desenhar na textura do monitor (`monitorScreenTexture`) os botões "Ler em 2D" e "Voltar ao quarto", que hoje aparecem do nada quando o HTML entra.
 - **README** no template do professor, wireframes em `docs/wireframes/` (gerados por `scripts/wireframes.mjs`) e capturas em `docs/prototipos/`.
 
 **Falta, em ordem de prazo:**
@@ -84,7 +92,7 @@ Você vai continuar o desenvolvimento do meu portfólio profissional, que é o t
   - **EmailJS:** vou criar a conta. Me passe os 2 modelos de e-mail prontos: um que chega para mim e uma confirmação para quem escreveu. Os parâmetros são `from_name`, `from_email`, `reply_to`, `message` e `lang`. Depois teste o envio real.
   - **Preview na Vercel** com as variáveis do EmailJS. Me guie no painel.
   - **E7:** TV = Experiências.
-  - **E8:** celular = Contato, com envio real de dentro da tela (pode ir para a S03, se apertar).
+  - **E8: celular = Contato.** Está detalhado na seção 4. Pode ir para a S03, se apertar.
 - **S03, até 26/10:**
   - **E9:** tela de abertura com a câmera "pousando" no quarto.
   - **E10:** contorno no hover e "aperto" no clique.
@@ -99,8 +107,61 @@ Você vai continuar o desenvolvimento do meu portfólio profissional, que é o t
 - **Apresentação em 02/11:** roteiro de 5 a 7 minutos (conceito, design a partir das fotos, arquitetura, demonstração ao vivo, desafios) e um plano B (modo sem 3D e vídeo gravado).
 - **Depois de 02/11:** iluminação assada no Blender. Primeiro só a oclusão de ambiente (AO), depois dia, noite e LEDs.
 
-## 4. Primeira resposta que espero
+## 4. Tarefa do celular (E8), já decidida comigo em 07/10
+
+O Contato abre **dentro da tela do celular**, com os ícones dos apps para entrar nas minhas páginas. A estética é **inspirada no iPhone 17 preto, com o iOS 26**. É só inspiração: **nada** da Apple (papel de parede, ícones, imagens, a fonte SF Pro) entra no projeto.
+
+**Câmera:**
+- O celular continua **deitado na cama**. A câmera para olhando **de cima**, com a tela em pé na vista.
+- Dica técnica: a tela do celular aponta para cima (+y). No `screenView` (`Scene.jsx`), empurre a câmera um tantinho para o lado de baixo da tela, por exemplo 0,001 no eixo −y local da malha. Assim o camera-controls escolhe um azimute em que o topo da tela fica no topo da vista.
+- Ponha `contact` em `SCREEN_VIEW` (com o `fill` por volta de 0,8) e registre `phone: PhoneScreen` em `SCREEN_COMPONENTS` (`src/screens/screens.js`).
+
+**Celular 3D (`room/Bed.jsx`):**
+- Preto, com bordas finas e iguais e cantos bem arredondados. A tela tem os mesmos cantos.
+- A textura (`phoneScreenTexture`, em `textures.js`) desenha a **mesma tela inicial** do HTML, para a troca não dar salto, como já é no monitor:
+  - o canvas tem a proporção da malha da tela (0,27 × 0,57), não 300×600 como hoje;
+  - a hora é a real e é redesenhada a cada minuto.
+
+**Tela inicial (HTML):**
+- Dynamic Island no topo. Barra de status com a hora à esquerda e sinal, Wi-Fi e bateria à direita.
+- Papel de parede próprio, em degradê com o rosa do RGB e o tom da madeira do quarto.
+- Data em cima e hora grande e grossa embaixo, como na tela bloqueada. A hora é a real, e a data sai em PT/EN.
+- Cartão em "Liquid Glass" (vidro translúcido com desfoque e um brilho fino na borda), com a minha foto (`src/assets/foto.jpg`) e o meu nome.
+- Ícones com os cantos contínuos do iOS e o nome branco embaixo:
+  - **LinkedIn**, **GitHub** e **Instagram** abrem as minhas páginas em nova aba, com `rel="noopener"`. Os links estão em `channels`, no `content.js`;
+  - **E-mail** abre o app de e-mail dentro do celular.
+- Barrinha de início (home indicator) na base. **Sem dock**, porque repetiria os mesmos apps.
+- Logos:
+  - GitHub e Instagram vêm do Simple Icons, que é CC0. Copie só os paths, com um comentário citando a licença;
+  - o do LinkedIn é desenhado por nós, porque o Simple Icons tirou esse logo;
+  - **nada de WhatsApp**.
+- Fonte do sistema: `-apple-system, BlinkMacSystemFont, system-ui, ...`. **Não** embutir a SF Pro, porque a licença da Apple não deixa.
+- Tudo dimensionado em `cqw`, para acompanhar o tamanho da tela, como no monitor.
+
+**App E-mail, no estilo do Mail do iPhone:**
+- No topo: "Cancelar", o título "Nova mensagem" e o botão redondo de enviar, com a seta para cima.
+- "Para:" com o meu e-mail, um botão de copiar e um link para abrir no app de e-mail (`mailto:`).
+- Os campos de nome ("De:"), e-mail e mensagem, separados por linhas finas.
+- Reaproveite a lógica do formulário do `Contact` (`Sections.jsx`) num hook compartilhado: validação, campo-isca contra robôs, `emailConfigured`, os estados enviado/sem configuração/erro e os avisos lidos pelo leitor de tela.
+- O rascunho fica guardado em memória se fechar e abrir de novo.
+- Esc dentro do app volta para a tela inicial, com o foco no ícone do E-mail. Esc na tela inicial volta para o quarto.
+- O app abre crescendo a partir do ícone e fecha voltando para ele. Com movimento reduzido, nada de animação.
+
+**Saídas e acessibilidade:**
+- "Voltar ao quarto" e "Ler em 2D" ficam **fora da tela**, ao lado do celular.
+- Tenha um `h2` "Contato" com `id="screen-title"` e o `headingRef`. Ele pode ficar visualmente escondido, mas o foco vai para ele quando a tela abre.
+- Ícones e campos usáveis só com o teclado, com rótulos (por exemplo: "LinkedIn (abre em nova aba)").
+
+**No celular de verdade e no modo sem 3D:** a folha de baixo e o painel usam o mesmo visual: os ícones dos apps em linha e o formulário de e-mail embaixo.
+
+**Como conferir:**
+- abra pelo menu, pela etiqueta e clicando no celular;
+- capturas de dia e de noite, no computador e no celular;
+- teclado, PT/EN e `npm run build`;
+- confira se a textura e o HTML batem na troca.
+
+## 5. Primeira resposta que espero
 
 1. O ambiente funcionando, com a captura da visão geral e os números do `desempenho.mjs`.
-2. O estado do monitor (Projetos dentro da tela): funciona? Algum problema?
+2. O estado do monitor (Projetos dentro da tela): funciona? A câmera ainda atravessa a cadeira no voo?
 3. A sua sugestão da próxima etapa, considerando que a S01 vence em 12/10, e a pergunta para eu confirmar.
