@@ -80,7 +80,7 @@ Você vai continuar o desenvolvimento do meu portfólio profissional, que é o t
     - "Esc volta ao quarto" aparecendo em tablet;
     - mídia ocupando a tela toda no menor tamanho.
   - **Resolvido em 07/10:** a câmera atravessava a cadeira no voo até o monitor. O ajuste do `near` (`FLIGHT_NEAR_MAX`) foi removido. Agora a cadeira rola para o lado quando Projetos abre no monitor (`Chair` em `room/Desk.jsx`). Não volte a usar o `near` para isso.
-  - **Falta:** desenhar na textura do monitor (`monitorScreenTexture`) os botões "Ler em 2D" e "Voltar ao quarto", que hoje aparecem do nada quando o HTML entra.
+  - **Resolvido em 07/10:** a textura do monitor (`monitorScreenTexture`) desenha os botões "Ler em 2D" e "Voltar ao quarto". Ela segue os mínimos em px do CSS (`fit`), então a troca textura → HTML não dá salto em telas pequenas.
 - **README** no template do professor, wireframes em `docs/wireframes/` (gerados por `scripts/wireframes.mjs`) e capturas em `docs/prototipos/`.
 
 **Falta, em ordem de prazo:**

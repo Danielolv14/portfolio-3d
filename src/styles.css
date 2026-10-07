@@ -551,6 +551,8 @@ h3 {
     --scr-dot-1: #f894ac;
     --scr-dot-2: #ecd5a7;
     --scr-dot-3: #a9dcc1;
+    /* texto do botão rosa: à noite a textura sai um pouco mais clara */
+    --accent-ink: #291025;
 }
 
 /* Barra de título: mesmas medidas da textura (bolinhas, caminho no meio e o X) */

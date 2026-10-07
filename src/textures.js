@@ -219,14 +219,17 @@ const MONITOR_COLORS = {
     muted: '#b4a9ad',
     accent: '#ff7ad9',
     accentSoft: '#5a3a55',
+    // texto do botão rosa ("Voltar ao quarto"): sai #1d0a19, o --accent-ink do CSS
+    accentInk: '#351e30',
     dots: ['#ff6b8b', '#ffc27a', '#6fd3a0']
 };
 
-// Medidas da janela em % da largura da tela: iguais às do CSS (.win-bar, .win-task, .win-scroll, em `cqw`)
-const MONITOR_LAYOUT = { bar: 3.6, taskbar: 4, padX: 2.6 };
+// Medidas da janela em % da largura da tela: iguais às do CSS (.win-bar, .win-scroll, em `cqw`)
+const MONITOR_LAYOUT = { bar: 3.6, padX: 2.6 };
 
 // Tela do monitor em repouso: a mesma janela da camada HTML (src/screens/MonitorScreen.jsx), com a
-// barra de título, os projetos de verdade e a barra de tarefas. `redraw(t)` redesenha no idioma novo.
+// barra de título, os projetos de verdade e a barra de tarefas. `redraw(t)` redesenha no idioma novo,
+// e `fit(largura)` recebe a largura (px) que a tela vai ter na página quando a câmera parar.
 export function monitorScreenTexture() {
     const canvas = document.createElement('canvas');
     // mesma proporção do plano da tela (2,22 x 1,22) e resolução boa para a câmera bem perto
@@ -240,7 +243,21 @@ export function monitorScreenTexture() {
     const H = canvas.height;
     const u = W / 100; // 1 "cqw"
     const c = MONITOR_COLORS;
-    const { bar, taskbar, padX } = MONITOR_LAYOUT;
+    const { bar, padX } = MONITOR_LAYOUT;
+
+    // Largura da tela na página. O CSS tem limites em px (letra de 14 a 32px, barra de 40px...): numa
+    // tela pequena o mínimo vale mais que o cqw, e a textura faz igual para a troca não dar salto.
+    let pageW = W;
+    // `cq(n, min, max)`: n cqw, mas nunca menos que `min` px nem mais que `max` px na página
+    // (como o max() e o clamp() do CSS). O resultado é em cqw.
+    const cq = (n, min = 0, max = Infinity) => Math.min(Math.max(n, (min / pageW) * 100), (max / pageW) * 100);
+
+    // Largura de um texto, em cqw
+    const textWidth = (value, size, { weight = 400, font = 'Figtree' } = {}) => {
+        ctx.font = `${weight} ${size * u}px "${font}", system-ui, sans-serif`;
+        ctx.letterSpacing = '0px';
+        return ctx.measureText(value).width / u;
+    };
 
     // `spacing`: espaço entre letras em em, como o letter-spacing do CSS
     const text = (value, x, y, size, { weight = 400, font = 'Figtree', color = c.fg, align = 'left', spacing = 0 } = {}) => {
@@ -253,6 +270,9 @@ export function monitorScreenTexture() {
 
     const draw = (t) => {
         texture.userData.t = t;
+        // letra da área com rolagem (.win-scroll: clamp(14px, 1.4cqw, 32px)); o cabeçalho da seção
+        // é medido nela (em), como no CSS
+        const em = cq(1.4, 14, 32);
         ctx.textBaseline = 'middle';
         ctx.fillStyle = c.bg;
         ctx.fillRect(0, 0, W, H);
@@ -280,15 +300,16 @@ export function monitorScreenTexture() {
         ctx.lineTo(x0 - s, y0 + s);
         ctx.stroke();
 
-        // título da seção com o ícone e a frase de abertura
+        // título da seção com o ícone e a frase de abertura (medidas do .section-head, em em)
         const top = (bar + 2.4) * u;
+        const icon = 2.3 * em;
         ctx.fillStyle = c.accentSoft;
-        roundRect(ctx, padX * u, top, 3.2 * u, 3.2 * u, 0.8 * u);
+        roundRect(ctx, padX * u, top, icon * u, icon * u, 0.6 * em * u);
         ctx.fill();
         // o mesmo ícone de monitor do HTML (IconMonitor, desenhado numa grade de 24)
-        const g = (1.68 * u) / 24;
-        const gx = (padX + 0.76) * u;
-        const gy = top + 0.76 * u;
+        const g = (1.2 * em * u) / 24;
+        const gx = (padX + 0.55 * em) * u;
+        const gy = top + 0.55 * em * u;
         ctx.strokeStyle = c.fg;
         ctx.lineWidth = 1.8 * g;
         roundRect(ctx, gx + 3 * g, gy + 4 * g, 18 * g, 12 * g, 2 * g);
@@ -297,12 +318,12 @@ export function monitorScreenTexture() {
         ctx.moveTo(gx + 12 * g, gy + 16 * g);
         ctx.lineTo(gx + 12 * g, gy + 20 * g);
         ctx.stroke();
-        text(t.ui.nav.projects, (padX + 4.3) * u, top + 1.6 * u, 2.1, { weight: 600, font: 'Unbounded', spacing: -0.01 });
-        text(t.projects.intro, padX * u, top + 5.55 * u, 1.4, { color: c.muted });
+        text(t.ui.nav.projects, (padX + 3.05 * em) * u, top + (icon / 2) * u, 1.5 * em, { weight: 600, font: 'Unbounded', spacing: -0.01 });
+        text(t.projects.intro, padX * u, top + 3.96 * em * u, em, { color: c.muted });
 
         // linha do tempo resumida: data, nome e tecnologias de cada projeto (do mais antigo ao mais recente)
         const items = [...t.projects.items].sort((a, b) => a.date.localeCompare(b.date));
-        const listTop = top + 7.6 * u;
+        const listTop = top + 5.43 * em * u;
         const row = 6.4 * u;
         const lineX = (padX + 0.6) * u;
         ctx.fillStyle = c.line;
@@ -325,14 +346,68 @@ export function monitorScreenTexture() {
             text(item.tech.join(' · '), W - (padX + 1.4) * u, mid, 1.05, { font: 'JetBrains Mono', color: c.muted, align: 'right' });
         });
 
-        // barra de tarefas com a dica do teclado
+        // barra de tarefas (.win-task): a dica do teclado à esquerda e as saídas à direita
+        const taskbar = cq(4, 40);
+        const mid = H - (taskbar / 2) * u;
         ctx.fillStyle = c.bar;
         ctx.fillRect(0, H - taskbar * u, W, taskbar * u);
-        text(t.ui.screen.escHint, padX * u, H - (taskbar / 2) * u, 1.1, { font: 'JetBrains Mono', color: c.muted });
+        // em tela de toque não há tecla Esc (no CSS, a .win-hint some com hover: none)
+        if (!window.matchMedia?.('(hover: none)').matches) {
+            text(t.ui.screen.escHint, padX * u, mid, cq(1.1, 12), { font: 'JetBrains Mono', color: c.muted });
+        }
+        // botões (.win-btn), da direita para a esquerda: "Voltar ao quarto" e "Ler em 2D"
+        const font = cq(1.15, 13);
+        const height = cq(2.7, 30);
+        const border = (1 / pageW) * 100; // 1px da página
+        let right = 100 - 1; // padding da direita: 1cqw
+        const button = (label, { primary = false, listIcon = false } = {}) => {
+            const iconSize = listIcon ? 1.3 * font : 0;
+            const gap = listIcon ? 0.5 * font : 0;
+            const width = 2 * (1.1 * font + border) + iconSize + gap + textWidth(label, font, { weight: 600 });
+            const x = right - width;
+            roundRect(ctx, x * u, mid - (height / 2) * u, width * u, height * u, (height / 2) * u);
+            if (primary) {
+                ctx.fillStyle = c.accent;
+                ctx.fill();
+            } else {
+                ctx.strokeStyle = c.line;
+                ctx.lineWidth = border * u;
+                ctx.stroke();
+            }
+            const color = primary ? c.accentInk : c.fg;
+            const textX = x + border + 1.1 * font;
+            if (listIcon) {
+                // o mesmo ícone de lista do HTML (IconList, grade de 24): 3 linhas com um ponto na frente
+                const k = (iconSize * u) / 24;
+                const ix = textX * u;
+                const iy = mid - (iconSize / 2) * u;
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1.8 * k;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                for (const y of [6, 12, 18]) {
+                    ctx.moveTo(ix + 8 * k, iy + y * k);
+                    ctx.lineTo(ix + 21 * k, iy + y * k);
+                    ctx.moveTo(ix + 3.5 * k, iy + y * k);
+                    ctx.lineTo(ix + 3.51 * k, iy + y * k);
+                }
+                ctx.stroke();
+            }
+            text(label, (textX + iconSize + gap) * u, mid, font, { weight: 600, color });
+            right = x - 0.8; // espaço entre os botões: 0.8cqw
+        };
+        button(t.ui.close, { primary: true });
+        button(t.ui.screen.read2d, { listIcon: true });
         texture.needsUpdate = true;
     };
 
     texture.userData.redraw = draw;
+    // Chamado pelo Scene.jsx antes do voo até a tela, com a largura (px) que ela vai ter na página
+    texture.userData.fit = (width) => {
+        if (!(width > 0) || Math.abs(width - pageW) < 0.5) return;
+        pageW = width;
+        if (texture.userData.t) draw(texture.userData.t);
+    };
     return texture;
 }
 

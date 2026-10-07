@@ -119,6 +119,18 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
         if (park.token === flight.current) onParked(park.screen);
     });
 
+    // A textura de cada tela se ajusta ao tamanho que a tela vai ter na página (textures.js).
+    // Roda ao abrir o site e quando a janela muda: assim a textura já está certa antes do clique,
+    // e não muda de tamanho no começo do voo, com o monitor à vista.
+    useEffect(() => {
+        for (const section of Object.keys(SCREEN_VIEW)) {
+            const mesh = findScreen(scene, section);
+            if (!mesh) continue;
+            const { width } = screenView(mesh, camera, size, topInset, SCREEN_VIEW[section]);
+            mesh.material.map?.userData.fit?.(width);
+        }
+    }, [scene, camera, size, topInset]);
+
     useEffect(() => {
         const c = controls.current;
         if (!c) return;
@@ -133,8 +145,6 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
         const mesh = screen && findScreen(scene, screen);
         if (mesh) {
             const view = screenView(mesh, camera, size, topInset, SCREEN_VIEW[screen]);
-            // A textura da tela se ajusta ao tamanho que a tela vai ter na página (textures.js)
-            mesh.material.map?.userData.fit?.(view.width);
             const goTo = (smooth) =>
                 Promise.all([
                     c.setFocalOffset(0, view.offsetY, 0, smooth),
