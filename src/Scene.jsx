@@ -56,21 +56,11 @@ const LIMITS_FREE = {
 };
 
 // Seções que abrem numa tela do quarto (src/screens): quanto da área útil (abaixo do menu do
-// topo) a tela ocupa com a câmera parada, e quanto espaço livre há na frente dela (ver `near`)
+// topo) a tela ocupa com a câmera parada. (A câmera para onde fica o encosto da cadeira: por isso,
+// com Projetos aberto, a cadeira se afasta para o lado. Veja Chair em room/Desk.jsx.)
 const SCREEN_VIEW = {
-    projects: { fill: 0.88, clearance: 2 }
+    projects: { fill: 0.88 }
 };
-
-const NEAR = 0.1;
-// Teto do `near` durante o voo até a tela (ver CameraRig): com a câmera ainda longe, um `near`
-// maior que isso cortaria o próprio quarto
-const FLIGHT_NEAR_MAX = 4;
-
-function setNear(camera, near) {
-    if (camera.near === near) return;
-    camera.near = near;
-    camera.updateProjectionMatrix();
-}
 
 // A câmera parou: o camera-controls avisa 'rest' (quase parada) e depois 'sleep' (parada de vez).
 // Depois de um quadro muito longo (aba escondida por minutos no meio do voo) ela chega de uma vez e
@@ -88,7 +78,7 @@ function stopped(controls) {
 }
 
 // Câmera de frente para a tela, calculada a partir da própria malha (centro, frente e tamanho)
-function screenView(mesh, camera, size, topInset, { fill, clearance }) {
+function screenView(mesh, camera, size, topInset, { fill }) {
     mesh.updateWorldMatrix(true, false);
     const center = mesh.getWorldPosition(new THREE.Vector3());
     // a frente do plano é o eixo +z dele, levado para o mundo
@@ -105,20 +95,15 @@ function screenView(mesh, camera, size, topInset, { fill, clearance }) {
     const pos = normal.multiplyScalar(distance).add(center);
     // Sobe a câmera meio menu (em unidades do mundo): a tela desce e fica no meio da área útil
     const offsetY = -((topInset / 2) * k * distance) / size.height;
-    // Em janela estreita a câmera fica longe e a cadeira passa a ficar entre ela e o monitor.
-    // O plano `near` corta tudo que está a mais de `clearance` da tela, do lado da câmera.
-    const near = Math.max(NEAR, distance - clearance);
     // Largura (px) que a tela vai ter na página: `fill` da largura ou da altura útil (a que encher primeiro)
     const width = fill * Math.min(size.width, (usableH * w) / h);
-    return { center, pos, offsetY, near, width };
+    return { center, pos, offsetY, width };
 }
 
 function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) {
     const controls = useRef();
     // cada voo ganha um número; só o último pode avisar que a câmera parou
     const flight = useRef(0);
-    // Voo até uma tela (e a volta): tela e folga usadas para corrigir o `near` a cada quadro
-    const nearFlight = useRef(null);
     // Chegada numa tela que ainda vai ser avisada ao App (no quadro seguinte, ver abaixo)
     const parkNext = useRef(null);
     const { size, camera, scene } = useThree();
@@ -132,16 +117,6 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
         if (!park) return;
         parkNext.current = null;
         if (park.token === flight.current) onParked(park.screen);
-    });
-
-    // No voo até a tela a câmera passa por cima da cadeira, e o encosto cobria o monitor.
-    // A cada quadro, o `near` corta tudo que está a mais de `clearance` da tela (como no fim do
-    // voo), mas sem passar do teto: de longe, isso cortaria o próprio quarto.
-    useFrame(() => {
-        const f = nearFlight.current;
-        if (!f) return;
-        const gap = camera.position.distanceTo(f.center) - f.clearance;
-        setNear(camera, THREE.MathUtils.clamp(gap, NEAR, f.max));
     });
 
     useEffect(() => {
@@ -158,12 +133,6 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
         const mesh = screen && findScreen(scene, screen);
         if (mesh) {
             const view = screenView(mesh, camera, size, topInset, SCREEN_VIEW[screen]);
-            // no fim do voo o `near` chega a view.near (o teto nunca fica abaixo dele)
-            nearFlight.current = {
-                center: view.center,
-                clearance: SCREEN_VIEW[screen].clearance,
-                max: Math.max(FLIGHT_NEAR_MAX, view.near)
-            };
             // A textura da tela se ajusta ao tamanho que a tela vai ter na página (textures.js)
             mesh.material.map?.userData.fit?.(view.width);
             const goTo = (smooth) =>
@@ -181,16 +150,13 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
             return;
         }
 
-        let arrived;
         if (!focus) {
             // Em telas estreitas a câmera se afasta para o quarto inteiro caber
             const distance = aspect >= 1.35 ? 24 : 24 * Math.pow(1.35 / aspect, 0.72);
             const dir = aspect < 1 ? OVERVIEW_DIR_PORTRAIT : OVERVIEW_DIR;
             const pos = dir.clone().multiplyScalar(distance).add(OVERVIEW_TARGET);
-            arrived = Promise.all([
-                c.setFocalOffset(0, 0, 0, animate),
-                c.setLookAt(pos.x, pos.y, pos.z, OVERVIEW_TARGET.x, OVERVIEW_TARGET.y, OVERVIEW_TARGET.z, animate)
-            ]);
+            c.setFocalOffset(0, 0, 0, animate);
+            c.setLookAt(pos.x, pos.y, pos.z, OVERVIEW_TARGET.x, OVERVIEW_TARGET.y, OVERVIEW_TARGET.z, animate);
         } else {
             const spot = SPOTS[focus];
             const target = new THREE.Vector3(...spot.target);
@@ -201,21 +167,11 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
             // Desloca a imagem para o objeto não ficar atrás do painel
             const halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * offset.length();
             const halfW = halfH * aspect;
-            arrived = Promise.all([
-                panel.side === 'right'
-                    ? c.setFocalOffset(panel.frac * halfW, 0, 0, animate)
-                    : // (no camera-controls o eixo y do deslocamento aponta para baixo)
-                      c.setFocalOffset(0, panel.frac * halfH, 0, animate),
-                c.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z, animate)
-            ]);
+            if (panel.side === 'right') c.setFocalOffset(panel.frac * halfW, 0, 0, animate);
+            // (no camera-controls o eixo y do deslocamento aponta para baixo)
+            else c.setFocalOffset(0, panel.frac * halfH, 0, animate);
+            c.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z, animate);
         }
-        // Saindo de uma tela, o `near` só volta ao normal quando a câmera chega:
-        // durante o voo ele continua cortando a cadeira que estava logo à frente
-        arrived.then(() => {
-            if (!isLatest()) return;
-            nearFlight.current = null;
-            setNear(camera, NEAR);
-        });
     }, [focus, screen, size, panel.side, panel.frac, topInset, camera, scene, reducedMotion, onParked]);
 
     // Só em desenvolvimento: window.__view([x, y, z], [alvo]) posiciona a câmera livremente,
@@ -225,15 +181,13 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
         window.__view = (pos, target) => {
             const c = controls.current;
             Object.assign(c, LIMITS_FREE);
-            nearFlight.current = null;
-            setNear(camera, NEAR);
             c.setFocalOffset(0, 0, 0, false);
             c.setLookAt(...pos, ...target, false);
         };
         return () => {
             delete window.__view;
         };
-    }, [camera]);
+    }, []);
 
     const limits = focus ? LIMITS_FREE : LIMITS_OVERVIEW;
     // Indo para uma tela o voo é mais rápido: o conteúdo só aparece quando a câmera para
@@ -316,7 +270,7 @@ export default function Scene({
             // No celular, no máximo 1,5 pixel por pixel CSS: a diferença quase não aparece e
             // a placa de vídeo pinta cerca de 45% menos pixels que com 2
             dpr={compact ? [1, 1.5] : [1, 2]}
-            camera={{ fov: 35, near: NEAR, far: 200, position: [34, 30, 34] }}
+            camera={{ fov: 35, near: 0.1, far: 200, position: [34, 30, 34] }}
             onCreated={onReady}
             onPointerMissed={closeOnClick}
         >
@@ -324,9 +278,11 @@ export default function Scene({
                 t={t}
                 night={night}
                 focus={focus}
+                screen={screen}
                 onSelect={onSelect}
                 showLabels={showLabels}
                 compact={compact}
+                reducedMotion={reducedMotion}
                 onBackgroundClick={closeOnClick}
             />
             {/* O quarto não se mexe e o sol não muda de lugar (só de cor e força): o mapa de

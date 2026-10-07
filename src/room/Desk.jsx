@@ -21,6 +21,16 @@ import {
 import { Box, C, Cyl, dayNight, Hotspot, lerp, Rounded } from './shared';
 
 const SILVER = { color: '#f2f3f5', roughness: 0.3, metalness: 0.55 };
+
+// Monitor no braço: a cadeira usa essa posição para saber se a câmera está perto dele
+const MONITOR_POS = [-4.38, 2.46, -2.85];
+
+// Cadeira encostada na mesa (como na foto) e afastada para o lado, quando Projetos abre.
+// x e z = posição no chão, rot = giro em volta do eixo y (radianos).
+const CHAIR_HOME = { x: -2.45, z: -2.85, rot: 0.15 };
+const CHAIR_AWAY = { x: -2.3, z: -4.1, rot: 1.0 };
+// Ao fechar, a cadeira só volta quando a câmera já está a esta distância do monitor
+const CHAIR_RETURN_DIST = 4;
 const PLASTIC = '#17181b';
 
 // Extrusões com a borda levemente arredondada (moldura do gabinete, do relógio e da cadeira)
@@ -250,7 +260,7 @@ function Monitor({ t, onSelect, showLabels, active }) {
             showLabel={showLabels}
             active={active}
             labelPosition={[0.8, -0.85, 0.7]}
-            position={[-4.38, 2.46, -2.85]}
+            position={MONITOR_POS}
             hit={{ size: [0.4, 1.5, 2.5], position: [0.1, 0, 0] }}
         >
             <Rounded size={[0.07, 1.32, 2.32]} radius={0.025} color={C.black} roughness={0.4} />
@@ -397,7 +407,29 @@ function Peripherals() {
 
 // Cadeira ergonômica: base estrela cromada com rodízios, assento e encosto de tela preta,
 // apoio de cabeça e braços. O filete claro no meio do encosto é igual ao da cadeira de verdade.
-function Chair({ chrome }) {
+// `away`: Projetos está aberto dentro do monitor. A câmera para bem onde fica o encosto, então a
+// cadeira rola para o lado (como quem afasta a cadeira para usar o PC) e volta depois.
+// `instant`: sem animação (movimento reduzido).
+const monitorCenter = new THREE.Vector3(...MONITOR_POS);
+
+function Chair({ chrome, away, instant }) {
+    const group = useRef();
+    // 0 = encostada na mesa, 1 = afastada para o lado
+    const progress = useRef(0);
+    useFrame(({ camera, gl }, dt) => {
+        // Ao fechar, espera a câmera sair de perto do monitor: senão voltaria passando por ela
+        const cameraClose = camera.position.distanceTo(monitorCenter) < CHAIR_RETURN_DIST;
+        const target = away || cameraClose ? 1 : 0;
+        if (progress.current === target) return;
+        let p = instant ? target : THREE.MathUtils.damp(progress.current, target, 5, dt);
+        if (Math.abs(p - target) < 0.001) p = target;
+        progress.current = p;
+        group.current.position.set(lerp(CHAIR_HOME.x, CHAIR_AWAY.x, p), 0, lerp(CHAIR_HOME.z, CHAIR_AWAY.z, p));
+        group.current.rotation.y = lerp(CHAIR_HOME.rot, CHAIR_AWAY.rot, p);
+        // A sombra é desenhada uma vez só (BakeShadows): enquanto a cadeira anda, redesenha
+        gl.shadowMap.needsUpdate = true;
+    });
+
     const fabric = useMemo(() => chairMeshTexture(), []);
     const shapes = useMemo(
         () => ({
@@ -411,7 +443,7 @@ function Chair({ chrome }) {
     );
     const mesh = <meshStandardMaterial map={fabric} transparent depthWrite={false} side={THREE.DoubleSide} roughness={0.9} />;
     return (
-        <group position={[-2.45, 0, -2.85]} rotation-y={0.15}>
+        <group ref={group} position={[CHAIR_HOME.x, 0, CHAIR_HOME.z]} rotation-y={CHAIR_HOME.rot}>
             {/* base estrela cromada com rodízios pretos */}
             {[0, 1, 2, 3, 4].map((i) => (
                 <group key={i} rotation-y={(i / 5) * Math.PI * 2}>
@@ -469,7 +501,7 @@ function Chair({ chrome }) {
     );
 }
 
-export default function DeskWall({ t, onSelect, showLabels, focus }) {
+export default function DeskWall({ t, onSelect, showLabels, focus, screen, reducedMotion }) {
     const oak = useMemo(() => oakTexture(), []);
     const walnut = useMemo(() => walnutTexture(), []);
     const walnutTop = useMemo(() => turned(walnutTexture()), []);
@@ -488,7 +520,7 @@ export default function DeskWall({ t, onSelect, showLabels, focus }) {
             <Monitor t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'projects'} />
             <TV t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'experience'} />
             <Peripherals />
-            <Chair chrome={chrome} />
+            <Chair chrome={chrome} away={screen === 'projects'} instant={reducedMotion} />
         </group>
     );
 }

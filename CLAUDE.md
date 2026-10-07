@@ -84,7 +84,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
     - painel de carvalho, TV com light bar (Experiências);
     - mesa de nogueira com gaveteiro;
     - gabinete camuflado com LED magenta e monitor no braço (Projetos);
-    - relógio LCD com a hora real, periféricos, cadeira cromada.
+    - relógio LCD com a hora real, periféricos, cadeira cromada. Com Projetos aberto no monitor, a cadeira rola para o lado, porque a câmera para onde fica o encosto. Ela só volta quando a câmera se afasta do monitor.
   - **`Niche.jsx`:**
     - nicho branco com 4 níveis;
     - luminária "&" com lâmpadas (troca dia e noite), JBL, robô;
@@ -152,14 +152,11 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   node scripts/desempenho.mjs
   ```
   Mostra draw calls, triângulos e FPS no computador e num celular simulado com CPU 4x.
-- **Playwright:** no Windows usa o Edge instalado. No Linux (nuvem) use:
+- **Playwright:** no Windows usa o Edge instalado. Na nuvem (Linux) o Chromium já vem instalado em `/opt/pw-browsers` e não dá para baixar outro. Instale, sem salvar no `package.json`, a versão do Playwright que casa com ele (em 07/10/2026, `chromium-1194` → `playwright@1.56.1`):
   ```bash
-  npm i -D playwright
+  npm i --no-save playwright@1.56.1
   ```
-  ```bash
-  npx playwright install chromium
-  ```
-  Os scripts usam WebGL por software (SwiftShader), mais lento.
+  Não rode `npx playwright install` nem `npm install` depois disso, porque eles apagam essa instalação. Os scripts usam WebGL por software (SwiftShader): cada quadro leva segundos, o FPS medido não vale e os draw calls valem. Na nuvem, um servidor em segundo plano é encerrado depois de 2 horas, então suba o Vite junto com cada teste.
 - **Wireframes:**
   ```bash
   node scripts/wireframes.mjs
@@ -184,6 +181,8 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   - Não use `enabled={false}` para travar a câmera, porque ele para de atualizar. Troque `mouseButtons` e `touches` para `ACTION.NONE`.
   - O eixo y do `setFocalOffset` aponta para baixo.
   - Os limites (`min/maxAzimuth`, distância) também restringem o `setLookAt`.
+  - Para saber quando a câmera chegou, espere `rest` **ou** `sleep`. Depois de um quadro muito longo (aba escondida por minutos), ela chega de uma vez e só vem o `sleep`.
+- **Objeto no caminho da câmera:** não esconda o objeto aumentando o plano `near`. A cadeira some de uma vez, aparece fatiada e o `near` fica preso ao ir para outra seção. Tire o objeto do caminho (veja a cadeira em `Desk.jsx`).
 - **`Hotspot`:** anima o `scale` do próprio grupo. Um `scale` passado nele é sobrescrito, então escale um grupo interno.
 - **Sombras:** com `BakeShadows`, a sombra é desenhada uma vez só. Qualquer animação que **mova** algo que projeta sombra precisa de `gl.shadowMap.needsUpdate = true` enquanto se move (há um exemplo no `Hotspot`). Mudar só cor ou intensidade não precisa disso.
 - **Etiquetas:** o `<button>` dentro de `<Html>` precisa de `e.stopPropagation()` no `onClick`. Sem isso o clique sobe ao Canvas, que entende "clique fora" e fecha a seção que acabou de abrir.
