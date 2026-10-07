@@ -1,5 +1,6 @@
 // Seções que abrem dentro de uma tela do quarto, em vez do painel lateral.
 import MonitorScreen from './MonitorScreen';
+import PhoneScreen from './PhoneScreen';
 
 // Seção -> tela onde ela aparece. No quarto, a malha dessa tela se chama `screen-<seção>`.
 export const SCREEN_OF = {
@@ -10,7 +11,8 @@ export const SCREEN_OF = {
 
 // Telas já prontas. Uma seção cuja tela ainda não existe continua abrindo no painel.
 export const SCREEN_COMPONENTS = {
-    monitor: MonitorScreen
+    monitor: MonitorScreen,
+    phone: PhoneScreen
 };
 
 export function hasScreen(section) {

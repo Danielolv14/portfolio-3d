@@ -186,7 +186,8 @@ export const content = {
                 path: { projects: '~/projetos' },
                 closeWindow: 'Fechar janela',
                 read2d: 'Ler em 2D',
-                escHint: 'Esc volta ao quarto'
+                escHint: 'Esc volta ao quarto',
+                escHome: 'Esc volta à tela inicial'
             }
         },
         about: {
@@ -235,13 +236,26 @@ export const content = {
         },
         contact: {
             intro: 'Escolha o canal que preferir ou me mande uma mensagem por aqui.',
-            copy: 'Copiar',
-            copied: 'Copiado',
-            open: 'Abrir',
+            // Apps (ícones) e o cartão da tela inicial do celular
+            mailApp: 'E-mail',
+            mailAppHint: 'escrever uma mensagem',
+            newTab: 'abre em nova aba',
+            cardRole: 'Engenharia de Software · PUC Minas',
+            copyEmail: 'Copiar e-mail',
+            emailCopied: 'E-mail copiado',
+            openMailApp: 'Abrir no seu app de e-mail',
+            // Formulário no estilo do app de e-mail (os rótulos curtos aparecem; os longos são lidos)
             form: {
-                name: 'Nome',
-                email: 'E-mail',
+                title: 'Nova mensagem',
+                cancel: 'Cancelar',
+                to: 'Para:',
+                from: 'De:',
+                emailLabel: 'E-mail:',
+                name: 'Seu nome',
+                email: 'Seu e-mail',
                 message: 'Mensagem',
+                emailPlaceholder: 'voce@exemplo.com',
+                messagePlaceholder: 'Escreva sua mensagem…',
                 send: 'Enviar mensagem',
                 sending: 'Enviando…',
                 errName: 'Informe seu nome.',
@@ -279,7 +293,8 @@ export const content = {
                 path: { projects: '~/projects' },
                 closeWindow: 'Close window',
                 read2d: 'Read in 2D',
-                escHint: 'Esc goes back to the room'
+                escHint: 'Esc goes back to the room',
+                escHome: 'Esc goes back to the home screen'
             }
         },
         about: {
@@ -328,13 +343,24 @@ export const content = {
         },
         contact: {
             intro: 'Pick the channel you prefer or send me a message right here.',
-            copy: 'Copy',
-            copied: 'Copied',
-            open: 'Open',
+            mailApp: 'Email',
+            mailAppHint: 'write a message',
+            newTab: 'opens in a new tab',
+            cardRole: 'Software Engineering · PUC Minas',
+            copyEmail: 'Copy email',
+            emailCopied: 'Email copied',
+            openMailApp: 'Open in your email app',
             form: {
-                name: 'Name',
-                email: 'Email',
+                title: 'New Message',
+                cancel: 'Cancel',
+                to: 'To:',
+                from: 'From:',
+                emailLabel: 'Email:',
+                name: 'Your name',
+                email: 'Your email',
                 message: 'Message',
+                emailPlaceholder: 'you@example.com',
+                messagePlaceholder: 'Write your message…',
                 send: 'Send message',
                 sending: 'Sending…',
                 errName: 'Enter your name.',

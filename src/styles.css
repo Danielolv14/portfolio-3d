@@ -1100,140 +1100,318 @@ a.job-org:hover {
     color: var(--muted);
 }
 
-/* Contato */
-.channels {
+/* Contato: os apps em linha e o formulário no estilo do app de e-mail do celular.
+   As mesmas peças aparecem dentro do celular 3D (src/screens/phone.css muda só cores e tamanhos). */
+.apps {
     list-style: none;
-    margin: 14px 0 0;
+    margin: 16px 0 4px;
     padding: 0;
     display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
 }
 
-.channel {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 10px 10px 12px;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--surface-2);
+.app {
+    display: grid;
+    justify-items: center;
+    gap: 7px;
+    width: 100%;
+    padding: 6px 0;
+    border: 0;
+    border-radius: 16px;
+    background: none;
+    color: var(--fg);
+    text-decoration: none;
 }
 
-.channel-icon {
+.app-art {
+    display: block;
+    width: 60px;
+    height: 60px;
+    filter: drop-shadow(0 6px 10px rgba(40, 20, 30, 0.18));
+    transition: transform 0.2s ease;
+}
+
+.app:hover .app-art {
+    transform: translateY(-2px);
+}
+
+.app-name {
+    font-size: var(--step--1);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* O "app de e-mail". As cores vêm de variáveis: aqui as do site; no celular 3D, as da tela. */
+.mail {
+    --mail-bg: var(--surface-2);
+    --mail-bar: var(--surface-2);
+    --mail-fg: var(--fg);
+    --mail-muted: var(--muted);
+    --mail-line: var(--line);
+    --mail-accent: var(--accent);
+    --mail-accent-ink: var(--accent-ink);
+    --mail-danger: var(--danger);
+    --mail-pad: 14px;
+
+    /* o formulário mede a própria largura: estreito (no celular 3D pequeno), o topo e o "Para:"
+       se reorganizam (veja o @container mail lá embaixo) */
+    container: mail / inline-size;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    border: 1px solid var(--mail-line);
+    border-radius: 20px;
+    background: var(--mail-bg);
+    color: var(--mail-fg);
+}
+
+/* Topo: "Cancelar" (só no celular 3D), o título e o botão redondo de enviar */
+.mail-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-areas: 'cancel title send';
+    align-items: center;
+    gap: 8px;
+    padding: 0.6em var(--mail-pad);
+    border-bottom: 1px solid var(--mail-line);
+    border-radius: 20px 20px 0 0;
+    background: var(--mail-bar);
+}
+
+/* No modo 2D a página inteira rola: o topo do formulário fica preso logo abaixo do menu fixo
+   (70 px), para o enviar estar sempre à mão. (No painel não: ele ficaria embaixo do X do painel) */
+.flat .mail {
+    scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 84px);
+}
+
+.flat .mail-bar {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 70px);
+    z-index: 1;
+}
+
+.mail-cancel,
+.mail-bar-side {
+    grid-area: cancel;
+    justify-self: start;
+}
+
+.mail-cancel {
+    padding: 0.35em 0.8em;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--mail-fg) 10%, transparent);
+    color: var(--mail-fg);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.mail-title {
+    grid-area: title;
+    margin: 0;
+    font-size: 1.05em;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.mail-send {
+    grid-area: send;
+    justify-self: end;
     display: grid;
     place-items: center;
     width: 36px;
     height: 36px;
-    border-radius: 50%;
-    background: var(--accent-soft);
-    flex-shrink: 0;
-}
-
-.channel-text {
-    display: grid;
-    min-width: 0;
-    flex: 1;
-}
-
-.channel-label {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    font-weight: 600;
-}
-
-.channel-value {
-    font-weight: 600;
-    /* `anywhere` (e não `break-word`) deixa o e-mail longo quebrar também no cálculo da largura
-       mínima: sem isso, no celular o cartão empurrava a folha e a página para os lados */
-    overflow-wrap: anywhere;
-    user-select: all;
-}
-
-.btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;
-    height: 36px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--fg);
-    font-size: var(--step--1);
-    font-weight: 600;
-    text-decoration: none;
-    flex-shrink: 0;
-}
-
-.btn-ghost:hover {
-    border-color: var(--accent);
-}
-
-.form {
-    display: grid;
-    gap: 12px;
-    margin-top: 18px;
-}
-
-.field {
-    display: grid;
-    gap: 5px;
-}
-
-.field label {
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.field input,
-.field textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: 1px solid var(--line);
-    background: var(--surface-2);
-    resize: vertical;
-}
-
-.field input:focus-visible,
-.field textarea:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 0;
-    border-color: transparent;
-}
-
-.field [aria-invalid='true'] {
-    border-color: var(--danger);
-}
-
-.field-error {
-    color: var(--danger);
-    font-size: var(--step--1);
-}
-
-.btn-primary {
-    justify-self: start;
-    padding: 11px 20px;
+    padding: 0;
     border: 0;
-    border-radius: 999px;
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-weight: 700;
+    border-radius: 50%;
+    background: var(--mail-accent);
+    color: var(--mail-accent-ink);
 }
 
-.btn-primary:disabled {
-    opacity: 0.6;
+.mail-send svg {
+    width: 55%;
+    height: 55%;
+}
+
+.mail-send:disabled {
+    opacity: 0.55;
     cursor: progress;
 }
 
+/* Linhas: rótulo curto à esquerda e o campo; as linhas finas começam depois da margem, como no celular */
+.mail-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    margin-left: var(--mail-pad);
+    padding: 0.75em var(--mail-pad) 0.75em 0;
+    border-bottom: 1px solid var(--mail-line);
+}
+
+/* O foco no campo aparece como uma linha mais grossa na cor de destaque */
+.mail-row:focus-within {
+    border-bottom-color: var(--mail-accent);
+    box-shadow: 0 1px 0 var(--mail-accent);
+}
+
+.mail-label {
+    flex-shrink: 0;
+    color: var(--mail-muted);
+}
+
+.mail-row:focus-within .mail-label {
+    color: var(--mail-fg);
+}
+
+.mail-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    line-height: 1.35;
+}
+
+.mail-input::placeholder {
+    color: var(--mail-muted);
+    opacity: 0.75;
+}
+
+/* o realce do foco é a linha (acima); o contorno padrão ficaria colado no texto */
+.mail-input:focus-visible {
+    outline: none;
+}
+
+.mail-input[aria-invalid='true']::placeholder {
+    color: var(--mail-danger);
+}
+
+/* "Para:" com o meu e-mail, o botão de copiar e o de abrir no app de e-mail, numa linha só
+   (no formulário estreito o e-mail desce para a linha de baixo; veja o @container mail) */
+.mail-to {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'label address actions';
+    align-items: center;
+}
+
+.mail-to .mail-label {
+    grid-area: label;
+}
+
+.mail-address {
+    grid-area: address;
+    min-width: 0;
+    color: var(--mail-accent);
+    font-weight: 600;
+    /* `anywhere` deixa o e-mail longo quebrar também no cálculo da largura mínima (sem estourar) */
+    overflow-wrap: anywhere;
+}
+
+.mail-actions {
+    grid-area: actions;
+    display: flex;
+    gap: 6px;
+}
+
+.mail-icon {
+    display: grid;
+    place-items: center;
+    width: 2.1em;
+    height: 2.1em;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 0;
+    border: 1px solid var(--mail-line);
+    border-radius: 50%;
+    background: none;
+    color: var(--mail-fg);
+}
+
+.mail-icon svg {
+    width: 55%;
+    height: 55%;
+}
+
+.mail-icon:hover {
+    border-color: var(--mail-accent);
+}
+
+/* a mensagem é a última linha: a linha do foco fica longe dos cantos arredondados do cartão */
+.mail-body {
+    display: block;
+    margin-right: var(--mail-pad);
+    padding-right: 0;
+    border-bottom: 0;
+}
+
+.mail-text {
+    display: block;
+    width: 100%;
+    min-height: 8em;
+    resize: vertical;
+    line-height: 1.45;
+}
+
+.mail-body:focus-within {
+    border-bottom: 1px solid var(--mail-accent);
+}
+
+/* Formulário estreito (folha do celular, painel apertado, celular 3D): o e-mail do "Para:" ganha
+   uma linha inteira, embaixo do rótulo e dos botões, em vez de quebrar no meio do nome */
+@container mail (width < 360px) {
+    .mail-to {
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            'label actions'
+            'address address';
+        row-gap: 0.3em;
+    }
+
+    .mail-actions {
+        justify-self: end;
+    }
+}
+
+/* Mais estreito ainda (celular 3D em janela pequena): o título vai para baixo de "Cancelar" e do
+   enviar, grande, como nos apps do celular */
+@container mail (width < 260px) {
+    .mail-bar {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            'cancel send'
+            'title title';
+        row-gap: 0.5em;
+    }
+
+    .mail-title {
+        font-size: 1.3em;
+        text-align: left;
+    }
+}
+
+.mail-error {
+    margin: 0.4em var(--mail-pad) 0;
+    color: var(--mail-danger);
+    font-size: 0.85em;
+    line-height: 1.35;
+}
+
+.mail .form-note {
+    margin: 0.4em var(--mail-pad) var(--mail-pad);
+}
+
 .form-note {
-    padding: 10px 12px;
+    padding: 0.7em 0.85em;
     border-radius: 12px;
-    background: var(--accent-soft);
-    font-size: 0.9rem;
+    background: color-mix(in srgb, var(--mail-accent, var(--accent)) 18%, transparent);
+    font-size: 0.9em;
+    line-height: 1.4;
 }
 
 /* No celular a barra de abas fica por cima do fim da página: ao rolar até o aviso,
@@ -1246,8 +1424,21 @@ a.job-org:hover {
 
 .form-note.is-error {
     background: none;
-    border: 1px solid var(--danger);
-    color: var(--danger);
+    border: 1px solid var(--mail-danger, var(--danger));
+    color: var(--mail-danger, var(--danger));
+}
+
+/* Só para o leitor de tela: fica fora da vista, mas continua sendo lido */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
 /* Campo-isca contra robôs: fora da tela e fora da ordem do teclado */

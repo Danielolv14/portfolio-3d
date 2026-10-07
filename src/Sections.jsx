@@ -1,19 +1,10 @@
 // As quatro seções do portfólio. São usadas no painel do modo 3D, nas telas do quarto e no modo 2D.
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
-import { channels, monthLabel, profile } from './content';
-import { emailConfigured, sendMessage } from './email';
-import {
-    channelIcon,
-    IconArrow,
-    IconCheck,
-    IconCopy,
-    IconLock,
-    IconPin,
-    IconPlay,
-    IconUsers,
-    sectionIcon
-} from './Icons';
+import { monthLabel, profile } from './content';
+import { IconArrow, IconLock, IconPin, IconPlay, IconUsers, sectionIcon } from './Icons';
+import { ContactApps } from './screens/AppIcons';
+import MailCompose from './screens/MailCompose';
 
 // Ícone + título da seção. O título recebe o foco quando a seção abre (headingRef).
 export function SectionHeader({ id, t, headingRef, headingId }) {
@@ -224,214 +215,23 @@ export function Experience({ t }) {
     );
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-// No celular o e-mail não cabe numa linha: o <wbr> deixa a quebra cair antes do @
-// (e não no meio de uma palavra). Ele não entra no texto quando a pessoa copia.
-function breakBeforeAt(value) {
-    const at = value.indexOf('@');
-    if (at <= 0) return value;
-    return (
-        <>
-            {value.slice(0, at)}
-            <wbr />
-            {value.slice(at)}
-        </>
-    );
-}
-const EMPTY = { name: '', email: '', message: '' };
-
+// Contato no painel, na folha do celular de verdade e no modo 2D. Tem o mesmo visual do celular 3D
+// (screens/PhoneScreen): os apps em linha e, embaixo, o formulário no estilo do app de e-mail.
 export function Contact({ t, lang, idPrefix }) {
-    const c = t.contact;
-    const f = c.form;
-    const [values, setValues] = useState(EMPTY);
-    const [errors, setErrors] = useState({});
-    const [status, setStatus] = useState('idle');
-    const [copied, setCopied] = useState(false);
-    // Aviso depois do envio (enviado, sem configuração ou erro)
-    const noteRef = useRef(null);
+    const nameRef = useRef(null);
 
-    const field = (name) => `${idPrefix}-${name}`;
-
-    // O aviso aparece embaixo do botão, quase sempre fora da parte visível do painel: rola até ele
-    useEffect(() => {
-        noteRef.current?.scrollIntoView({ block: 'nearest' });
-    }, [status]);
-
-    const update = (name) => (event) => {
-        setValues((v) => ({ ...v, [name]: event.target.value }));
-        setErrors((err) => ({ ...err, [name]: undefined }));
-        if (status !== 'sending') setStatus('idle');
+    // Aqui o formulário já está na página: o ícone do E-mail rola até ele e põe o cursor no "De:"
+    const goToForm = () => {
+        const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+        nameRef.current?.closest('.mail')?.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+        nameRef.current?.focus({ preventScroll: true });
     };
-
-    const validate = () => {
-        const next = {};
-        if (!values.name.trim()) next.name = f.errName;
-        if (!EMAIL_RE.test(values.email.trim())) next.email = f.errEmail;
-        if (values.message.trim().length < 10) next.message = f.errMessage;
-        return next;
-    };
-
-    const onSubmit = async (event) => {
-        event.preventDefault();
-        if (status === 'sending') return;
-        const next = validate();
-        setErrors(next);
-        const firstInvalid = Object.keys(next)[0];
-        if (firstInvalid) {
-            document.getElementById(field(firstInvalid))?.focus();
-            return;
-        }
-        // Campo escondido: só robôs preenchem
-        if (event.currentTarget.elements.company?.value) {
-            setStatus('sent');
-            return;
-        }
-        if (!emailConfigured) {
-            setStatus('offline');
-            return;
-        }
-        setStatus('sending');
-        try {
-            await sendMessage({
-                name: values.name.trim(),
-                email: values.email.trim(),
-                message: values.message.trim(),
-                lang
-            });
-            setValues(EMPTY);
-            setStatus('sent');
-        } catch {
-            setStatus('error');
-        }
-    };
-
-    const copy = async (text) => {
-        try {
-            await navigator.clipboard.writeText(text);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1800);
-        } catch {
-            setCopied(false);
-        }
-    };
-
-    const note = {
-        sent: { text: f.sent, role: 'status' },
-        offline: { text: f.offline, role: 'status' },
-        error: { text: f.failed, role: 'alert' }
-    }[status];
 
     return (
         <div>
-            <p className="muted">{c.intro}</p>
-            <ul className="channels">
-                {channels.map((ch) => {
-                    const Icon = channelIcon[ch.id];
-                    return (
-                        <li key={ch.id} className="channel">
-                            <span className="channel-icon">
-                                <Icon />
-                            </span>
-                            <span className="channel-text">
-                                <span className="channel-label">{ch.label}</span>
-                                <span className="channel-value">{breakBeforeAt(ch.value)}</span>
-                            </span>
-                            {ch.copy ? (
-                                <button
-                                    type="button"
-                                    className="btn-ghost"
-                                    onClick={() => copy(ch.value)}
-                                    aria-label={`${copied ? c.copied : c.copy}: ${ch.label}`}
-                                    title={copied ? c.copied : c.copy}
-                                >
-                                    {copied ? <IconCheck /> : <IconCopy />}
-                                </button>
-                            ) : (
-                                <a
-                                    className="btn-ghost"
-                                    href={ch.href}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    aria-label={`${c.open}: ${ch.label}`}
-                                    title={c.open}
-                                >
-                                    <IconArrow />
-                                </a>
-                            )}
-                        </li>
-                    );
-                })}
-            </ul>
-
-            <form className="form" onSubmit={onSubmit} noValidate>
-                <div className="field">
-                    <label htmlFor={field('name')}>{f.name}</label>
-                    <input
-                        id={field('name')}
-                        name="name"
-                        autoComplete="name"
-                        value={values.name}
-                        onChange={update('name')}
-                        aria-invalid={!!errors.name}
-                        aria-describedby={errors.name ? field('name-err') : undefined}
-                    />
-                    {errors.name && (
-                        <p className="field-error" id={field('name-err')}>
-                            {errors.name}
-                        </p>
-                    )}
-                </div>
-                <div className="field">
-                    <label htmlFor={field('email')}>{f.email}</label>
-                    <input
-                        id={field('email')}
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        value={values.email}
-                        onChange={update('email')}
-                        aria-invalid={!!errors.email}
-                        aria-describedby={errors.email ? field('email-err') : undefined}
-                    />
-                    {errors.email && (
-                        <p className="field-error" id={field('email-err')}>
-                            {errors.email}
-                        </p>
-                    )}
-                </div>
-                <div className="field">
-                    <label htmlFor={field('message')}>{f.message}</label>
-                    <textarea
-                        id={field('message')}
-                        name="message"
-                        rows={4}
-                        value={values.message}
-                        onChange={update('message')}
-                        aria-invalid={!!errors.message}
-                        aria-describedby={errors.message ? field('message-err') : undefined}
-                    />
-                    {errors.message && (
-                        <p className="field-error" id={field('message-err')}>
-                            {errors.message}
-                        </p>
-                    )}
-                </div>
-                <div className="hp" aria-hidden="true">
-                    <label>
-                        Company
-                        <input name="company" tabIndex={-1} autoComplete="off" />
-                    </label>
-                </div>
-                <button type="submit" className="btn-primary" disabled={status === 'sending'}>
-                    {status === 'sending' ? f.sending : f.send}
-                </button>
-                {note && (
-                    <p ref={noteRef} className={`form-note${status === 'error' ? ' is-error' : ''}`} role={note.role}>
-                        {note.text}
-                    </p>
-                )}
-            </form>
+            <p className="muted">{t.contact.intro}</p>
+            <ContactApps t={t} onMail={goToForm} />
+            <MailCompose t={t} lang={lang} idPrefix={idPrefix} nameRef={nameRef} />
         </div>
     );
 }

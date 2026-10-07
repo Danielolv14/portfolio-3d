@@ -71,32 +71,6 @@ export const IconClose = () => (
     </svg>
 );
 
-export const IconMail = () => (
-    <svg {...base}>
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="M3.5 6.5L12 13l8.5-6.5" />
-    </svg>
-);
-
-export const IconChat = () => (
-    <svg {...base}>
-        <path d="M20 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.2A8 8 0 1 1 20 12z" />
-    </svg>
-);
-
-export const IconBriefcase = () => (
-    <svg {...base}>
-        <rect x="3" y="7" width="18" height="13" rx="2" />
-        <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18" />
-    </svg>
-);
-
-export const IconCode = () => (
-    <svg {...base}>
-        <path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4.5l-3 15" />
-    </svg>
-);
-
 export const IconPlay = () => (
     <svg {...base} width={28} height={28}>
         <circle cx="12" cy="12" r="9.5" />
@@ -110,6 +84,13 @@ export const IconArrow = () => (
     </svg>
 );
 
+// Seta para cima do botão redondo de enviar (app E-mail)
+export const IconArrowUp = () => (
+    <svg {...base} width={18} height={18} strokeWidth={2.4}>
+        <path d="M12 19V5.5M6 11l6-6 6 6" />
+    </svg>
+);
+
 export const IconCopy = () => (
     <svg {...base} width={18} height={18}>
         <rect x="9" y="9" width="11" height="11" rx="2" />
@@ -120,14 +101,6 @@ export const IconCopy = () => (
 export const IconCheck = () => (
     <svg {...base} width={18} height={18}>
         <path d="M5 12.5l4.5 4.5L19 7.5" />
-    </svg>
-);
-
-export const IconCamera = () => (
-    <svg {...base}>
-        <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
-        <circle cx="12" cy="12" r="4" />
-        <path d="M17 7h.01" />
     </svg>
 );
 
@@ -151,14 +124,6 @@ export const IconPin = () => (
         <circle cx="12" cy="10" r="2.3" />
     </svg>
 );
-
-export const channelIcon = {
-    email: IconMail,
-    whatsapp: IconChat,
-    linkedin: IconBriefcase,
-    github: IconCode,
-    instagram: IconCamera
-};
 
 export const sectionIcon = {
     about: IconUser,

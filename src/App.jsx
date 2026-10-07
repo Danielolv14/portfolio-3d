@@ -291,6 +291,7 @@ export default function App() {
                             section={screen}
                             box={screenBox}
                             t={t}
+                            lang={lang}
                             headingRef={headingRef}
                             onClose={() => setFocus(null)}
                             onRead2d={() => readIn2d(screen)}

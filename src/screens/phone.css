@@ -1,0 +1,417 @@
+/* ---------- Celular (Contato): camada HTML sobre a tela do celular 3D ---------- */
+
+/* Medidas em cqw (% da largura da tela do celular): acompanham o tamanho da tela 3D. A altura da
+   tela é 211,1cqw (malha de 0,27 x 0,57). A tela inicial não tem mínimos em px, porque a textura do
+   celular (phoneScreenTexture, em textures.js) reproduz essas mesmas medidas. */
+
+/* A .screen do celular não corta nem anima: as saídas ficam fora dela, ao lado do celular.
+   O corte, os cantos arredondados e a animação ficam no display, logo abaixo. */
+.screen--phone {
+    display: block;
+    overflow: visible;
+    background: none;
+    color: inherit;
+    color-scheme: inherit;
+    animation: none;
+}
+
+/* Cores da tela. Todas são cores que a tela 3D consegue mostrar depois do tone mapping (ACES):
+   o branco mais claro possível é cerca de #ddd, então nada aqui é branco puro. */
+.phone-display {
+    --ph-white: #dddcda;
+    --ph-soft: #c9c1c6;
+    --ph-bg: #1b1a1f;
+    --ph-line: #3a3740;
+    --ph-muted: #9a949c;
+    --ph-accent: #e775cc;
+    --ph-accent-ink: #2b0f26;
+    --ph-danger: #e88a80;
+
+    position: absolute;
+    inset: 0;
+    /* clip (e não hidden): cortar sem virar área de rolagem; assim o scrollIntoView do aviso do
+       formulário não rola a tela inteira para cima */
+    overflow: clip;
+    border-radius: 13cqw;
+    color: var(--ph-white);
+    color-scheme: dark;
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.2;
+    /* Papel de parede próprio: o rosa do RGB do quarto em cima à direita e o tom da madeira
+       embaixo à esquerda, sobre um degradê de ameixa escura para marrom */
+    background:
+        radial-gradient(circle 78cqw at 92cqw 62cqw, rgba(231, 117, 204, 0.62), rgba(231, 117, 204, 0)),
+        radial-gradient(circle 96cqw at 4cqw 196cqw, rgba(201, 150, 100, 0.7), rgba(201, 150, 100, 0)),
+        linear-gradient(180deg, #2a1230 0%, #4b1d4a 40%, #6a3346 72%, #6e4630 100%);
+    /* a tela "acende" ao aparecer (a textura por baixo já mostra quase o mesmo) */
+    animation: phone-wake 0.22s ease-out both;
+}
+
+@keyframes phone-wake {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.phone-home p {
+    margin: 0;
+}
+
+/* Dynamic Island, barra de status e barrinha de início ficam por cima de tudo, até do app */
+.phone-island {
+    position: absolute;
+    z-index: 3;
+    left: 35cqw;
+    top: 2.6cqw;
+    width: 30cqw;
+    height: 8.8cqw;
+    border-radius: 4.4cqw;
+    background: #000;
+}
+
+.phone-status {
+    position: absolute;
+    z-index: 3;
+    inset: 0 0 auto 0;
+    height: 13cqw;
+    pointer-events: none;
+}
+
+/* hora centrada no "ombro" esquerdo (entre a borda e a ilha), na altura do meio da ilha (7cqw) */
+.phone-status-time {
+    position: absolute;
+    left: 4cqw;
+    width: 27cqw;
+    top: 4.85cqw;
+    font-size: 4.3cqw;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+}
+
+.phone-status-icons {
+    position: absolute;
+    left: 74.2cqw;
+    top: 5.3cqw;
+    width: 16.6cqw;
+    height: 3.4cqw;
+}
+
+.phone-homebar {
+    position: absolute;
+    z-index: 3;
+    left: 33cqw;
+    bottom: 2.2cqw;
+    width: 34cqw;
+    height: 1.3cqw;
+    border-radius: 0.65cqw;
+    background: var(--ph-white);
+}
+
+/* ---------- Tela inicial ---------- */
+
+.phone-home {
+    position: absolute;
+    inset: 0;
+}
+
+/* Data em cima e a hora grande e grossa embaixo, como na tela bloqueada */
+.phone-date,
+.phone-time {
+    position: absolute;
+    left: 0;
+    right: 0;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.phone-date {
+    top: 18cqw;
+    font-size: 4.6cqw;
+    font-weight: 600;
+}
+
+.phone-time {
+    top: 24cqw;
+    font-size: 24cqw;
+    font-weight: 700;
+}
+
+/* Cartão em "vidro líquido": translúcido, desfoca o papel de parede e tem um brilho fino na borda */
+.phone-card {
+    position: absolute;
+    left: 9cqw;
+    top: 76cqw;
+    width: 82cqw;
+    height: 52cqw;
+    border-radius: 8cqw;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(4cqw) saturate(1.4);
+    -webkit-backdrop-filter: blur(4cqw) saturate(1.4);
+    box-shadow: 0 2cqw 6cqw rgba(24, 6, 22, 0.3);
+}
+
+/* o brilho da borda: um degradê só no contorno (a máscara tira o miolo) */
+.phone-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 0.45cqw;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.07) 45%, rgba(255, 255, 255, 0.22));
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+        linear-gradient(#000 0 0) content-box exclude,
+        linear-gradient(#000 0 0);
+    pointer-events: none;
+}
+
+.phone-photo {
+    position: absolute;
+    left: 29cqw;
+    top: 6cqw;
+    width: 24cqw;
+    height: 24cqw;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 0.6cqw rgba(255, 255, 255, 0.18);
+}
+
+.phone-name,
+.phone-role {
+    position: absolute;
+    left: 4cqw;
+    right: 4cqw;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.phone-name {
+    top: 34cqw;
+    font-size: 5.6cqw;
+    font-weight: 700;
+}
+
+.phone-role {
+    top: 42cqw;
+    font-size: 3.6cqw;
+    font-weight: 500;
+    color: var(--ph-soft);
+}
+
+/* Apps: uma linha de 4 colunas iguais, com o ícone (16,5cqw) no meio de cada uma. As bordas do
+   primeiro e do último ícone ficam alinhadas com o cartão (9cqw e 91cqw). */
+.phone-apps {
+    position: absolute;
+    left: 6.333cqw;
+    top: 158cqw;
+    width: 87.333cqw;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.phone-apps .app {
+    display: grid;
+    justify-items: center;
+    gap: 2cqw;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 3cqw;
+    background: none;
+    color: var(--ph-white);
+    font: inherit;
+    text-decoration: none;
+}
+
+.phone-apps .app-art {
+    display: block;
+    width: 16.5cqw;
+    height: 16.5cqw;
+}
+
+.phone-apps .app-name {
+    font-size: 3.2cqw;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* o anel do foco não aparece na textura, então pode ter mínimo em px para ficar visível
+   (nos campos do formulário o foco aparece na linha embaixo deles) */
+.phone-display :focus-visible:not(.mail-input) {
+    outline: max(2px, 0.6cqw) solid var(--ph-accent);
+    outline-offset: max(2px, 0.6cqw);
+}
+
+.phone-apps .app:active .app-art {
+    filter: brightness(0.8);
+}
+
+/* ---------- App E-mail ---------- */
+
+/* Ocupa a tela toda, abaixo da barra de status. Abre crescendo a partir do ícone do E-mail
+   (--ox, --oy: centro do ícone; --os: tamanho dele) e fecha voltando para ele. */
+.phone-app {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding-top: 13cqw;
+    border-radius: 13cqw;
+    background: var(--ph-bg);
+    transform-origin: var(--ox) var(--oy);
+    animation: phone-app-open 0.42s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+    outline: none;
+}
+
+.phone-app.is-closing {
+    animation: phone-app-close 0.34s cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+
+@keyframes phone-app-open {
+    0% {
+        transform: scale(var(--os));
+        opacity: 0;
+    }
+    35% {
+        opacity: 1;
+    }
+    100% {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+@keyframes phone-app-close {
+    0% {
+        transform: none;
+        opacity: 1;
+    }
+    65% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(var(--os));
+        opacity: 0;
+    }
+}
+
+/* O formulário (MailCompose) com as cores da tela e letra que acompanha o tamanho dela.
+   Aqui há mínimos em px: o app não aparece na textura e precisa continuar legível na tela pequena. */
+.phone-app .mail {
+    --mail-bg: var(--ph-bg);
+    --mail-bar: var(--ph-bg);
+    --mail-fg: var(--ph-white);
+    --mail-muted: var(--ph-muted);
+    --mail-line: var(--ph-line);
+    --mail-accent: var(--ph-accent);
+    --mail-accent-ink: var(--ph-accent-ink);
+    --mail-danger: var(--ph-danger);
+    --mail-pad: max(4.5cqw, 10px);
+
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    margin: 0;
+    /* espaço no fim para o aviso não ficar embaixo da barrinha de início */
+    padding-bottom: 7cqw;
+    border: 0;
+    border-radius: 0;
+    font-size: clamp(12px, 4.1cqw, 17px);
+}
+
+.phone-app .mail-bar {
+    border-radius: 0;
+}
+
+.phone-app .mail-send {
+    width: max(8.4cqw, 26px);
+    height: max(8.4cqw, 26px);
+}
+
+.phone-app .mail-text {
+    min-height: 7.5em;
+    resize: none;
+}
+
+/* ---------- Saídas, fora da tela ---------- */
+
+/* À direita do celular, no meio da altura. Usam as cores do site (estão no quarto, não na tela). */
+.phone-exits {
+    position: absolute;
+    left: calc(100% + 32px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+    width: max-content;
+    animation: phone-exits-in 0.35s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes phone-exits-in {
+    from {
+        opacity: 0;
+        transform: translate(-12px, -50%);
+    }
+}
+
+.phone-exit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--fg);
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: var(--shadow);
+}
+
+.phone-exit:hover {
+    border-color: var(--accent);
+}
+
+.phone-exit-primary {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+}
+
+.phone-esc {
+    margin: 2px 0 0;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 85%, transparent);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+/* Em tela de toque não há tecla Esc */
+@media (hover: none) {
+    .phone-esc {
+        display: none;
+    }
+}
