@@ -11,6 +11,9 @@ export const lerp = THREE.MathUtils.lerp;
 
 export const WALL_H = 5.6;
 
+// Posição do monitor no braço (Desk.jsx): a cadeira (Chair.jsx) mede a distância da câmera até ele
+export const MONITOR_POS = [-4.38, 2.46, -2.85];
+
 export const C = {
     wall: '#dccab6',
     baseboard: '#efe7da',
