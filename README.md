@@ -296,8 +296,8 @@ Wireframes de média fidelidade, em tons de cinza, com anotações numeradas exp
 | Visão geral (dia) | Visão geral (noite) |
 | :---: | :---: |
 | <img src="docs/prototipos/desktop-visao-geral-dia.jpg" alt="Quarto 3D visto de cima, no modo dia, com etiquetas nos objetos clicáveis" width="420px"> | <img src="docs/prototipos/desktop-visao-geral-noite.jpg" alt="O mesmo quarto no modo noite, com a luminária e o RGB rosa do gabinete acesos" width="420px"> |
-| **Projetos (câmera no monitor)** | **Contato (câmera no celular)** |
-| <img src="docs/prototipos/desktop-projetos.jpg" alt="Câmera aproximada do monitor com o painel de Projetos aberto à direita" width="420px"> | <img src="docs/prototipos/desktop-contato.jpg" alt="Câmera aproximada do celular com o painel de Contato e o formulário" width="420px"> |
+| **Projetos (dentro do monitor)** | **Contato (câmera no celular)** |
+| <img src="docs/prototipos/desktop-projetos.jpg" alt="Projetos aberto dentro da tela do monitor, com a linha do tempo e os botões Ler em 2D e Voltar ao quarto" width="420px"> | <img src="docs/prototipos/desktop-contato.jpg" alt="Câmera aproximada do celular com o painel de Contato e o formulário" width="420px"> |
 | **Sobre mim (noite)** | **Modo sem 3D** |
 | <img src="docs/prototipos/desktop-sobre-noite.jpg" alt="Painel Sobre mim aberto no modo noite" width="420px"> | <img src="docs/prototipos/desktop-sem-3d.jpg" alt="Versão em página comum, sem 3D" width="420px"> |
 
