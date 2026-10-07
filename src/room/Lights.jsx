@@ -2,7 +2,7 @@
 // telas e a light bar da TV. Tudo é misturado aos poucos pelo valor dayNight.mix.
 import { Environment, Lightformer } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 import { dayNight, lerp } from './shared';
@@ -27,6 +27,12 @@ export default function Lights({ night }) {
         }),
         []
     );
+
+    // Na montagem o quarto já começa no tema atual, como o fundo CSS (o tema fica guardado,
+    // então abrir o site à noite é comum); só as trocas depois disso são graduais
+    useLayoutEffect(() => {
+        dayNight.mix = night ? 1 : 0;
+    }, []);
 
     useFrame((_, dt) => {
         dayNight.mix = THREE.MathUtils.damp(dayNight.mix, night ? 1 : 0, 3, dt);

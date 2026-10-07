@@ -12,8 +12,8 @@ import {
     chairMeshTexture,
     chromeEnvTexture,
     clockTexture,
-    codeScreenTexture,
     keyboardTexture,
+    monitorScreenTexture,
     oakTexture,
     tvScreenTexture,
     walnutTexture
@@ -223,24 +223,38 @@ function PC() {
     );
 }
 
-function Monitor({ t, onSelect, showLabels }) {
-    const screenTex = useMemo(() => codeScreenTexture(), []);
+// Monitor = Projetos. A tela tem nome (`screen-projects`): a câmera e a camada HTML
+// (src/screens) acham a malha por ele para parar de frente e cobrir a tela certinho.
+function Monitor({ t, onSelect, showLabels, active }) {
+    const screenTex = useMemo(() => monitorScreenTexture(), []);
     const screen = useRef();
     useFrame(() => {
         screen.current.color.setScalar(lerp(0.85, 1.25, dayNight.mix));
     });
+    // Desenha a janela no idioma atual. As fontes do site (Google Fonts) podem chegar
+    // depois do primeiro desenho; quando chegam, desenha de novo com elas.
+    useEffect(() => {
+        let current = true;
+        const redraw = () => current && screenTex.userData.redraw(t);
+        redraw();
+        document.fonts?.ready.then(redraw);
+        return () => {
+            current = false;
+        };
+    }, [screenTex, t]);
     return (
         <Hotspot
             id="projects"
             label={t.ui.nav.projects}
             onSelect={onSelect}
             showLabel={showLabels}
+            active={active}
             labelPosition={[0.8, -0.85, 0.7]}
             position={[-4.38, 2.46, -2.85]}
             hit={{ size: [0.4, 1.5, 2.5], position: [0.1, 0, 0] }}
         >
             <Rounded size={[0.07, 1.32, 2.32]} radius={0.025} color={C.black} roughness={0.4} />
-            <mesh position={[0.037, 0.02, 0]} rotation-y={Math.PI / 2}>
+            <mesh name="screen-projects" position={[0.037, 0.02, 0]} rotation-y={Math.PI / 2}>
                 <planeGeometry args={[2.22, 1.22]} />
                 <meshBasicMaterial ref={screen} map={screenTex} toneMapped={false} />
             </mesh>
@@ -255,7 +269,7 @@ function Monitor({ t, onSelect, showLabels }) {
     );
 }
 
-function TV({ t, onSelect, showLabels }) {
+function TV({ t, onSelect, showLabels, active }) {
     const tex = useMemo(() => tvScreenTexture(), []);
     const screen = useRef();
     const bar = useRef();
@@ -270,13 +284,14 @@ function TV({ t, onSelect, showLabels }) {
             label={t.ui.nav.experience}
             onSelect={onSelect}
             showLabel={showLabels}
+            active={active}
             labelPosition={[0.3, 1.05, 0]}
             position={[-4.8, 4.14, -2.8]}
         >
             {/* um pouco menor, para deixar o vão entre a TV e o monitor como na foto */}
             <group scale={0.92}>
                 <Rounded size={[0.09, 1.5, 2.6]} radius={0.02} color={C.black} roughness={0.35} />
-                <mesh position={[0.047, 0.02, 0]} rotation-y={Math.PI / 2}>
+                <mesh name="screen-experience" position={[0.047, 0.02, 0]} rotation-y={Math.PI / 2}>
                     <planeGeometry args={[2.5, 1.4]} />
                     <meshBasicMaterial ref={screen} map={tex} toneMapped={false} />
                 </mesh>
@@ -454,7 +469,7 @@ function Chair({ chrome }) {
     );
 }
 
-export default function DeskWall({ t, onSelect, showLabels }) {
+export default function DeskWall({ t, onSelect, showLabels, focus }) {
     const oak = useMemo(() => oakTexture(), []);
     const walnut = useMemo(() => walnutTexture(), []);
     const walnutTop = useMemo(() => turned(walnutTexture()), []);
@@ -470,8 +485,8 @@ export default function DeskWall({ t, onSelect, showLabels }) {
             <Drawers walnut={walnut} chrome={chrome} />
 
             <PC />
-            <Monitor t={t} onSelect={onSelect} showLabels={showLabels} />
-            <TV t={t} onSelect={onSelect} showLabels={showLabels} />
+            <Monitor t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'projects'} />
+            <TV t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'experience'} />
             <Peripherals />
             <Chair chrome={chrome} />
         </group>

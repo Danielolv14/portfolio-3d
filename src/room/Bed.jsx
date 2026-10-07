@@ -260,7 +260,7 @@ function Lanyard() {
     );
 }
 
-function Phone({ t, onSelect, showLabels }) {
+function Phone({ t, onSelect, showLabels, active }) {
     const tex = useMemo(() => phoneScreenTexture(), []);
     const screen = useRef();
     useFrame(() => {
@@ -272,6 +272,7 @@ function Phone({ t, onSelect, showLabels }) {
             label={t.ui.nav.contact}
             onSelect={onSelect}
             showLabel={showLabels}
+            active={active}
             labelPosition={[0, 0.85, 0]}
             position={[2.55, 1.073, -2.75]}
             rotation-y={0.45}
@@ -279,7 +280,7 @@ function Phone({ t, onSelect, showLabels }) {
         >
             {/* tamanho de celular de verdade; a área de clique continua grande */}
             <Rounded size={[0.3, 0.035, 0.62]} radius={0.016} color="#141518" roughness={0.3} />
-            <mesh position={[0, 0.019, 0]} rotation-x={-Math.PI / 2}>
+            <mesh name="screen-contact" position={[0, 0.019, 0]} rotation-x={-Math.PI / 2}>
                 <planeGeometry args={[0.27, 0.57]} />
                 <meshBasicMaterial ref={screen} map={tex} toneMapped={false} />
             </mesh>
@@ -497,7 +498,7 @@ function Rug({ compact }) {
     );
 }
 
-export default function BedWall({ t, onSelect, showLabels, compact }) {
+export default function BedWall({ t, onSelect, showLabels, compact, focus }) {
     const frameWood = useMemo(() => mahoganyTexture(), []);
     const ball = useMemo(() => ballTexture(), []);
     return (
@@ -508,7 +509,7 @@ export default function BedWall({ t, onSelect, showLabels, compact }) {
             <Headboard />
             <Bedding />
 
-            <Phone t={t} onSelect={onSelect} showLabels={showLabels} />
+            <Phone t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'contact'} />
 
             <Nightstand />
 

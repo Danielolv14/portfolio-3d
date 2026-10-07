@@ -7,14 +7,14 @@ import Lights from './room/Lights';
 import Niche from './room/Niche';
 import Shell from './room/Shell';
 
-export default function Room({ t, night, onSelect, showLabels, compact, onBackgroundClick }) {
+export default function Room({ t, night, focus, onSelect, showLabels, compact, onBackgroundClick }) {
     return (
         <group onClick={onBackgroundClick}>
             <Lights night={night} />
             <Shell />
-            <Desk t={t} onSelect={onSelect} showLabels={showLabels} />
-            <Niche t={t} night={night} onSelect={onSelect} showLabels={showLabels} compact={compact} />
-            <Bed t={t} onSelect={onSelect} showLabels={showLabels} compact={compact} />
+            <Desk t={t} onSelect={onSelect} showLabels={showLabels} focus={focus} />
+            <Niche t={t} night={night} onSelect={onSelect} showLabels={showLabels} compact={compact} focus={focus} />
+            <Bed t={t} onSelect={onSelect} showLabels={showLabels} compact={compact} focus={focus} />
             <Floor />
         </group>
     );

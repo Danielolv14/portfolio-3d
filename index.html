@@ -6,6 +6,16 @@
         <title>Daniel Oliveira · Portfólio</title>
         <meta name="description" content="Portfólio de Daniel Oliveira, estudante de Engenharia de Software na PUC Minas: um quarto 3D onde cada objeto abre uma seção." />
         <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+        <script>
+            // Aplica o tema guardado (App.jsx) antes do primeiro desenho: quem escolheu a noite
+            // não vê o fundo claro piscar enquanto o React carrega
+            try {
+                const mode = localStorage.getItem('portfolio-theme');
+                if (mode === 'day' || mode === 'night') document.documentElement.dataset.mode = mode;
+            } catch {
+                // sem armazenamento: o App decide pelo tema do sistema
+            }
+        </script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link

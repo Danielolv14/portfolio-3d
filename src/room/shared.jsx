@@ -1,7 +1,7 @@
 // Peças básicas do quarto: formas com material, objeto clicável e as cores tiradas das fotos.
 import { Html, RoundedBox, useCursor } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import { useRef, useState } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
+import { useLayoutEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 // Valor de 0 (dia) a 1 (noite), animado aos poucos pelas luzes
@@ -64,14 +64,30 @@ export function Cyl({ args, color, map, roughness, metalness, ...props }) {
 
 // Objeto clicável: cresce um pouco no hover e mostra uma etiqueta com o nome da seção.
 // `hit` cria uma área de clique invisível maior que o objeto (bom para o toque).
-export function Hotspot({ id, label, onSelect, showLabel, labelPosition, hit, children, ...props }) {
+// `active`: a seção dele está aberta. Aí ele fica no tamanho normal, sem hover, para a
+// camada HTML da tela (ScreenOverlay) encaixar certinho em cima da malha; e clicar nele fecha.
+export function Hotspot({ id, label, onSelect, showLabel, labelPosition, hit, active = false, children, ...props }) {
     const ref = useRef();
     const [hover, setHover] = useState(false);
-    useCursor(hover);
+    const gl = useThree((state) => state.gl);
+    useCursor(hover && !active);
 
-    useFrame((_, dt) => {
-        const s = THREE.MathUtils.damp(ref.current.scale.x, hover ? 1.04 : 1, 12, dt);
+    // Ao abrir, volta na hora ao tamanho normal (o clique parece um botão apertado). A câmera mede a
+    // tela logo em seguida (screenView, em Scene.jsx) e precisa do tamanho de verdade, não o do hover.
+    // (o layout effect roda antes do efeito da câmera, no mesmo commit)
+    useLayoutEffect(() => {
+        if (!active) return;
+        ref.current.scale.setScalar(1);
+        gl.shadowMap.needsUpdate = true;
+    }, [active, gl]);
+
+    useFrame((state, dt) => {
+        const target = hover && !active ? 1.04 : 1;
+        const s = THREE.MathUtils.damp(ref.current.scale.x, target, 12, dt);
         ref.current.scale.setScalar(s);
+        // A sombra é desenhada uma vez só (BakeShadows, em Scene.jsx). Enquanto o objeto cresce
+        // ou encolhe, pede para redesenhá-la, senão a sombra fica do tamanho antigo
+        if (Math.abs(s - target) > 0.001) state.gl.shadowMap.needsUpdate = true;
     });
 
     return (
@@ -84,6 +100,15 @@ export function Hotspot({ id, label, onSelect, showLabel, labelPosition, hit, ch
             }}
             onPointerOut={() => setHover(false)}
             onClick={(e) => {
+                // 2º clique de um duplo clique (ou toque duplo): a seção já abriu no 1º.
+                // Para aqui, senão ele abriria outro objeto ou fecharia a seção (ver Scene.jsx).
+                if (e.detail > 1) {
+                    e.stopPropagation();
+                    return;
+                }
+                // Já aberto, o clique segue para o quarto, que entende "clique fora" e fecha.
+                // (com a câmera no monitor, a área de clique dele cobre quase a página toda)
+                if (active) return;
                 e.stopPropagation();
                 onSelect(id);
             }}
@@ -100,7 +125,12 @@ export function Hotspot({ id, label, onSelect, showLabel, labelPosition, hit, ch
                     <button
                         type="button"
                         className={`tag${hover ? ' is-hover' : ''}`}
-                        onClick={() => onSelect(id)}
+                        onClick={(e) => {
+                            // Sem isto o clique sobe até o Canvas, que entende "clique fora"
+                            // e fecha na hora a seção que acabou de abrir
+                            e.stopPropagation();
+                            onSelect(id);
+                        }}
                         onPointerEnter={() => setHover(true)}
                         onPointerLeave={() => setHover(false)}
                     >

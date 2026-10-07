@@ -443,7 +443,7 @@ function Trooper(props) {
     );
 }
 
-function Portrait({ t, onSelect, showLabels }) {
+function Portrait({ t, onSelect, showLabels, active }) {
     const photo = useMemo(() => {
         const tex = new THREE.TextureLoader().load(foto);
         tex.colorSpace = THREE.SRGBColorSpace;
@@ -459,6 +459,7 @@ function Portrait({ t, onSelect, showLabels }) {
             label={t.ui.nav.about}
             onSelect={onSelect}
             showLabel={showLabels}
+            active={active}
             labelPosition={[0.5, 0.9, -1.5]}
             position={[-4.66, LEVELS[1], 3.42]}
             rotation-y={-0.3}
@@ -671,7 +672,7 @@ function Unicorn(props) {
     );
 }
 
-export default function Niche({ t, night, onSelect, showLabels, compact }) {
+export default function Niche({ t, night, onSelect, showLabels, compact, focus }) {
     const [base, low, mid, high] = LEVELS;
     return (
         <group>
@@ -701,7 +702,7 @@ export default function Niche({ t, night, onSelect, showLabels, compact }) {
                 <Trophy />
             </Item>
             <Keys position={[-4.45, low, 3.98]} rotation-y={0.6} />
-            <Portrait t={t} onSelect={onSelect} showLabels={showLabels} />
+            <Portrait t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'about'} />
             <Item position={[-4.68, low, 2.74]} turn={0.35}>
                 <Trooper />
             </Item>

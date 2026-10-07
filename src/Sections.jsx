@@ -1,14 +1,33 @@
-// As quatro seções do portfólio. São usadas tanto no painel do modo 3D quanto no modo 2D.
+// As quatro seções do portfólio. São usadas no painel do modo 3D, nas telas do quarto e no modo 2D.
 import { useState } from 'react';
 
-import { channels, profile } from './content';
+import { channels, monthLabel, profile } from './content';
 import { emailConfigured, sendMessage } from './email';
-import { channelIcon, IconArrow, IconCheck, IconCopy, IconLock, IconPin, IconPlay, IconUsers } from './Icons';
+import {
+    channelIcon,
+    IconArrow,
+    IconCheck,
+    IconCopy,
+    IconLock,
+    IconPin,
+    IconPlay,
+    IconUsers,
+    sectionIcon
+} from './Icons';
 
-// '2026-03' -> 'mar 2026' (ou 'Mar 2026' em inglês)
-function monthLabel(iso, t) {
-    const [year, month] = iso.split('-');
-    return `${t.ui.months[Number(month) - 1]} ${year}`;
+// Ícone + título da seção. O título recebe o foco quando a seção abre (headingRef).
+export function SectionHeader({ id, t, headingRef, headingId }) {
+    const Icon = sectionIcon[id];
+    return (
+        <header className="section-head">
+            <span className="section-icon">
+                <Icon />
+            </span>
+            <h2 ref={headingRef} id={headingId} tabIndex={-1}>
+                {t.ui.nav[id]}
+            </h2>
+        </header>
+    );
 }
 
 function Avatar() {
@@ -120,38 +139,41 @@ export function Projects({ t }) {
                                     <span>{p.gif}</span>
                                 </div>
                             )}
-                            <div className="project-head">
-                                <h3>{item.name}</h3>
-                                {item.team && (
-                                    <span className="badge">
-                                        <IconUsers /> {p.team}
-                                    </span>
-                                )}
-                            </div>
-                            <p>{item.description}</p>
-                            {item.role && <p className="project-role">{item.role}</p>}
-                            <ul className="chips chips-mono">
-                                {item.tech.map((tech) => (
-                                    <li key={tech}>{tech}</li>
-                                ))}
-                            </ul>
-                            <div className="project-links">
-                                {item.links.map((link) => (
-                                    <a
-                                        key={link.url}
-                                        className="text-link"
-                                        href={link.url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        {p.links[link.kind]} <IconArrow />
-                                    </a>
-                                ))}
-                                {item.privateRepo && (
-                                    <span className="badge badge-quiet">
-                                        <IconLock /> {p.privateRepo}
-                                    </span>
-                                )}
+                            {/* o texto fica num bloco só: no monitor largo ele vai para a coluna ao lado da mídia */}
+                            <div className="project-body">
+                                <div className="project-head">
+                                    <h3>{item.name}</h3>
+                                    {item.team && (
+                                        <span className="badge">
+                                            <IconUsers /> {p.team}
+                                        </span>
+                                    )}
+                                </div>
+                                <p>{item.description}</p>
+                                {item.role && <p className="project-role">{item.role}</p>}
+                                <ul className="chips chips-mono">
+                                    {item.tech.map((tech) => (
+                                        <li key={tech}>{tech}</li>
+                                    ))}
+                                </ul>
+                                <div className="project-links">
+                                    {item.links.map((link) => (
+                                        <a
+                                            key={link.url}
+                                            className="text-link"
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            {p.links[link.kind]} <IconArrow />
+                                        </a>
+                                    ))}
+                                    {item.privateRepo && (
+                                        <span className="badge badge-quiet">
+                                            <IconLock /> {p.privateRepo}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </article>
                     </li>

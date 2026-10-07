@@ -1,5 +1,25 @@
 /* Layout: quarto 3D em tela cheia; menu no topo (celular: abas embaixo); seções abrem num painel lateral (celular: folha de baixo). */
+
+/* Registrar as cores do fundo como <color> deixa o navegador animá-las. Sem isso o gradiente
+   do palco pula de uma vez na troca de tema, enquanto o quarto 3D leva cerca de 1 s. */
+@property --bg {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #efe6db;
+}
+
+@property --bg-deep {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #d7c5b0;
+}
+
 :root {
+    /* 1 s com a mesma cara do damp (λ = 3) do dayNight no 3D: uns 45% em 0,2 s e 78% em 0,5 s */
+    transition:
+        --bg 1s cubic-bezier(0.25, 0.75, 0.75, 1),
+        --bg-deep 1s cubic-bezier(0.25, 0.75, 0.75, 1);
+
     --bg: #efe6db;
     --bg-deep: #d7c5b0;
     --surface: #fbf8f4;
@@ -109,7 +129,6 @@ body {
     font-size: var(--step-0);
     line-height: 1.55;
     overflow: hidden;
-    transition: background-color 0.6s ease;
 }
 
 body.is-flat {
@@ -277,8 +296,8 @@ h3 {
 .stage {
     position: fixed;
     inset: 0;
+    /* a troca de tema anima --bg e --bg-deep (lá no :root); o gradiente acompanha */
     background: radial-gradient(120% 90% at 50% 35%, var(--bg) 0%, var(--bg-deep) 100%);
-    transition: background 0.6s ease;
 }
 
 .stage canvas {
@@ -442,6 +461,262 @@ h3 {
     }
 }
 
+/* ---------- Telas do quarto (camada HTML sobre a tela 3D, src/screens) ---------- */
+
+/* Posição e tamanho vêm do ScreenTracker a cada quadro (transform, width e height no style).
+   Acima das etiquetas (z-index até 20), abaixo do painel (25) e do menu do topo (30). */
+.screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 22;
+    /* fica invisível até receber a primeira posição (placeScreen) */
+    visibility: hidden;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden;
+    /* as medidas em cqw (% da largura da tela) acompanham o tamanho da tela 3D */
+    container-type: size;
+    background: var(--scr-bg);
+    color: var(--scr-fg);
+    color-scheme: dark;
+    /* a tela "liga": abre a partir da linha do meio */
+    animation: screen-on 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes screen-on {
+    from {
+        clip-path: inset(50% 0 50% 0);
+        opacity: 0.3;
+    }
+    to {
+        clip-path: inset(0);
+        opacity: 1;
+    }
+}
+
+/* Cores do monitor: são as que a textura (monitorScreenTexture, em textures.js) mostra depois do
+   tone mapping do 3D, medidas na captura. Assim a troca textura -> HTML não muda a cor. */
+.screen--monitor {
+    --scr-bg: #141119;
+    --scr-bar: #221f2a;
+    --scr-card: #1e1a25;
+    --scr-line: #3c3547;
+    --scr-fg: #e6e2e0;
+    --scr-muted: #b5adb0;
+    --scr-accent: #e786cc;
+    --scr-accent-soft: #4a2645;
+    --scr-dot-1: #ea7491;
+    --scr-dot-2: #e0c18a;
+    --scr-dot-3: #89caa9;
+
+    /* as peças das seções (cartões, chips, links) passam a usar as cores da tela */
+    --surface: var(--scr-bg);
+    --surface-2: var(--scr-card);
+    --fg: var(--scr-fg);
+    --muted: var(--scr-muted);
+    --line: var(--scr-line);
+    --accent: var(--scr-accent);
+    --accent-ink: #1d0a19;
+    --accent-soft: var(--scr-accent-soft);
+}
+
+/* À noite a tela 3D brilha mais (Desk.jsx), então as cores medidas são mais claras */
+:root[data-mode='night'] .screen--monitor {
+    --scr-bg: #1e1b25;
+    --scr-bar: #312c3a;
+    --scr-card: #2b2634;
+    --scr-line: #51495e;
+    --scr-fg: #eeebea;
+    --scr-muted: #cbc5c7;
+    --scr-accent: #f4a4dd;
+    --scr-accent-soft: #62355c;
+    --scr-dot-1: #f894ac;
+    --scr-dot-2: #ecd5a7;
+    --scr-dot-3: #a9dcc1;
+}
+
+/* Barra de título: mesmas medidas da textura (bolinhas, caminho no meio e o X) */
+.win-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3.6cqw;
+    background: var(--scr-bar);
+}
+
+.win-dots {
+    position: absolute;
+    left: 1.45cqw;
+    display: flex;
+    gap: 0.5cqw;
+}
+
+.win-dots i {
+    width: 0.9cqw;
+    height: 0.9cqw;
+    border-radius: 50%;
+    background: var(--scr-dot-1);
+}
+
+.win-dots i:nth-child(2) {
+    background: var(--scr-dot-2);
+}
+
+.win-dots i:nth-child(3) {
+    background: var(--scr-dot-3);
+}
+
+.win-path {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 1.25cqw;
+    line-height: 1;
+    color: var(--scr-muted);
+}
+
+/* o X fica centrado a 2,2cqw da borda direita, como na textura; nunca menor que 28px para o clique */
+.win-close {
+    position: absolute;
+    right: calc(2.2cqw - max(2.6cqw, 28px) / 2);
+    display: grid;
+    place-items: center;
+    width: max(2.6cqw, 28px);
+    height: max(2.6cqw, 28px);
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: var(--scr-muted);
+}
+
+.win-close svg {
+    width: 2cqw;
+    height: 2cqw;
+}
+
+.win-close:hover {
+    background: var(--scr-line);
+    color: var(--scr-fg);
+}
+
+/* Conteúdo com rolagem própria: rolar até o fim não passa a rolagem para a página */
+.win-scroll {
+    container: win / inline-size;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scrollbar-color: var(--scr-line) transparent;
+    display: grid;
+    align-content: start;
+    gap: 0.9em;
+    padding: 2.4cqw 2.6cqw 3cqw;
+    /* letra que cresce com a tela, mas com limites para continuar legível (e o zoom funcionar) */
+    font-size: clamp(14px, 1.4cqw, 32px);
+    --step--1: 0.8125em;
+    --step-0: 1em;
+    --step-1: 1.2em;
+    --step-2: 1.5em;
+}
+
+/* o espaço entre o ícone e o título cresce com a letra, como na textura */
+.win-scroll .section-head {
+    padding-right: 0;
+    gap: 0.75em;
+}
+
+.win-scroll .section-icon {
+    width: 2.3em;
+    height: 2.3em;
+    border-radius: 0.6em;
+}
+
+.win-scroll .section-icon svg {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.win-scroll .text-link svg,
+.win-scroll .badge svg {
+    width: 1em;
+    height: 1em;
+}
+
+/* Com largura, cada projeto vira 2 colunas: a mídia (os GIFs da Sprint 3) ao lado do texto.
+   (`.win-scroll .project` para valer mais que o `.project` lá embaixo, que define gap e padding) */
+@container win (min-width: 720px) {
+    .win-scroll .project {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        column-gap: 1.4em;
+        align-items: start;
+        padding: 1em;
+    }
+}
+
+/* Estreita (no menor modo tela, 900x560), a mídia em 16:9 tomaria a área toda: fica mais baixa */
+@container win (max-width: 719px) {
+    .win-scroll .project-media {
+        max-height: 30cqh;
+    }
+}
+
+/* Barra de tarefas: a dica do teclado à esquerda e as saídas à direita */
+.win-task {
+    display: flex;
+    align-items: center;
+    gap: 0.8cqw;
+    height: max(4cqw, 40px);
+    padding: 0 1cqw 0 2.6cqw;
+    background: var(--scr-bar);
+}
+
+.win-hint {
+    margin-right: auto;
+    font-family: var(--font-mono);
+    font-size: max(1.1cqw, 12px);
+    line-height: 1;
+    color: var(--scr-muted);
+    white-space: nowrap;
+}
+
+/* Em tela de toque (tablet) não há tecla Esc. visibility guarda o espaço: os botões não mudam de lugar */
+@media (hover: none) {
+    .win-hint {
+        visibility: hidden;
+    }
+}
+
+.win-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    height: max(2.7cqw, 30px);
+    padding: 0 1.1em;
+    border: 1px solid var(--scr-line);
+    border-radius: 999px;
+    background: none;
+    color: var(--scr-fg);
+    font-size: max(1.15cqw, 13px);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.win-btn svg {
+    width: 1.3em;
+    height: 1.3em;
+}
+
+.win-btn:hover {
+    border-color: var(--scr-accent);
+}
+
+.win-btn-primary {
+    border-color: var(--scr-accent);
+    background: var(--scr-accent);
+    color: var(--accent-ink);
+}
+
 .section-head {
     padding-right: 52px;
     display: flex;
@@ -502,7 +777,7 @@ h3 {
 
 .chips-mono li {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.72em;
 }
 
 /* Sobre mim */
@@ -644,7 +919,7 @@ img.avatar {
 
 .timeline-date {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.75em;
     color: var(--muted);
     font-variant-numeric: tabular-nums;
 }
@@ -656,6 +931,12 @@ img.avatar {
     border: 1px solid var(--line);
     border-radius: 16px;
     background: var(--surface-2);
+    min-width: 0;
+}
+
+.project-body {
+    display: grid;
+    gap: 8px;
     min-width: 0;
 }
 
@@ -675,7 +956,7 @@ img.avatar {
 
 .project-role {
     color: var(--muted);
-    font-size: 0.92rem;
+    font-size: 0.92em;
 }
 
 .project-links {
@@ -693,7 +974,7 @@ img.avatar {
     padding: 2px 9px;
     border-radius: 999px;
     background: var(--accent-soft);
-    font-size: 0.75rem;
+    font-size: 0.75em;
     font-weight: 600;
     white-space: nowrap;
 }
@@ -720,7 +1001,7 @@ img.avatar {
     gap: 4px;
     color: var(--muted);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.72em;
     background:
         repeating-linear-gradient(
             -45deg,

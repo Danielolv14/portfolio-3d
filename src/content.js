@@ -147,6 +147,12 @@ const EXPERIENCES = [
     }
 ];
 
+// '2026-03' -> 'mar 2026' (ou 'Mar 2026' em inglês). Usado nas seções e na tela 3D do monitor.
+export function monthLabel(iso, t) {
+    const [year, month] = iso.split('-');
+    return `${t.ui.months[Number(month) - 1]} ${year}`;
+}
+
 function localize(list, lang) {
     return list.map(({ pt, en, ...shared }) => ({ ...shared, ...(lang === 'pt' ? pt : en) }));
 }
@@ -173,7 +179,14 @@ export const content = {
             close: 'Voltar ao quarto',
             loading: 'Montando o quarto…',
             months: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'],
-            present: 'atual'
+            present: 'atual',
+            // Seções que abrem dentro de uma tela do quarto (src/screens)
+            screen: {
+                path: { projects: '~/projetos' },
+                closeWindow: 'Fechar janela',
+                read2d: 'Ler em 2D',
+                escHint: 'Esc volta ao quarto'
+            }
         },
         about: {
             role: 'Estudante de Engenharia de Software, curioso e motivado',
@@ -260,7 +273,13 @@ export const content = {
             close: 'Back to the room',
             loading: 'Building the room…',
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            present: 'present'
+            present: 'present',
+            screen: {
+                path: { projects: '~/projects' },
+                closeWindow: 'Close window',
+                read2d: 'Read in 2D',
+                escHint: 'Esc goes back to the room'
+            }
         },
         about: {
             role: 'A curious and driven Software Engineering student',

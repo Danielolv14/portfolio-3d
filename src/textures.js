@@ -2,6 +2,8 @@
 // As cores seguem as fotos do quarto do Daniel.
 import * as THREE from 'three';
 
+import { monthLabel } from './content';
+
 function canvasTexture(width, height, draw, { repeat } = {}) {
     const canvas = document.createElement('canvas');
     canvas.width = width;
@@ -205,41 +207,133 @@ export function camoTexture(palette = ['#d0d0cc', '#838486', '#424347', '#1a1b1e
     });
 }
 
-// Tela do monitor: editor de código escuro
-export function codeScreenTexture() {
-    return canvasTexture(640, 384, (ctx, w, h) => {
-        ctx.fillStyle = '#0f1218';
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = '#171b23';
-        ctx.fillRect(0, 0, w, 30);
-        ctx.fillStyle = '#13161d';
-        ctx.fillRect(0, 30, 130, h - 30);
-        const rand = seeded(42);
-        const palette = ['#7cc7ff', '#f0b44c', '#c3a6ff', '#ff8fa3', '#9be29b', '#9aa7b4'];
-        for (let i = 0; i < 9; i++) {
-            ctx.fillStyle = '#2a313d';
-            ctx.fillRect(14, 48 + i * 22, 50 + rand() * 50, 8);
-        }
-        let indent = 0;
-        for (let line = 0; line < 15; line++) {
-            const y = 46 + line * 21;
-            ctx.fillStyle = '#3a4352';
-            ctx.fillRect(142, y, 14, 8);
-            if (rand() > 0.7) indent = Math.min(indent + 1, 3);
-            else if (rand() > 0.75) indent = Math.max(indent - 1, 0);
-            let x = 172 + indent * 24;
-            const tokens = 1 + Math.floor(rand() * 4);
-            for (let t = 0; t < tokens; t++) {
-                const len = 22 + rand() * 80;
-                ctx.fillStyle = palette[Math.floor(rand() * palette.length)];
-                ctx.fillRect(x, y, len, 8);
-                x += len + 10;
-            }
-        }
-        // barra de tarefas
-        ctx.fillStyle = '#0a0c10';
-        ctx.fillRect(0, h - 16, w, 16);
-    });
+// Cores da janela do monitor na textura. Elas passam pelo tone mapping (ACES) do pós-processamento
+// e saem mais escuras na tela; o CSS da camada HTML (.screen--monitor, em styles.css) usa as cores
+// que saem de verdade, de dia e de noite, para a troca textura -> HTML não dar salto de cor.
+const MONITOR_COLORS = {
+    bg: '#2a2730',
+    bar: '#38343f',
+    card: '#34303b',
+    line: '#4d4756',
+    fg: '#f4eeea',
+    muted: '#b4a9ad',
+    accent: '#ff7ad9',
+    accentSoft: '#5a3a55',
+    dots: ['#ff6b8b', '#ffc27a', '#6fd3a0']
+};
+
+// Medidas da janela em % da largura da tela: iguais às do CSS (.win-bar, .win-task, .win-scroll, em `cqw`)
+const MONITOR_LAYOUT = { bar: 3.6, taskbar: 4, padX: 2.6 };
+
+// Tela do monitor em repouso: a mesma janela da camada HTML (src/screens/MonitorScreen.jsx), com a
+// barra de título, os projetos de verdade e a barra de tarefas. `redraw(t)` redesenha no idioma novo.
+export function monitorScreenTexture() {
+    const canvas = document.createElement('canvas');
+    // mesma proporção do plano da tela (2,22 x 1,22) e resolução boa para a câmera bem perto
+    canvas.width = 1600;
+    canvas.height = 880;
+    const ctx = canvas.getContext('2d');
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 8;
+    const W = canvas.width;
+    const H = canvas.height;
+    const u = W / 100; // 1 "cqw"
+    const c = MONITOR_COLORS;
+    const { bar, taskbar, padX } = MONITOR_LAYOUT;
+
+    // `spacing`: espaço entre letras em em, como o letter-spacing do CSS
+    const text = (value, x, y, size, { weight = 400, font = 'Figtree', color = c.fg, align = 'left', spacing = 0 } = {}) => {
+        ctx.font = `${weight} ${size * u}px "${font}", system-ui, sans-serif`;
+        ctx.letterSpacing = `${spacing * size * u}px`;
+        ctx.fillStyle = color;
+        ctx.textAlign = align;
+        ctx.fillText(value, x, y);
+    };
+
+    const draw = (t) => {
+        texture.userData.t = t;
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = c.bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // barra de título: 3 bolinhas, o caminho no meio e o X
+        ctx.fillStyle = c.bar;
+        ctx.fillRect(0, 0, W, bar * u);
+        c.dots.forEach((color, i) => {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc((1.9 + i * 1.4) * u, (bar / 2) * u, 0.45 * u, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        text(t.ui.screen.path.projects, W / 2, (bar / 2) * u, 1.25, { weight: 500, font: 'JetBrains Mono', color: c.muted, align: 'center' });
+        ctx.strokeStyle = c.muted;
+        ctx.lineWidth = 0.14 * u;
+        ctx.lineCap = 'round';
+        const x0 = W - 2.2 * u;
+        const y0 = (bar / 2) * u;
+        const s = 0.5 * u;
+        ctx.beginPath();
+        ctx.moveTo(x0 - s, y0 - s);
+        ctx.lineTo(x0 + s, y0 + s);
+        ctx.moveTo(x0 + s, y0 - s);
+        ctx.lineTo(x0 - s, y0 + s);
+        ctx.stroke();
+
+        // título da seção com o ícone e a frase de abertura
+        const top = (bar + 2.4) * u;
+        ctx.fillStyle = c.accentSoft;
+        roundRect(ctx, padX * u, top, 3.2 * u, 3.2 * u, 0.8 * u);
+        ctx.fill();
+        // o mesmo ícone de monitor do HTML (IconMonitor, desenhado numa grade de 24)
+        const g = (1.68 * u) / 24;
+        const gx = (padX + 0.76) * u;
+        const gy = top + 0.76 * u;
+        ctx.strokeStyle = c.fg;
+        ctx.lineWidth = 1.8 * g;
+        roundRect(ctx, gx + 3 * g, gy + 4 * g, 18 * g, 12 * g, 2 * g);
+        ctx.moveTo(gx + 9 * g, gy + 20 * g);
+        ctx.lineTo(gx + 15 * g, gy + 20 * g);
+        ctx.moveTo(gx + 12 * g, gy + 16 * g);
+        ctx.lineTo(gx + 12 * g, gy + 20 * g);
+        ctx.stroke();
+        text(t.ui.nav.projects, (padX + 4.3) * u, top + 1.6 * u, 2.1, { weight: 600, font: 'Unbounded', spacing: -0.01 });
+        text(t.projects.intro, padX * u, top + 5.55 * u, 1.4, { color: c.muted });
+
+        // linha do tempo resumida: data, nome e tecnologias de cada projeto (do mais antigo ao mais recente)
+        const items = [...t.projects.items].sort((a, b) => a.date.localeCompare(b.date));
+        const listTop = top + 7.6 * u;
+        const row = 6.4 * u;
+        const lineX = (padX + 0.6) * u;
+        ctx.fillStyle = c.line;
+        ctx.fillRect(lineX - 0.1 * u, listTop, 0.2 * u, row * items.length - 1.2 * u);
+        items.forEach((item, i) => {
+            const y = listTop + i * row;
+            ctx.fillStyle = c.card;
+            roundRect(ctx, (padX + 2.2) * u, y, W - (2 * padX + 2.2) * u, row - 1.2 * u, 1 * u);
+            ctx.fill();
+            ctx.fillStyle = c.bg;
+            ctx.strokeStyle = c.accent;
+            ctx.lineWidth = 0.3 * u;
+            ctx.beginPath();
+            ctx.arc(lineX, y + 2.6 * u, 0.55 * u, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            const mid = y + (row - 1.2 * u) / 2;
+            text(monthLabel(item.date, t), (padX + 3.6) * u, mid, 1.1, { font: 'JetBrains Mono', color: c.muted });
+            text(item.name, (padX + 12) * u, mid, 1.75, { weight: 700 });
+            text(item.tech.join(' · '), W - (padX + 1.4) * u, mid, 1.05, { font: 'JetBrains Mono', color: c.muted, align: 'right' });
+        });
+
+        // barra de tarefas com a dica do teclado
+        ctx.fillStyle = c.bar;
+        ctx.fillRect(0, H - taskbar * u, W, taskbar * u);
+        text(t.ui.screen.escHint, padX * u, H - (taskbar / 2) * u, 1.1, { font: 'JetBrains Mono', color: c.muted });
+        texture.needsUpdate = true;
+    };
+
+    texture.userData.redraw = draw;
+    return texture;
 }
 
 // Tela da TV: cartão da experiência atual (seção Experiências)
