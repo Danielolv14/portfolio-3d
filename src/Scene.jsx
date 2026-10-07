@@ -72,6 +72,21 @@ function setNear(camera, near) {
     camera.updateProjectionMatrix();
 }
 
+// A câmera parou: o camera-controls avisa 'rest' (quase parada) e depois 'sleep' (parada de vez).
+// Depois de um quadro muito longo (aba escondida por minutos no meio do voo) ela chega de uma vez e
+// só vem o 'sleep'. Esperando qualquer um dos dois, a tela sempre aparece.
+function stopped(controls) {
+    return new Promise((resolve) => {
+        const done = () => {
+            controls.removeEventListener('rest', done);
+            controls.removeEventListener('sleep', done);
+            resolve();
+        };
+        controls.addEventListener('rest', done);
+        controls.addEventListener('sleep', done);
+    });
+}
+
 // Câmera de frente para a tela, calculada a partir da própria malha (centro, frente e tamanho)
 function screenView(mesh, camera, size, topInset, { fill, clearance }) {
     mesh.updateWorldMatrix(true, false);
@@ -104,7 +119,20 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
     const flight = useRef(0);
     // Voo até uma tela (e a volta): tela e folga usadas para corrigir o `near` a cada quadro
     const nearFlight = useRef(null);
+    // Chegada numa tela que ainda vai ser avisada ao App (no quadro seguinte, ver abaixo)
+    const parkNext = useRef(null);
     const { size, camera, scene } = useThree();
+
+    // Avisa que a câmera parou só no quadro seguinte à chegada. Nesse quadro o ScreenTracker
+    // (que roda depois deste) já mede a tela com a câmera no lugar final, e a camada HTML nasce
+    // visível. Sem isso, com movimento reduzido (voo instantâneo) ela nascia antes da primeira
+    // medida, ainda escondida, e o foco no título se perdia.
+    useFrame(() => {
+        const park = parkNext.current;
+        if (!park) return;
+        parkNext.current = null;
+        if (park.token === flight.current) onParked(park.screen);
+    });
 
     // No voo até a tela a câmera passa por cima da cadeira, e o encosto cobria o monitor.
     // A cada quadro, o `near` corta tudo que está a mais de `clearance` da tela (como no fim do
@@ -126,7 +154,7 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
         setInput(c, !focus);
 
         // Tela: a câmera para de frente para ela e avisa o App quando chegou (aí o HTML aparece).
-        // As duas promessas terminam quando a câmera para (evento `rest` do camera-controls).
+        // A chegada é quando a câmera para (veja `stopped`).
         const mesh = screen && findScreen(scene, screen);
         if (mesh) {
             const view = screenView(mesh, camera, size, topInset, SCREEN_VIEW[screen]);
@@ -143,12 +171,12 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
                     c.setFocalOffset(0, view.offsetY, 0, smooth),
                     c.setLookAt(...view.pos.toArray(), ...view.center.toArray(), smooth)
                 ]);
-            goTo(animate).then(() => {
+            Promise.race([goTo(animate), stopped(c)]).then(() => {
                 if (!isLatest()) return;
                 // O `rest` chega com a câmera ainda deslizando 1 ou 2 px por mais um segundo:
                 // termina o caminho na hora, para a camada HTML entrar sobre uma tela parada
                 goTo(false);
-                onParked(screen);
+                parkNext.current = { token, screen };
             });
             return;
         }

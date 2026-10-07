@@ -1,5 +1,5 @@
 // As quatro seções do portfólio. São usadas no painel do modo 3D, nas telas do quarto e no modo 2D.
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { channels, monthLabel, profile } from './content';
 import { emailConfigured, sendMessage } from './email';
@@ -225,6 +225,20 @@ export function Experience({ t }) {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+// No celular o e-mail não cabe numa linha: o <wbr> deixa a quebra cair antes do @
+// (e não no meio de uma palavra). Ele não entra no texto quando a pessoa copia.
+function breakBeforeAt(value) {
+    const at = value.indexOf('@');
+    if (at <= 0) return value;
+    return (
+        <>
+            {value.slice(0, at)}
+            <wbr />
+            {value.slice(at)}
+        </>
+    );
+}
 const EMPTY = { name: '', email: '', message: '' };
 
 export function Contact({ t, lang, idPrefix }) {
@@ -234,8 +248,15 @@ export function Contact({ t, lang, idPrefix }) {
     const [errors, setErrors] = useState({});
     const [status, setStatus] = useState('idle');
     const [copied, setCopied] = useState(false);
+    // Aviso depois do envio (enviado, sem configuração ou erro)
+    const noteRef = useRef(null);
 
     const field = (name) => `${idPrefix}-${name}`;
+
+    // O aviso aparece embaixo do botão, quase sempre fora da parte visível do painel: rola até ele
+    useEffect(() => {
+        noteRef.current?.scrollIntoView({ block: 'nearest' });
+    }, [status]);
 
     const update = (name) => (event) => {
         setValues((v) => ({ ...v, [name]: event.target.value }));
@@ -314,7 +335,7 @@ export function Contact({ t, lang, idPrefix }) {
                             </span>
                             <span className="channel-text">
                                 <span className="channel-label">{ch.label}</span>
-                                <span className="channel-value">{ch.value}</span>
+                                <span className="channel-value">{breakBeforeAt(ch.value)}</span>
                             </span>
                             {ch.copy ? (
                                 <button
@@ -406,7 +427,7 @@ export function Contact({ t, lang, idPrefix }) {
                     {status === 'sending' ? f.sending : f.send}
                 </button>
                 {note && (
-                    <p className={`form-note${status === 'error' ? ' is-error' : ''}`} role={note.role}>
+                    <p ref={noteRef} className={`form-note${status === 'error' ? ' is-error' : ''}`} role={note.role}>
                         {note.text}
                     </p>
                 )}

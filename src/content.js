@@ -15,7 +15,8 @@ const PROJECTS = [
     {
         id: 'djfinance',
         date: '2026-03',
-        tech: ['Java', 'Spring Boot', 'PostgreSQL', 'React', 'Tailwind CSS', 'APIs do Google'],
+        // nomes de tecnologias são os mesmos em PT e EN (por isso "Google APIs", o nome do produto)
+        tech: ['Java', 'Spring Boot', 'PostgreSQL', 'React', 'Tailwind CSS', 'Google APIs'],
         links: [
             { kind: 'back', url: 'https://github.com/Danielolv14/DJFinance-Back-End' },
             { kind: 'front', url: 'https://github.com/Danielolv14/DJFinance-Front-End' },

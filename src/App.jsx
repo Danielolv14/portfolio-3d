@@ -94,6 +94,8 @@ export default function App() {
         () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false,
         []
     );
+    // Tela de toque sem mouse (celular, tablet): a dica fala em "toque", mesmo em tela larga
+    const touch = useMemo(() => window.matchMedia?.('(hover: none)').matches ?? false, []);
 
     // Seção aberta dentro de uma tela do quarto (monitor...), ou null quando ela usa o painel
     const screen = !flat && w >= SCREEN_MIN_W && h >= SCREEN_MIN_H && hasScreen(focus) ? focus : null;
@@ -248,6 +250,7 @@ export default function App() {
                             type="button"
                             className="tool tool-wide"
                             aria-label={flat ? t.ui.view3d : t.ui.view2d}
+                            title={flat ? t.ui.view3d : t.ui.view2d}
                             onClick={() => {
                                 setFocus(null);
                                 setFlat((f) => !f);
@@ -280,7 +283,7 @@ export default function App() {
                         />
                     </Suspense>
                     {!ready && <p className="loading">{t.ui.loading}</p>}
-                    {!focus && ready && <p className="hint">{mobile ? t.ui.hintTouch : t.ui.hint}</p>}
+                    {!focus && ready && <p className="hint">{mobile || touch ? t.ui.hintTouch : t.ui.hint}</p>}
 
                     {screenOpen && (
                         <ScreenOverlay
