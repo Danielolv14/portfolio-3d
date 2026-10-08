@@ -1,8 +1,8 @@
 // Ícones dos "apps" do Contato: LinkedIn, GitHub, Instagram e E-mail.
 // Aparecem na tela inicial do celular 3D (PhoneScreen) e em linha no painel / modo 2D (Sections.jsx).
 // Cada ícone é um SVG de 100 x 100: o fundo com os cantos contínuos do iOS e o logo por cima.
-// Os desenhos ficam em dados (APP_ART) para a textura do celular (textures.js) poder desenhar
-// exatamente o mesmo no canvas, com new Path2D(d).
+// Os desenhos ficam em dados (APP_ART) para a textura do celular (room/phoneTexture.js) poder
+// desenhar exatamente o mesmo no canvas, com new Path2D(d).
 import { useId } from 'react';
 
 import { channels } from '../content';

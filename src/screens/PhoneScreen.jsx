@@ -1,8 +1,8 @@
 // Celular = Contato. A tela inicial é inspirada no iOS 26 (só inspiração: nada da Apple entra aqui):
 // hora e data como na tela bloqueada, um cartão de vidro com a minha foto e os apps.
 // O app E-mail é o formulário de contato. "Ler em 2D" e "Voltar ao quarto" ficam fora da tela,
-// ao lado do celular. A textura do celular em repouso (phoneScreenTexture, em textures.js) desenha
-// a mesma tela inicial, com as mesmas medidas (phone.css, em cqw), para a troca não aparecer.
+// ao lado do celular. A textura do celular em repouso (phoneScreenTexture, em room/phoneTexture.js)
+// desenha a mesma tela inicial, com as mesmas medidas (phone.css, em cqw), para a troca não aparecer.
 import { useEffect, useRef, useState } from 'react';
 
 import { profile } from '../content';

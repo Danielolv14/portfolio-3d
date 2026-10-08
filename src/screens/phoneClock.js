@@ -1,5 +1,5 @@
 // Hora e data da tela do celular, como na tela bloqueada. Ficam aqui para a camada HTML
-// (PhoneScreen) e a textura do celular (textures.js) escreverem exatamente o mesmo texto.
+// (PhoneScreen) e a textura do celular (room/phoneTexture.js) escreverem exatamente o mesmo texto.
 import { useEffect, useState } from 'react';
 
 // '19:42' em português; '7:42' em inglês (relógio de 12 horas, sem AM/PM, como no celular)

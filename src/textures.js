@@ -608,29 +608,6 @@ export function clockTexture() {
     return texture;
 }
 
-export function phoneScreenTexture() {
-    return canvasTexture(300, 600, (ctx, w, h) => {
-        const g = ctx.createLinearGradient(0, 0, 0, h);
-        g.addColorStop(0, '#3a1d3f');
-        g.addColorStop(1, '#0e1020');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = 'rgba(255,255,255,0.92)';
-        ctx.font = '600 64px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('12:36', w / 2, 130);
-        const icons = ['#f0b44c', '#5ef2d6', '#ff8fa3', '#7cc7ff', '#c3a6ff', '#3fd17a', '#ffffff', '#ff6b5e'];
-        icons.forEach((c, i) => {
-            ctx.fillStyle = c;
-            roundRect(ctx, 26 + (i % 4) * 66, 300 + Math.floor(i / 4) * 80, 50, 50, 14);
-            ctx.fill();
-        });
-        ctx.fillStyle = 'rgba(255,255,255,0.18)';
-        roundRect(ctx, 22, h - 100, w - 44, 70, 26);
-        ctx.fill();
-    });
-}
-
 // Teclado mecânico preto (vista de cima)
 export function keyboardTexture() {
     return canvasTexture(512, 192, (ctx, w, h) => {

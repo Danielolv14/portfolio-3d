@@ -125,7 +125,8 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
         if (park.token === flight.current) onParked(park.screen);
     });
 
-    // A textura de cada tela se ajusta ao tamanho que a tela vai ter na página (textures.js).
+    // A textura de cada tela se ajusta ao tamanho que a tela vai ter na página (o `fit` do monitor,
+    // em textures.js, e o do celular, em room/phoneTexture.js).
     // Roda ao abrir o site e quando a janela muda: assim a textura já está certa antes do clique,
     // e não muda de tamanho no começo do voo, com o monitor à vista.
     useEffect(() => {
