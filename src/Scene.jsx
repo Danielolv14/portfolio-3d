@@ -58,8 +58,10 @@ const LIMITS_FREE = {
 // Seções que abrem numa tela do quarto (src/screens): quanto da área útil (abaixo do menu do
 // topo) a tela ocupa com a câmera parada. (A câmera para onde fica o encosto da cadeira: por isso,
 // com Projetos aberto, a cadeira se afasta para o lado. Veja Chair em room/Desk.jsx.)
+// O celular fica deitado na cama, com a tela virada para cima: a câmera olha de cima (`faceUp`).
 const SCREEN_VIEW = {
-    projects: { fill: 0.88 }
+    projects: { fill: 0.88 },
+    contact: { fill: 0.8, faceUp: true }
 };
 
 // A câmera parou: o camera-controls avisa 'rest' (quase parada) e depois 'sleep' (parada de vez).
@@ -78,7 +80,7 @@ function stopped(controls) {
 }
 
 // Câmera de frente para a tela, calculada a partir da própria malha (centro, frente e tamanho)
-function screenView(mesh, camera, size, topInset, { fill }) {
+function screenView(mesh, camera, size, topInset, { fill, faceUp = false }) {
     mesh.updateWorldMatrix(true, false);
     const center = mesh.getWorldPosition(new THREE.Vector3());
     // a frente do plano é o eixo +z dele, levado para o mundo
@@ -93,6 +95,10 @@ function screenView(mesh, camera, size, topInset, { fill }) {
     // Distância para a tela ocupar `fill` da largura ou da altura útil (o que encher primeiro)
     const distance = (size.height / (k * fill)) * Math.max(h / usableH, w / size.width);
     const pos = normal.multiplyScalar(distance).add(center);
+    // Tela virada para cima: olhando reto para baixo, a câmera não teria um "lado de cima" e o
+    // camera-controls poderia girar a vista para qualquer lado. Um empurrão de 0,001 para o lado de
+    // baixo da tela (eixo -y da malha) decide o giro: o topo da tela fica no topo da vista, de pé.
+    if (faceUp) pos.add(new THREE.Vector3(0, -1, 0).transformDirection(mesh.matrixWorld).multiplyScalar(0.001));
     // Sobe a câmera meio menu (em unidades do mundo): a tela desce e fica no meio da área útil
     const offsetY = -((topInset / 2) * k * distance) / size.height;
     // Largura (px) que a tela vai ter na página: `fill` da largura ou da altura útil (a que encher primeiro)
