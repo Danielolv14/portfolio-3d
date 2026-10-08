@@ -287,7 +287,7 @@ export default function DeskWall({ t, onSelect, showLabels, focus, screen, reduc
             <Monitor t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'projects'} />
             <TV t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'experience'} />
             <Peripherals />
-            <Chair chrome={chrome} away={screen === 'projects'} instant={reducedMotion} />
+            <Chair away={screen === 'projects'} instant={reducedMotion} />
         </group>
     );
 }

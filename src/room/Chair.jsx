@@ -394,11 +394,10 @@ function weaveTexture(open) {
 
 // `away`: Projetos está aberto dentro do monitor. A câmera para bem onde fica o encosto, então a
 // cadeira rola para o lado (como quem afasta a cadeira para usar o PC) e volta depois.
-// `instant`: sem animação (movimento reduzido). `chrome` (o cromado da mesa) não é mais usado,
-// porque a base agora é de nylon preto como a da cadeira de verdade.
+// `instant`: sem animação (movimento reduzido).
 const monitorCenter = new THREE.Vector3(...MONITOR_POS);
 
-export function Chair({ chrome, away, instant }) {
+export function Chair({ away, instant }) {
     const group = useRef();
     // 0 = encostada na mesa, 1 = afastada para o lado
     const progress = useRef(0);

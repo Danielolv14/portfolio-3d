@@ -608,33 +608,6 @@ export function clockTexture() {
     return texture;
 }
 
-// Teclado mecânico preto (vista de cima)
-export function keyboardTexture() {
-    return canvasTexture(512, 192, (ctx, w, h) => {
-        ctx.fillStyle = '#16171a';
-        ctx.fillRect(0, 0, w, h);
-        const rows = 6;
-        const kw = 30;
-        for (let r = 0; r < rows; r++) {
-            const cols = r === 0 ? 15 : 14;
-            for (let c = 0; c < cols; c++) {
-                let x = 10 + c * (kw + 3) + (r % 2) * 6;
-                if (x + kw > w - 50) continue;
-                ctx.fillStyle = '#2b2d32';
-                roundRect(ctx, x, 10 + r * 29, kw, 25, 4);
-                ctx.fill();
-                ctx.fillStyle = 'rgba(255,255,255,0.06)';
-                ctx.fillRect(x + 3, 12 + r * 29, kw - 6, 3);
-            }
-        }
-        // botão giratório
-        ctx.fillStyle = '#3a3c42';
-        ctx.beginPath();
-        ctx.arc(w - 26, 26, 16, 0, Math.PI * 2);
-        ctx.fill();
-    });
-}
-
 // Calculadora científica (vista de cima)
 export function calculatorTexture() {
     return canvasTexture(160, 300, (ctx, w, h) => {
@@ -751,19 +724,6 @@ export function caseStickersTexture() {
         roundRect(ctx, 192, 108, 40, 142, 8);
         ctx.fill();
     });
-}
-
-// Tela da cadeira: trama fina e escura, um pouco vazada (usada com transparência)
-export function chairMeshTexture() {
-    return canvasTexture(64, 64, (ctx, w, h) => {
-        ctx.fillStyle = 'rgba(30, 31, 35, 0.8)';
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = 'rgba(12, 12, 14, 0.96)';
-        for (let i = 0; i < w; i += 8) {
-            ctx.fillRect(i, 0, 3, h);
-            ctx.fillRect(0, i, w, 3);
-        }
-    }, { repeat: [9, 9] });
 }
 
 // Bola de futevôlei: gomos amarelo, azul e verde

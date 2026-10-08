@@ -65,26 +65,32 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   - `ScreenTracker`: fica dentro do Canvas e projeta os cantos da malha a cada quadro.
   - `ScreenOverlay`: a camada HTML.
   - `MonitorScreen`: Projetos dentro do monitor.
-  - Hoje só o monitor tem tela. TV (Experiências) e celular (Contato) ainda abrem no painel. O celular é a próxima etapa (E8, decisão 7).
+  - `PhoneScreen` (tela inicial), `MailCompose` (app E-mail), `AppIcons` (ícones dos apps, também usados no painel), `phoneClock.js` (hora e data) e `phone.css`: Contato dentro do celular (decisão 7). As saídas "Voltar ao quarto" e "Ler em 2D" ficam fora da tela, ao lado do celular.
+  - O monitor e o celular já têm tela. A TV (Experiências) ainda abre no painel: é a etapa E7.
 - **`src/Sections.jsx`:**
   - `About`;
   - `Projects`: linha do tempo ordenada por data, vários links, selos "em equipe" e "repositório privado";
   - `Experience`: com `highlights`;
-  - `Contact`: canais, formulário com validação, campo-isca anti-robô e EmailJS.
+  - `Contact`: no painel, na folha e no modo 2D, com o mesmo visual do celular: os ícones dos apps em linha e o formulário estilo Mail.
+- **`src/useContactForm.js`:** a lógica do formulário, usada no painel e no app E-mail do celular: validação, campo-isca anti-robô, EmailJS, estados do envio e o rascunho do celular guardado em memória.
 - **`src/content.js`:** todo o texto em PT e EN.
   - `PROJECTS` e `EXPERIENCES` guardam os dados uma vez só e passam por `localize`.
   - `profile` usa a foto `src/assets/foto.jpg`.
   - `channels`: e-mail, LinkedIn, GitHub e Instagram.
 - **`src/styles.css`:** tokens de cor com as cores do quarto. De dia, madeira e bege; à noite, o rosa do RGB (`--accent: #ff6ad9`). `@property --bg` faz o fundo trocar junto com o 3D.
 - **`src/room/`, o quarto:**
-  - **`shared.jsx`:** `Box`, `Rounded`, `Cyl`, `Hotspot` (objeto clicável com etiqueta `<button>` e prop `active`), cores `C`, `dayNight.mix` (0 = dia, 1 = noite, animado com `damp`), `lerp` e `WALL_H`.
+  - **`shared.jsx`:** `Box`, `Rounded`, `Cyl`, `Hotspot` (objeto clicável com etiqueta `<button>` e prop `active`), cores `C`, `dayNight.mix` (0 = dia, 1 = noite, animado com `damp`), `lerp`, `WALL_H` e `MONITOR_POS`.
+  - **`parts.jsx`:** formas e peças reutilizáveis (contornos, cabo, cromado, caixa com textura numa face).
   - **`Lights.jsx`:** sol, janela, luminária "&", RGB, monitor, light bar e `Environment` com Lightformers (nada baixado).
   - **`Shell.jsx`:** piso de porcelanato, paredes, rodapé de granito, janela com persiana, porta e pôster do de_dust2. Exporta `Poster`.
   - **`Desk.jsx`:**
     - painel de carvalho, TV com light bar (Experiências);
     - mesa de nogueira com gaveteiro;
     - gabinete camuflado com LED magenta e monitor no braço (Projetos);
-    - relógio LCD com a hora real, periféricos, cadeira cromada. Com Projetos aberto no monitor, a cadeira rola para o lado, porque a câmera para onde fica o encosto. Ela só volta quando a câmera se afasta do monitor.
+    - relógio LCD com a hora real, caderninho com a calculadora, fones.
+  - **`Chair.jsx`:** cadeira Elements Vector preta (base de nylon, assento e encosto em tela, apoio de cabeça 2D, braços 6D), em 4 malhas juntadas por material. Com Projetos aberto no monitor, ela rola para o lado, porque a câmera para onde fica o encosto, e só volta quando a câmera se afasta do monitor.
+  - **`Keyboard.jsx` e `Mouse.jsx`:** teclado Ajazz AK820 preto (75%, 81 teclas e o knob, numa geometria só com as legendas num atlas de canvas, RGB à noite) e mouse ATK VXE Dragonfly R1.
+  - **`Phone.jsx` e `phoneTexture.js`:** celular inspirado no iPhone 17, deitado na cama (Contato). A textura desenha a mesma tela inicial do HTML e desfaz o tone mapping ACES pixel a pixel, para a troca textura → HTML não aparecer.
   - **`Niche.jsx`:**
     - nicho branco com 4 níveis;
     - luminária "&" com lâmpadas (troca dia e noite), JBL, robô;
@@ -92,7 +98,6 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
     - pelúcias.
   - **`Bed.jsx`:**
     - cama com cabeceira de mogno, edredom matelassê, travesseiros, almofada, boné;
-    - celular (Contato);
     - criado-mudo com luminária de cobre;
     - pôsteres minimalistas de filmes, tapete felpudo em camadas, bola de futevôlei.
   - **`Floor.jsx`:** mochila e tênis.
@@ -182,11 +187,13 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   - O eixo y do `setFocalOffset` aponta para baixo.
   - Os limites (`min/maxAzimuth`, distância) também restringem o `setLookAt`.
   - Para saber quando a câmera chegou, espere `rest` **ou** `sleep`. Depois de um quadro muito longo (aba escondida por minutos), ela chega de uma vez e só vem o `sleep`.
-- **Objeto no caminho da câmera:** não esconda o objeto aumentando o plano `near`. A cadeira some de uma vez, aparece fatiada e o `near` fica preso ao ir para outra seção. Tire o objeto do caminho (veja a cadeira em `Desk.jsx`).
+- **Objeto no caminho da câmera:** não esconda o objeto aumentando o plano `near`. A cadeira some de uma vez, aparece fatiada e o `near` fica preso ao ir para outra seção. Tire o objeto do caminho (veja a cadeira em `Chair.jsx`).
 - **`Hotspot`:** anima o `scale` do próprio grupo. Um `scale` passado nele é sobrescrito, então escale um grupo interno.
 - **Sombras:** com `BakeShadows`, a sombra é desenhada uma vez só. Qualquer animação que **mova** algo que projeta sombra precisa de `gl.shadowMap.needsUpdate = true` enquanto se move (há um exemplo no `Hotspot`). Mudar só cor ou intensidade não precisa disso.
 - **Etiquetas:** o `<button>` dentro de `<Html>` precisa de `e.stopPropagation()` no `onClick`. Sem isso o clique sobe ao Canvas, que entende "clique fora" e fecha a seção que acabou de abrir.
 - **Pós-processamento:** dentro do `EffectComposer` é preciso o efeito `<ToneMapping/>`, senão as cores ficam lavadas.
+- **Textura de tela × camada HTML:** a cor da textura passa pelo brilho do material e pelo ACES, então sai diferente da do CSS. Calibre a cor de entrada (monitor: `MONITOR_COLORS` em `textures.js`) ou desfaça o ACES no canvas (celular: `phoneTexture.js`), e compare as duas no mesmo quadro.
+- **Classes CSS genéricas:** a raiz da página é `<div className="app">`. Uma classe `.app` em outro componente pega a página inteira; use nomes específicos ou `:where(...)`.
 - **Escala:** o quarto tem cerca de 450 malhas. O que pesa no celular é a quantidade de draw calls (CPU), não os triângulos.
 - **Node 18 no Windows:** importar por caminho absoluto exige `file:///C:/...`.
 - **Agentes em paralelo:** cada agente edita só os próprios arquivos (por exemplo, parede, mesa e cama em arquivos separados), e um revisor confere no fim.
