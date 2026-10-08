@@ -1111,7 +1111,9 @@ a.job-org:hover {
     gap: 8px;
 }
 
-.app {
+/* Só os apps dentro da lista: a raiz da página (App.jsx) também tem a classe "app". O :where não
+   soma especificidade, então o phone.css continua mudando os apps do celular. */
+:where(.apps) .app {
     display: grid;
     justify-items: center;
     gap: 7px;
@@ -1132,7 +1134,7 @@ a.job-org:hover {
     transition: transform 0.2s ease;
 }
 
-.app:hover .app-art {
+:where(.apps) .app:hover .app-art {
     transform: translateY(-2px);
 }
 

@@ -2,7 +2,7 @@
 
 /* Medidas em cqw (% da largura da tela do celular): acompanham o tamanho da tela 3D. A altura da
    tela é 211,1cqw (malha de 0,27 x 0,57). A tela inicial não tem mínimos em px, porque a textura do
-   celular (phoneScreenTexture, em textures.js) reproduz essas mesmas medidas. */
+   celular (phoneScreenTexture, em room/phoneTexture.js) reproduz essas mesmas medidas. */
 
 /* A .screen do celular não corta nem anima: as saídas ficam fora dela, ao lado do celular.
    O corte, os cantos arredondados e a animação ficam no display, logo abaixo. */
