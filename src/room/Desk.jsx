@@ -311,8 +311,12 @@ function Peripherals() {
         <group>
             {/* mousepad azul-marinho */}
             <Rounded size={[1.25, 0.02, 2.15]} radius={0.01} position={[-4.075, 1.57, -3.275]} color={C.navy} roughness={0.95} />
-            <Keyboard />
-            <Mouse />
+            <Bake peca="teclado">
+                <Keyboard />
+            </Bake>
+            <Bake peca="mouse">
+                <Mouse />
+            </Bake>
             <Clock />
             {/* caderninho com a calculadora em cima */}
             <Rounded
@@ -332,10 +336,14 @@ function Peripherals() {
                 color="#2c2e33"
                 roughness={0.5}
             />
-            <Earphones />
-            {[...MONITOR_CABLES, ...TV_CABLES].map((points, i) => (
-                <Cable key={i} points={points} />
-            ))}
+            <Bake peca="fones">
+                <Earphones />
+            </Bake>
+            <Bake peca="cabos">
+                {[...MONITOR_CABLES, ...TV_CABLES].map((points, i) => (
+                    <Cable key={i} points={points} />
+                ))}
+            </Bake>
         </group>
     );
 }

@@ -896,3 +896,14 @@ const POSTERS = {
 export function posterTexture(kind) {
     return canvasTexture(300, 420, POSTERS[kind]);
 }
+
+// Pôster em resolução maior (para o pipeline do Blender): o mesmo desenho, com o canvas ampliado
+export function posterCanvas(kind, scale = 3) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 300 * scale;
+    canvas.height = 420 * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    POSTERS[kind](ctx, 300, 420);
+    return canvas;
+}

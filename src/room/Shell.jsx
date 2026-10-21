@@ -291,7 +291,9 @@ export default function Shell() {
                 <meshStandardMaterial map={tiles} roughness={0.32} />
             </mesh>
 
-            <Walls />
+            <Bake peca="paredes">
+                <Walls />
+            </Bake>
 
             {/* Rodapé de granito: parede B inteira; na parede A, fora da porta e do nicho */}
             <Baseboard along="x" length={10.3} at={0.15} />
@@ -299,7 +301,9 @@ export default function Shell() {
             <Baseboard along="z" length={2.3 - DOOR.z1 - CASING} at={(DOOR.z1 + CASING + 2.3) / 2} />
             <Baseboard along="z" length={0.35} at={5.125} />
 
-            <Window />
+            <Bake peca="janela">
+                <Window />
+            </Bake>
             <Door />
 
             {/* Pôster minimalista do de_dust2, entre a janela e os pôsteres de filmes */}

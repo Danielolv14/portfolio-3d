@@ -8,7 +8,16 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 
 import { content } from '../content/content';
 import Room from '../room/Room';
-import { camoTexture } from '../room/textures';
+import { creatineTexture, quiltTexture } from '../room/bedTextures';
+import {
+    ballTexture,
+    calculatorTexture,
+    camoTexture,
+    caseBadgeTexture,
+    caseStickersTexture,
+    clockTexture,
+    posterCanvas
+} from '../room/textures';
 
 function Exporter() {
     const scene = useThree((state) => state.scene);
@@ -32,7 +41,23 @@ function Exporter() {
             return btoa(bin);
         };
         // Texturas desenhadas em canvas que os modelos do Blender reaproveitam (pipeline/blender/modelos)
-        window.__exportTexturas = () => ({ camo: camoTexture().image.toDataURL('image/png') });
+        window.__exportTexturas = () => {
+            const png = (tex) => (tex.image ?? tex).toDataURL('image/png');
+            const out = {
+                camo: png(camoTexture()),
+                adesivos: png(caseStickersTexture()),
+                logo: png(caseBadgeTexture('logo')),
+                asas: png(caseBadgeTexture('wings')),
+                relogio: png(clockTexture()),
+                calculadora: png(calculatorTexture()),
+                creatina: png(creatineTexture()),
+                matelasse: png(quiltTexture()),
+                bola: png(ballTexture())
+            };
+            for (const kind of ['dust', 'pulp', 'fight', 'beauty', 'basterds'])
+                out[`poster_${kind}`] = posterCanvas(kind).toDataURL('image/png');
+            return out;
+        };
         window.__exportReady = true;
     }, [scene]);
     return null;

@@ -6,7 +6,7 @@ import bpy
 
 from comum import do_site, log, selecionar
 
-CHAVES = ("group", "kind", "id", "area")
+CHAVES = ("group", "kind", "id", "area", "peca")
 
 
 def limpar_cena():
@@ -195,6 +195,8 @@ def paredes_fantasma(config):
         ((f, 2.7, 0), (e, 6.6, 11.0)),  # parede da frente, lado +x
         ((0, 2.7, f), (11.0, 6.6, e)),  # parede da frente, lado +z
         ((0, 5.6 + e / 2, 0), (11.0, e, 11.0)),  # teto
+        # atrás da porta (do lado de fora da parede A): sem isso o céu entrava pela fresta de baixo
+        ((-5.45, 2.3, 0.875), (e, 4.8, 2.3)),
     ]
     fantasmas = []
     for i, (centro, tam) in enumerate(caixas):

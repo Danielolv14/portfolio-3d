@@ -407,34 +407,42 @@ function Nightstand() {
 
             {/* em cima: luminária, difusor, latinha, creatina, controle e estojo */}
             <CopperLamp position={[4.96, top, -1.68]} rotation-y={-0.8} />
-            <Diffuser position={[4.92, top, -1.42]} rotation-y={0.3} />
-            <Box size={[0.32, 0.016, 0.24]} position={[4.56, top + 0.008, -1.22]} rotation-y={0.2} color="#6e4c30" roughness={0.6} />
-            <Cyl args={[0.1, 0.1, 0.05, 32]} position={[4.56, top + 0.041, -1.22]} color="#f2f1ec" roughness={0.35} />
-            <Cyl args={[0.102, 0.102, 0.01, 32]} position={[4.56, top + 0.05, -1.22]} color="#d4dde3" roughness={0.3} />
-            <group position={[5.0, top - 0.02, -1.08]} rotation-y={-0.6}>
-                <Soft size={[0.3, 0.6, 0.14]} round={0.2} pinch={0.85} map={creatine} position={[0, 0.3, 0]} roughness={0.5} />
-                <Box size={[0.28, 0.07, 0.016]} position={[0.005, 0.6, 0.012]} rotation={[0.35, 0, 0.05]} color="#1d1f22" roughness={0.6} />
-            </group>
-            <group position={[4.4, top + 0.016, -1.55]} rotation-y={0.45}>
-                <Rounded size={[0.42, 0.032, 0.1]} radius={0.014} color="#141518" roughness={0.45} />
-                {[-0.12, -0.06, 0, 0.06].map((x) => (
-                    <Cyl
-                        key={x}
-                        args={[0.012, 0.012, 0.01, 10]}
-                        position={[x, 0.018, 0]}
-                        color={x < -0.1 ? '#b8322c' : '#55575c'}
-                        roughness={0.5}
+            <Bake peca="objetos_criado">
+                <Diffuser position={[4.92, top, -1.42]} rotation-y={0.3} />
+                <Box size={[0.32, 0.016, 0.24]} position={[4.56, top + 0.008, -1.22]} rotation-y={0.2} color="#6e4c30" roughness={0.6} />
+                <Cyl args={[0.1, 0.1, 0.05, 32]} position={[4.56, top + 0.041, -1.22]} color="#f2f1ec" roughness={0.35} />
+                <Cyl args={[0.102, 0.102, 0.01, 32]} position={[4.56, top + 0.05, -1.22]} color="#d4dde3" roughness={0.3} />
+                <group position={[5.0, top - 0.02, -1.08]} rotation-y={-0.6}>
+                    <Soft size={[0.3, 0.6, 0.14]} round={0.2} pinch={0.85} map={creatine} position={[0, 0.3, 0]} roughness={0.5} />
+                    <Box
+                        size={[0.28, 0.07, 0.016]}
+                        position={[0.005, 0.6, 0.012]}
+                        rotation={[0.35, 0, 0.05]}
+                        color="#1d1f22"
+                        roughness={0.6}
                     />
-                ))}
-            </group>
-            <Rounded
-                size={[0.32, 0.06, 0.15]}
-                radius={0.028}
-                position={[4.46, top + 0.03, -1.8]}
-                rotation-y={-0.25}
-                color="#202124"
-                roughness={0.7}
-            />
+                </group>
+                <group position={[4.4, top + 0.016, -1.55]} rotation-y={0.45}>
+                    <Rounded size={[0.42, 0.032, 0.1]} radius={0.014} color="#141518" roughness={0.45} />
+                    {[-0.12, -0.06, 0, 0.06].map((x) => (
+                        <Cyl
+                            key={x}
+                            args={[0.012, 0.012, 0.01, 10]}
+                            position={[x, 0.018, 0]}
+                            color={x < -0.1 ? '#b8322c' : '#55575c'}
+                            roughness={0.5}
+                        />
+                    ))}
+                </group>
+                <Rounded
+                    size={[0.32, 0.06, 0.15]}
+                    radius={0.028}
+                    position={[4.46, top + 0.03, -1.8]}
+                    rotation-y={-0.25}
+                    color="#202124"
+                    roughness={0.7}
+                />
+            </Bake>
         </group>
     );
 }
@@ -536,9 +544,11 @@ export default function BedWall({ t, onSelect, showLabels, compact, focus }) {
             <Box size={[5.8, 0.1, 2.75]} position={[1.96, 0.05, -3.5]} color="#2a160e" roughness={0.7} />
             <Box size={[6.02, 0.4, 2.95]} position={[1.96, 0.3, -3.5]} map={frameWood} color="#ffffff" roughness={0.45} />
             <Headboard />
-            <Bedding />
+            <Bake peca="roupa_cama">
+                <Bedding />
+            </Bake>
 
-            <Bake group="props">
+            <Bake group="props" peca="celular">
                 <Phone t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'contact'} />
             </Bake>
 
@@ -553,10 +563,12 @@ export default function BedWall({ t, onSelect, showLabels, compact, focus }) {
             {/* tapete felpudo e a bola de futevôlei */}
             <Bake group="props">
                 <Rug compact={compact} />
-                <mesh position={[3.15, 0.45, 1.15]} rotation={[0.4, 0.8, 0.2]} castShadow receiveShadow>
-                    <sphereGeometry args={[0.4, 32, 24]} />
-                    <meshStandardMaterial map={ball} roughness={0.55} />
-                </mesh>
+                <Bake peca="bola">
+                    <mesh position={[3.15, 0.45, 1.15]} rotation={[0.4, 0.8, 0.2]} castShadow receiveShadow>
+                        <sphereGeometry args={[0.4, 32, 24]} />
+                        <meshStandardMaterial map={ball} roughness={0.55} />
+                    </mesh>
+                </Bake>
             </Bake>
         </group>
     );
