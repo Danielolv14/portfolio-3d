@@ -6,7 +6,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 
 export default [
-    { ignores: ['dist', 'capturas', 'docs/historico', 'node_modules'] },
+    { ignores: ['dist', 'capturas', 'docs/historico', 'node_modules', 'public/draco', 'public/room-poc', 'pipeline/.cache'] },
     js.configs.recommended,
     {
         files: ['**/*.{js,jsx,mjs}'],
@@ -31,7 +31,7 @@ export default [
     },
     // Scripts de Node (capturas, medições, config do Vite)
     {
-        files: ['scripts/**/*.mjs', '*.config.js'],
+        files: ['scripts/**/*.mjs', 'pipeline/**/*.mjs', '*.config.js'],
         languageOptions: { globals: { ...globals.node } }
     },
     prettier

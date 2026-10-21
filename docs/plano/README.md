@@ -68,6 +68,7 @@ Os números de hoje são medidos de novo na Fase 0, porque viram a linha de base
 | D8 | **A estante vira o "Sobre mim"** com objetos que representam o Daniel | 21/10 |
 | D9 | **A vista da janela vira paisagem viva** em camadas com paralaxe | 21/10 |
 | D11 | **Respostas P1–P6, P9, P12, P13:** Blender 4.5 LTS; orgânicos podem ser feitos à mão em `art/`; repositório em inglês com tradução PT; arte em CC BY 4.0; domínio próprio no lançamento; dia = fim de tarde; celular com dock; vista = BH estilizada; dados reais do GitHub no build | 21/10 |
+| D12 | **Luz da noite focada na luminária ao lado da cama e na luminária da TV.** A luminária "&" deixa de iluminar o quarto (vira brilho decorativo na nova estante) | 21/10 |
 | D10 | **Modelagem detalhada no Blender** (por script, e à mão só onde o script não alcança) para acabar com o visual genérico. O código continua dono do layout | 21/10 |
 | D6 | Continuam valendo: conteúdo das telas como camada HTML, monitor = Projetos, TV = Experiências, celular = Contato, porta-retrato = Sobre mim, luminária "&" = dia/noite, modo sem 3D, sem WhatsApp, MinhaReceita sem link, `referencias/` privada | antes |
 

@@ -9,7 +9,7 @@ A luz é a principal ferramenta de direção de arte. É ela que separa "modelo 
 | | **Dia: fim de tarde** (recomendado, pergunta P6) | **Noite: aconchego com neon** |
 |---|---|---|
 | Sensação | Sol baixo e dourado entrando pela janela, quarto quente e calmo | Quarto escuro, ilhas de luz quente e o rosa do RGB |
-| Luz principal | Sol a ~25–30° de altura, entrando pela janela da parede B | Luminária "&" e luminária de cobre do criado-mudo |
+| Luz principal | Sol a ~25–30° de altura, entrando pela janela da parede B | **Luminária de cobre do criado-mudo** (quente, ao lado da cama) e **luminária da TV** (a light bar em cima da TV, fria, banhando o painel de madeira) |
 | Luz secundária | Céu azulado pela janela (sombras levemente frias) | Lua azul fraca pela janela, telas e RGB |
 | Contraste | Mancha de sol forte no chão; cantos em penumbra | Alto: áreas quase pretas entre as fontes |
 | Paleta da luz | Âmbar contra azul-acinzentado | Âmbar contra magenta contra azul |
@@ -32,9 +32,11 @@ O contraste **quente contra frio** dentro da mesma imagem é o que dá profundid
 | Céu | *Sky Texture* (Nishita), sol a 28° | força 1,0 | Dá a luz azulada e a cor do sol |
 | Sol | *Sun lamp* alinhado com o céu | 4–6 W/m², ângulo 1,5° | O ângulo controla a maciez da borda da sombra |
 | Portal | *Area light* com portal | — | Só ajuda a amostragem |
-| RGB do gabinete | Emissão | fraco (0,5) | Fica no canal R da máscara, então é ajustável ao vivo |
+| RGB do gabinete | Emissão | fraco (0,5) | Fica no canal B da máscara, então é ajustável ao vivo |
 
 ## 4. Rig de noite
+
+**Decisão do Daniel (21/10):** à noite, a luz fica focada na **luminária ao lado da cama** e na **luminária em cima da TV**. A luminária "&" da prateleira deixa de ser fonte principal, porque a estante vai ser refeita como o "Sobre mim" ([09](09-estante-sobre-mim.md)). Ela pode continuar acesa como detalhe, bem fraca.
 
 A luz de noite é dividida em duas partes: a **base**, assada no lightmap da noite, e as **fontes ajustáveis**, assadas na máscara, uma por canal, e somadas no site.
 
@@ -44,16 +46,17 @@ A luz de noite é dividida em duas partes: a **base**, assada no lightmap da noi
 |---|---|---|---|
 | Céu noturno | Cor de fundo do mundo | `#1a2238`, bem fraca | Só para os cantos não ficarem pretos puros |
 | Lua | *Sun lamp* | `#9fb2ff`, fraca | Recorte azul da janela no chão |
-| Luminária de cobre | *Spot* dentro da cúpula + emissão interna | 2400 K | Cone quente no criado-mudo e na parede |
 | Relógio LCD | Emissão | fraquinha | Detalhe |
 
 **Fontes ajustáveis (máscara RGB):**
 
 | Canal | Fonte | Cor padrão | O que dá para fazer no site |
 |---|---|---|---|
-| **R** | RGB do gabinete + teclado | `#ff3fd2` | Trocar a cor do RGB (ideia de interação) |
-| **G** | Luminária "&" (lâmpadas do nicho) | 2700 K `#ffb46b` | Acender e apagar com a animação do interruptor; tremular de leve ao ligar |
-| **B** | Telas: monitor, TV e light bar | `#9fb7ff` | Acompanhar a cor do conteúdo aberto na tela |
+| **R** | **Luminária de cobre do criado-mudo** (principal, quente) | 2400 K `#ff9a4d` | Acender e apagar com o interruptor; um leve tremor ao ligar |
+| **G** | **Luminária da TV** (light bar com o LED para baixo; principal, fria) + telas | `#eef3ff` | Acompanhar a cor do conteúdo aberto na TV e no monitor |
+| **B** | RGB do gabinete + teclado (apoio) | `#ff3fd2` | Trocar a cor do RGB (ideia de interação) |
+
+A luminária "&" fica na base da noite, como um brilho fraco e decorativo.
 
 Cada fonte é assada sozinha, branca e com força 1. No site: `luz += máscara × cor × potência`. A conta é física, então a cor rosa ilumina a parede de rosa do jeito certo.
 
@@ -111,8 +114,8 @@ Se o Daniel preferir, a vista pode lembrar a **vista real da janela dele** (perg
 Hoje tudo muda junto. A versão nova vira uma **sequência** de cerca de 1,5 s:
 
 1. O sol baixa: `uNight` vai de 0 a 1 e a exposição se ajusta.
-2. Com um pequeno atraso, as luminárias acendem, com uma leve tremida no "&" e o canal G subindo.
-3. As telas e o RGB ganham força por último.
+2. Com um pequeno atraso, a luminária da cabeceira acende (canal R, com uma leve tremida) e logo depois a luminária da TV (canal G).
+3. O RGB do gabinete ganha força por último.
 
 No sentido contrário, as luzes se apagam primeiro e o sol volta depois. O interruptor da luminária "&" tem uma animação de mola (ver [05](05-experiencia.md)).
 

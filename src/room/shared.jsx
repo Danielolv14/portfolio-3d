@@ -20,9 +20,10 @@ export const WALL_H = 5.6;
 //   live    = continua desenhada pelo código em tempo real, não é assada (ex.: o céu da janela)
 //   glass   = vidro, recebe reflexo em tempo real
 //   skip    = não exportar (áreas de clique invisíveis)
+// `area`: a parte do quarto (desk, niche, bed), para assar só um pedaço durante os testes.
 // Telas (`screen-*`), luzes e metais são reconhecidos pelo nome e pelo material.
-export function Bake({ group, kind, id, children }) {
-    return <group userData={{ bake: { group, kind, id } }}>{children}</group>;
+export function Bake({ group, kind, id, area, children }) {
+    return <group userData={{ bake: { group, kind, id, area } }}>{children}</group>;
 }
 
 // Posição do monitor no braço (Desk.jsx): a cadeira (Chair.jsx) mede a distância da câmera até ele

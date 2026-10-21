@@ -4,6 +4,8 @@ O coração do salto visual. O quarto continua sendo montado em React. Um comand
 
 **Fase 1a (prova de conceito):** M. **Fase 1b (quarto inteiro):** G. **Marcos:** M1 e M2.
 
+> **Situação em 21/10/2026:** Fase 1a feita. Resultados e ajustes para a 1b em [resultados-poc.md](resultados-poc.md). Como rodar: [`pipeline/README.md`](../../pipeline/README.md).
+
 ---
 
 ## 1. Visão geral

@@ -87,14 +87,14 @@ Prioridade pelo que mais aparece: **H** = herói (a câmera chega perto), **M** 
 | Cabeceira de mogno | `Bed.jsx` | M | Perfil extrudado, com emissivo falso de dia | Chanfro; remover o emissivo falso (a luz rebatida vem do bake) |
 | Celular (Contato) | `Phone.jsx` | H | Bom (iPhone 17) | Só bake; tela continua ao vivo |
 | Monitor + braço (Projetos) | `Desk.jsx` | H | Bom | Chanfro, cabo, reflexo do cubemap no vidro |
-| Gabinete camuflado + LED | `Desk.jsx` | H | Bom | LED no canal R; adesivos como decalque no albedo |
-| Teclado AK820 e mouse | `Keyboard.jsx`, `Mouse.jsx` | H | Bons | Teclas por detalhe assado; RGB no canal R |
+| Gabinete camuflado + LED | `Desk.jsx` | H | Bom | LED no canal B; adesivos como decalque no albedo |
+| Teclado AK820 e mouse | `Keyboard.jsx`, `Mouse.jsx` | H | Bons | Teclas por detalhe assado; RGB no canal B |
 | Cadeira Elements Vector | `Chair.jsx` | M | Boa, cromada | Peça `dyn-`, metal com cubemap, mancha de sombra própria |
-| TV + light bar (Experiências) | `Desk.jsx` | H | Boa | Light bar no canal B |
+| TV + light bar (Experiências) | `Desk.jsx` | H | Boa | **Luminária principal da noite** (light bar, canal G) |
 | Mesa de nogueira e gaveteiro | `Desk.jsx` | M | Caixas | Chanfro, veio procedural, puxadores com metal |
 | Relógio LCD | `Desk.jsx` | F | Hora real | Continua ao vivo como `emit-` |
 | Nicho branco (4 níveis) | `Niche.jsx` | M | Caixas | Chanfro, sombra de contato de cada objeto |
-| Luminária "&" | `Niche.jsx` | H | Boa | Canal G, interruptor com mola |
+| Luminária "&" | `Niche.jsx` | M | Boa | Só brilho decorativo à noite (não ilumina mais o quarto); entra na nova estante |
 | Porta-retrato (Sobre mim) | `Niche.jsx` | H | Bom | Vidro com reflexo |
 | Pelúcias, robô, Stormtrooper, troféu, JBL | `Niche.jsx` | M | Formas simples | Pelúcias "infladas"; resto conforme a pergunta P2 |
 | Porta | `Shell.jsx` | M | Boa | Batente chanfrado, maçaneta metal |

@@ -13,15 +13,21 @@ export default function Room({ t, night, focus, screen, onSelect, showLabels, co
         <group onClick={onBackgroundClick}>
             <Lights night={night} />
             {/* Os grupos do bake: estrutura, móveis e objetos (cada área marca os seus objetos por dentro) */}
-            <Bake group="shell">
+            <Bake group="shell" area="shell">
                 <Shell />
             </Bake>
             <Bake group="furniture">
-                <Desk t={t} onSelect={onSelect} showLabels={showLabels} focus={focus} screen={screen} reducedMotion={reducedMotion} />
-                <Niche t={t} night={night} onSelect={onSelect} showLabels={showLabels} compact={compact} focus={focus} />
-                <Bed t={t} onSelect={onSelect} showLabels={showLabels} compact={compact} focus={focus} />
+                <Bake area="desk">
+                    <Desk t={t} onSelect={onSelect} showLabels={showLabels} focus={focus} screen={screen} reducedMotion={reducedMotion} />
+                </Bake>
+                <Bake area="niche">
+                    <Niche t={t} night={night} onSelect={onSelect} showLabels={showLabels} compact={compact} focus={focus} />
+                </Bake>
+                <Bake area="bed">
+                    <Bed t={t} onSelect={onSelect} showLabels={showLabels} compact={compact} focus={focus} />
+                </Bake>
             </Bake>
-            <Bake group="props">
+            <Bake group="props" area="floor">
                 <Floor />
             </Bake>
         </group>

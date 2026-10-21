@@ -7,6 +7,7 @@ import { ToneMappingMode } from 'postprocessing';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
+import BakedRoom from '../baked/BakedRoom';
 import Room from '../room/Room';
 import { findScreen } from '../screens/screens';
 import ScreenTracker from '../screens/ScreenTracker';
@@ -223,14 +224,21 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
     );
 }
 
+// Prova de conceito do quarto assado no Blender (só em desenvolvimento): http://localhost:5173/?render=poc
+// Desenha o GLB do pipeline (public/room-poc) no lugar do quarto em código, sem luzes em tempo real.
+const BAKED_POC = import.meta.env.DEV && new URLSearchParams(window.location.search).get('render') === 'poc';
+
 // Brilho nas luzes (RGB, lâmpadas, telas) e sombra de contato entre os objetos.
-// No celular fica só o brilho, para não pesar.
+// No celular fica só o brilho, para não pesar. No quarto assado, a sombra de contato já vem do
+// Blender, e o tone mapping é o AgX, o mesmo do Blender, para as cores baterem.
 function Effects({ compact }) {
     return (
         <EffectComposer multisampling={compact ? 0 : 4} disableNormalPass>
-            {!compact && <N8AO halfRes aoRadius={0.55} intensity={1.8} distanceFalloff={0.6} />}
-            <Bloom mipmapBlur luminanceThreshold={1} luminanceSmoothing={0.2} intensity={0.75} />
-            <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+            {!compact && !BAKED_POC && <N8AO halfRes aoRadius={0.55} intensity={1.8} distanceFalloff={0.6} />}
+            {/* No quarto assado, superfícies muito iluminadas (a mancha de sol) passam um pouco de 1; o limiar
+                maior deixa o brilho só para as lâmpadas e LEDs */}
+            <Bloom mipmapBlur luminanceThreshold={BAKED_POC ? 1.6 : 1} luminanceSmoothing={0.2} intensity={0.75} />
+            <ToneMapping mode={BAKED_POC ? ToneMappingMode.AGX : ToneMappingMode.ACES_FILMIC} />
         </EffectComposer>
     );
 }
@@ -291,20 +299,24 @@ export default function Scene({
             onCreated={onReady}
             onPointerMissed={closeOnClick}
         >
-            <Room
-                t={t}
-                night={night}
-                focus={focus}
-                screen={screen}
-                onSelect={onSelect}
-                showLabels={showLabels}
-                compact={compact}
-                reducedMotion={reducedMotion}
-                onBackgroundClick={closeOnClick}
-            />
+            {BAKED_POC ? (
+                <BakedRoom night={night} />
+            ) : (
+                <Room
+                    t={t}
+                    night={night}
+                    focus={focus}
+                    screen={screen}
+                    onSelect={onSelect}
+                    showLabels={showLabels}
+                    compact={compact}
+                    reducedMotion={reducedMotion}
+                    onBackgroundClick={closeOnClick}
+                />
+            )}
             {/* O quarto não se mexe e o sol não muda de lugar (só de cor e força): o mapa de
                 sombra é desenhado uma vez só, em vez de redesenhar todas as peças a cada quadro */}
-            <BakeShadows />
+            {!BAKED_POC && <BakeShadows />}
             <CameraRig focus={focus} screen={screen} panel={panel} topInset={topInset} reducedMotion={reducedMotion} onParked={onParked} />
             {screen && <ScreenTracker section={screen} box={screenBox} />}
             <Effects compact={compact} />
