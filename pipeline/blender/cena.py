@@ -1,4 +1,6 @@
 """Etapas 00–10: importar o GLB exportado do site, ler as marcações do <Bake> e preparar as malhas."""
+import math
+
 import bmesh
 import bpy
 
@@ -78,8 +80,29 @@ def preparar(areas=None):
     selecionar(ficam)
     bpy.ops.object.make_single_user(object=True, obdata=True, material=False)
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    soldar(ficam)
     log(f"preparado: {len(ficam)} malhas ({len(apagar)} fora do bake)")
     return ficam
+
+
+def soldar(objs):
+    """Junta os vértices repetidos. O three.js (BoxGeometry e companhia) manda cada face com os seus
+    próprios vértices; sem soldar, nada está "grudado" para o Blender, e o desdobramento de UV fazia
+    quase uma ilha por face (ex.: 2.142 faces -> 1.823 ilhas na estrutura). Isso causava a luz
+    manchada, os degraus e o quadriculado nas emendas (estudo de 21/10, docs/plano/estudo-bake.md).
+    Depois de soldar, as quinas continuam vivas: arestas com mais de 30° viram "sharp"."""
+    for o in objs:
+        bm = bmesh.new()
+        bm.from_mesh(o.data)
+        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
+        bm.to_mesh(o.data)
+        bm.free()
+        if o.data.has_custom_normals:
+            o.data.free_normals_split() if hasattr(o.data, "free_normals_split") else None
+            selecionar([o])
+            bpy.ops.mesh.customdata_custom_splitnormals_clear()
+        o.data.set_sharp_from_angle(angle=math.radians(30))
+    log(f"soldado: {len(objs)} malhas")
 
 
 def juntar_por_grupo(objs):
