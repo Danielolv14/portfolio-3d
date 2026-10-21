@@ -5,13 +5,39 @@ import Desk from './Desk';
 import Floor from './Floor';
 import Lights from './Lights';
 import Niche from './Niche';
+import { useLayoutEffect, useRef } from 'react';
+
 import { Bake } from './shared';
 import Shell from './Shell';
 
-export default function Room({ t, night, focus, screen, onSelect, showLabels, compact, reducedMotion, onBackgroundClick }) {
+// `interactionOnly`: modo do quarto assado (src/baked). O quarto em código continua montado, mas
+// invisível, como camada de interação: cliques, etiquetas, hover e a cadeira continuam vindo daqui,
+// e o modelo assado acompanha os movimentos. Ficam visíveis só as telas e o céu da janela.
+export default function Room({
+    t,
+    night,
+    focus,
+    screen,
+    onSelect,
+    showLabels,
+    compact,
+    reducedMotion,
+    onBackgroundClick,
+    interactionOnly
+}) {
+    const root = useRef();
+    useLayoutEffect(() => {
+        if (!interactionOnly) return;
+        root.current.traverse((o) => {
+            if (!o.isMesh && !o.isPoints) return;
+            const live = o.name.startsWith('screen-') || insideLive(o);
+            // Invisível não é desenhado, mas o raycaster do three continua acertando (os cliques funcionam)
+            if (!live) o.visible = false;
+        });
+    }, [interactionOnly]);
     return (
-        <group onClick={onBackgroundClick}>
-            <Lights night={night} />
+        <group ref={root} onClick={onBackgroundClick}>
+            {!interactionOnly && <Lights night={night} />}
             {/* Os grupos do bake: estrutura, móveis e objetos (cada área marca os seus objetos por dentro) */}
             <Bake group="shell" area="shell">
                 <Shell />
@@ -32,4 +58,10 @@ export default function Room({ t, night, focus, screen, onSelect, showLabels, co
             </Bake>
         </group>
     );
+}
+
+// Dentro de um <Bake kind="live"> (o céu da janela): continua sendo desenhado pelo código
+function insideLive(o) {
+    for (let p = o; p; p = p.parent) if (p.userData?.bake?.kind === 'live') return true;
+    return false;
 }

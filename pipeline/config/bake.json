@@ -2,11 +2,6 @@
     "comentario": "Configuração do bake. Coordenadas no sistema do site (three.js: y para cima). Ver docs/plano/02-pipeline-blender.md e 03-iluminacao.md.",
     "blenderVersao": "4.5",
     "dispositivo": "OPTIX",
-    "areasPoc": [
-        "shell",
-        "bed",
-        "desk"
-    ],
     "grupos": {
         "shell": {
             "albedo": 4096,
@@ -16,9 +11,21 @@
             "albedo": 4096,
             "luz": 2048
         },
-        "props": {
+        "props-desk": {
             "albedo": 4096,
             "luz": 2048
+        },
+        "props-bed": {
+            "albedo": 4096,
+            "luz": 2048
+        },
+        "props-niche": {
+            "albedo": 4096,
+            "luz": 2048
+        },
+        "props-floor": {
+            "albedo": 2048,
+            "luz": 1024
         }
     },
     "amostras": {
@@ -187,5 +194,7 @@
                 -5
             ]
         }
-    }
+    },
+    "areas": null,
+    "webpQualidade": 90
 }

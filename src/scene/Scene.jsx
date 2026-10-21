@@ -299,21 +299,21 @@ export default function Scene({
             onCreated={onReady}
             onPointerMissed={closeOnClick}
         >
-            {BAKED_POC ? (
-                <BakedRoom night={night} />
-            ) : (
-                <Room
-                    t={t}
-                    night={night}
-                    focus={focus}
-                    screen={screen}
-                    onSelect={onSelect}
-                    showLabels={showLabels}
-                    compact={compact}
-                    reducedMotion={reducedMotion}
-                    onBackgroundClick={closeOnClick}
-                />
-            )}
+            {BAKED_POC && <BakedRoom night={night} />}
+            {/* No modo assado, o quarto em código fica invisível e só cuida da interação (cliques,
+                etiquetas, telas, hover e cadeira); o modelo assado desenha o visual */}
+            <Room
+                t={t}
+                night={night}
+                focus={focus}
+                screen={screen}
+                onSelect={onSelect}
+                showLabels={showLabels}
+                compact={compact}
+                reducedMotion={reducedMotion}
+                onBackgroundClick={closeOnClick}
+                interactionOnly={BAKED_POC}
+            />
             {/* O quarto não se mexe e o sol não muda de lugar (só de cor e força): o mapa de
                 sombra é desenhado uma vez só, em vez de redesenhar todas as peças a cada quadro */}
             {!BAKED_POC && <BakeShadows />}

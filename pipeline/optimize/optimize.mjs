@@ -19,7 +19,7 @@ for (const f of arquivos) {
     copyFileSync(join(origem, f), join(destino, f));
     const bytes = statSync(join(destino, f)).size;
     // A Vercel comprime o que não é imagem; o GLB chega comprimido (gzip/brotli)
-    const enviado = f.endsWith('.png') ? bytes : gzipSync(readFileSync(join(destino, f))).length;
+    const enviado = /.(png|webp)$/.test(f) ? bytes : gzipSync(readFileSync(join(destino, f))).length;
     total += bytes;
     totalGzip += enviado;
     console.log(`${f.padEnd(26)} ${String(Math.round(bytes / 1024)).padStart(6)} KB  (enviado ~${Math.round(enviado / 1024)} KB)`);

@@ -47,7 +47,8 @@ def preparar(areas=None):
     apagar = []
     for o in malhas:
         kind = o["bk_kind"]
-        if kind in ("skip", "live", "glass") or _material_transparente(o):
+        # Telas (screen-*): o site desenha ao vivo, com o conteúdo de cada seção; não entram no bake
+        if o.name.startswith("screen-") or kind in ("skip", "live", "glass") or _material_transparente(o):
             apagar.append(o)
         elif areas and o["bk_area"] not in areas:
             apagar.append(o)
@@ -55,6 +56,12 @@ def preparar(areas=None):
             log(f"AVISO: sem grupo, ignorado: {o.name}")
             apagar.append(o)
     ficam = [o for o in malhas if o not in apagar]
+
+    # Objetos pequenos: um atlas por área (props-desk, props-bed...). Com um atlas só para
+    # todos, os detalhes ficavam borrados de perto (docs/plano/resultados-poc.md)
+    for o in ficam:
+        if o["bk_group"] == "props" and o["bk_area"]:
+            o["bk_group"] = f'props-{o["bk_area"]}'
 
     # Solta dos pais mantendo a posição, depois apaga o que não é malha
     for o in ficam:
@@ -99,11 +106,16 @@ def juntar_por_grupo(objs):
 
 def materiais_por_grupo(objs):
     """Cada grupo assa na sua imagem. Material repetido entre grupos vira cópia, senão o
-    nó de imagem ativo de um grupo apontaria para a imagem do outro."""
+    nó de imagem ativo de um grupo apontaria para a imagem do outro.
+    Também zera os brilhos (emissão) que o código usa como truque de luz, como a cabeceira que
+    "brilha" de dia: no bake a luz rebatida é de verdade. As fontes de luz vêm do rig."""
     for o in objs:
         for slot in o.material_slots:
             if slot.material:
                 slot.material = slot.material.copy()
+                bsdf = slot.material.node_tree.nodes.get("Principled BSDF") if slot.material.use_nodes else None
+                if bsdf:
+                    bsdf.inputs["Emission Strength"].default_value = 0.0
 
 
 def paredes_fantasma(config):

@@ -1,8 +1,8 @@
 // O quarto assado no Blender: lê o manifest.json do pipeline, carrega o GLB e as texturas e monta
 // um material por grupo (shell, furniture, props). Por enquanto só na prova de conceito (?render=poc).
 import { useGLTF, useTexture } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import { useEffect, useMemo, useState } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 import { dayNight } from '../room/shared';
@@ -45,6 +45,35 @@ function BakedScene({ manifest, night }) {
             if (materials[group]) o.material = materials[group];
         });
     }, [scene, materials]);
+
+    // Partes que se mexem: o objeto clicável (cresce no hover) e a cadeira (sai do caminho da câmera)
+    // são animados no quarto em código, invisível (Room com interactionOnly). A malha assada copia o
+    // movimento: matriz = (posição atual do objeto do código) × (posição dele no momento do bake)⁻¹
+    const world = useThree((state) => state.scene);
+    const followers = useRef([]);
+    useEffect(() => {
+        const list = [];
+        scene.traverse((mesh) => {
+            const match = mesh.isMesh && mesh.name.split('__')[1]?.match(/^(hotspot|dyn)-(.+)$/);
+            if (!match) return;
+            let target = null;
+            world.traverse((n) => {
+                const bake = n.userData?.bake;
+                if (!target && bake?.kind === match[1] && bake?.id === match[2]) target = n;
+            });
+            if (!target) return;
+            target.updateWorldMatrix(true, false);
+            mesh.matrixAutoUpdate = false;
+            list.push({ mesh, target, rest: target.matrixWorld.clone().invert() });
+        });
+        followers.current = list;
+    }, [scene, world]);
+    useFrame(() => {
+        for (const f of followers.current) {
+            f.mesh.matrix.multiplyMatrices(f.target.matrixWorld, f.rest);
+            f.mesh.matrixWorldNeedsUpdate = true;
+        }
+    });
 
     // Exposição em stops, como no Blender: 2^exposição, misturada entre dia e noite
     const exposure = manifest.exposicao ?? { dia: 0, noite: 0 };

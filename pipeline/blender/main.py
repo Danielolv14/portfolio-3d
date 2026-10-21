@@ -47,7 +47,7 @@ def main():
     cena.limpar_cena()
     configurar_gpu(config["dispositivo"])
     cena.importar(os.path.join(CACHE, "source.glb"))
-    malhas = cena.preparar(config.get("areasPoc"))
+    malhas = cena.preparar(config.get("areas"))
     objs = cena.juntar_por_grupo(malhas)
     cena.materiais_por_grupo(objs)
     grupos = {}

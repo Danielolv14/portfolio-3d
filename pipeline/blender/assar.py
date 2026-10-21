@@ -100,10 +100,12 @@ def _salvar_png(dados, nome):
     img = bpy.data.images.new(nome, w, h, alpha=True, float_buffer=False)
     img.colorspace_settings.name = "Non-Color"
     img.pixels.foreach_set(np.clip(dados, 0, 1).astype(np.float32).ravel())
-    caminho = os.path.join(SAIDA, nome + ".png")
+    # WebP (q90): ~6x menor que PNG sem perda visível (docs/plano/resultados-poc.md)
+    # Image.save grava os valores como estão (o save_render aplicaria a transformação de cor da cena)
+    caminho = os.path.join(SAIDA, nome + ".webp")
     img.filepath_raw = caminho
-    img.file_format = "PNG"
-    img.save()
+    img.file_format = "WEBP"
+    img.save(quality=90)
     bpy.data.images.remove(img)
     return caminho
 
