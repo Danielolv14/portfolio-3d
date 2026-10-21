@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Bloom, EffectComposer, N8AO, ToneMapping } from '@react-three/postprocessing';
 import CameraControlsImpl from 'camera-controls';
 import { ToneMappingMode } from 'postprocessing';
-import { useEffect, useRef } from 'react';
+import { Component, useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 import BakedRoom from '../baked/BakedRoom';
@@ -224,21 +224,37 @@ function CameraRig({ focus, screen, panel, topInset, reducedMotion, onParked }) 
     );
 }
 
-// Prova de conceito do quarto assado no Blender (só em desenvolvimento): http://localhost:5173/?render=poc
-// Desenha o GLB do pipeline (public/room-poc) no lugar do quarto em código, sem luzes em tempo real.
-const BAKED_POC = import.meta.env.DEV && new URLSearchParams(window.location.search).get('render') === 'poc';
+// O quarto assado no Blender (src/baked, pipeline/) é o padrão. `?render=source` desenha o quarto em
+// código com luz em tempo real (para comparar e para o export do pipeline). Se o assado falhar ao
+// carregar, o Scene volta sozinho para o quarto em código.
+const PREFER_SOURCE = new URLSearchParams(window.location.search).get('render') === 'source';
+
+// Pega erro ao carregar o GLB ou as texturas (eles carregam dentro do Suspense)
+class BakedBoundary extends Component {
+    state = { failed: false };
+    static getDerivedStateFromError() {
+        return { failed: true };
+    }
+    componentDidCatch(error) {
+        console.error('quarto assado indisponível, voltando ao quarto em código', error);
+        this.props.onFail();
+    }
+    render() {
+        return this.state.failed ? null : this.props.children;
+    }
+}
 
 // Brilho nas luzes (RGB, lâmpadas, telas) e sombra de contato entre os objetos.
 // No celular fica só o brilho, para não pesar. No quarto assado, a sombra de contato já vem do
 // Blender, e o tone mapping é o AgX, o mesmo do Blender, para as cores baterem.
-function Effects({ compact }) {
+function Effects({ compact, baked }) {
     return (
         <EffectComposer multisampling={compact ? 0 : 4} disableNormalPass>
-            {!compact && !BAKED_POC && <N8AO halfRes aoRadius={0.55} intensity={1.8} distanceFalloff={0.6} />}
+            {!compact && !baked && <N8AO halfRes aoRadius={0.55} intensity={1.8} distanceFalloff={0.6} />}
             {/* No quarto assado, superfícies muito iluminadas (a mancha de sol) passam um pouco de 1; o limiar
                 maior deixa o brilho só para as lâmpadas e LEDs */}
-            <Bloom mipmapBlur luminanceThreshold={BAKED_POC ? 1.6 : 1} luminanceSmoothing={0.2} intensity={0.75} />
-            <ToneMapping mode={BAKED_POC ? ToneMappingMode.AGX : ToneMappingMode.ACES_FILMIC} />
+            <Bloom mipmapBlur luminanceThreshold={baked ? 1.6 : 1} luminanceSmoothing={0.2} intensity={0.75} />
+            <ToneMapping mode={baked ? ToneMappingMode.AGX : ToneMappingMode.ACES_FILMIC} />
         </EffectComposer>
     );
 }
@@ -285,13 +301,16 @@ export default function Scene({
     compact
 }) {
     const showLabels = !focus;
+    const [baked, setBaked] = useState(!PREFER_SOURCE);
+    const onBakedFail = useCallback(() => setBaked(false), []);
     // Clique fora (no quarto ou no vazio) fecha a seção. O 2º clique de um duplo clique não conta:
     // ele cai onde estava a etiqueta ou o objeto que abriu a seção (a câmera já saiu do lugar)
     // e fecharia na hora o que o 1º clique abriu.
     const closeOnClick = (e) => focus && e.detail < 2 && onClose();
     return (
         <Canvas
-            shadows="soft"
+            // Quarto assado: as sombras já vêm do Blender, nada é calculado em tempo real
+            shadows={baked ? false : 'soft'}
             // No celular, no máximo 1,5 pixel por pixel CSS: a diferença quase não aparece e
             // a placa de vídeo pinta cerca de 45% menos pixels que com 2
             dpr={compact ? [1, 1.5] : [1, 2]}
@@ -299,7 +318,11 @@ export default function Scene({
             onCreated={onReady}
             onPointerMissed={closeOnClick}
         >
-            {BAKED_POC && <BakedRoom night={night} />}
+            {baked && (
+                <BakedBoundary onFail={onBakedFail}>
+                    <BakedRoom night={night} compact={compact} onFail={onBakedFail} />
+                </BakedBoundary>
+            )}
             {/* No modo assado, o quarto em código fica invisível e só cuida da interação (cliques,
                 etiquetas, telas, hover e cadeira); o modelo assado desenha o visual */}
             <Room
@@ -312,14 +335,14 @@ export default function Scene({
                 compact={compact}
                 reducedMotion={reducedMotion}
                 onBackgroundClick={closeOnClick}
-                interactionOnly={BAKED_POC}
+                interactionOnly={baked}
             />
             {/* O quarto não se mexe e o sol não muda de lugar (só de cor e força): o mapa de
                 sombra é desenhado uma vez só, em vez de redesenhar todas as peças a cada quadro */}
-            {!BAKED_POC && <BakeShadows />}
+            {!baked && <BakeShadows />}
             <CameraRig focus={focus} screen={screen} panel={panel} topInset={topInset} reducedMotion={reducedMotion} onParked={onParked} />
             {screen && <ScreenTracker section={screen} box={screenBox} />}
-            <Effects compact={compact} />
+            <Effects compact={compact} baked={baked} />
             {import.meta.env.DEV && <DevStats />}
         </Canvas>
     );

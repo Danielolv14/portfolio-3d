@@ -93,67 +93,7 @@
                     1.0
                 ]
             },
-            "luzes": [
-                {
-                    "nome": "luminaria-cabeceira",
-                    "comentario": "luminária de cobre no criado-mudo, ao lado da cama: luz principal quente da noite",
-                    "tipo": "POINT",
-                    "posicao": [
-                        4.87,
-                        1.98,
-                        -1.77
-                    ],
-                    "raio": 0.05,
-                    "forca": 150,
-                    "cor": [
-                        1.0,
-                        0.6,
-                        0.3
-                    ]
-                },
-                {
-                    "nome": "luminaria-tv",
-                    "comentario": "light bar em cima da TV, LED virado para baixo: luz principal fria da noite, banha o painel de madeira",
-                    "tipo": "AREA",
-                    "posicao": [
-                        -4.5,
-                        4.84,
-                        -2.8
-                    ],
-                    "tamanho": [
-                        0.1,
-                        1.9
-                    ],
-                    "direcao": [
-                        0.35,
-                        -1,
-                        0
-                    ],
-                    "forca": 140,
-                    "cor": [
-                        0.93,
-                        0.95,
-                        1.0
-                    ]
-                },
-                {
-                    "nome": "rgb-gabinete",
-                    "comentario": "RGB rosa do gabinete, de apoio",
-                    "tipo": "POINT",
-                    "posicao": [
-                        -3.15,
-                        3.7,
-                        -1.6
-                    ],
-                    "raio": 0.2,
-                    "forca": 12,
-                    "cor": [
-                        1.0,
-                        0.25,
-                        0.82
-                    ]
-                }
-            ],
+            "luzes": [],
             "exposicao": -0.5
         }
     },
@@ -196,5 +136,69 @@
         }
     },
     "areas": null,
-    "webpQualidade": 90
+    "webpQualidade": 90,
+    "leds": [
+        {
+            "nome": "luminaria-cabeceira",
+            "comentario": "luminária de cobre no criado-mudo, ao lado da cama: luz principal quente da noite",
+            "tipo": "POINT",
+            "posicao": [
+                4.87,
+                1.98,
+                -1.77
+            ],
+            "raio": 0.05,
+            "forca": 150,
+            "canal": "R",
+            "corSite": [
+                1.0,
+                0.6,
+                0.3
+            ]
+        },
+        {
+            "nome": "luminaria-tv",
+            "comentario": "light bar em cima da TV, LED virado para baixo: luz principal fria da noite, banha o painel de madeira",
+            "tipo": "AREA",
+            "posicao": [
+                -4.5,
+                4.84,
+                -2.8
+            ],
+            "tamanho": [
+                0.1,
+                1.9
+            ],
+            "direcao": [
+                0.35,
+                -1,
+                0
+            ],
+            "forca": 140,
+            "canal": "G",
+            "corSite": [
+                0.93,
+                0.95,
+                1.0
+            ]
+        },
+        {
+            "nome": "rgb-gabinete",
+            "comentario": "RGB rosa do gabinete, de apoio",
+            "tipo": "POINT",
+            "posicao": [
+                -3.15,
+                3.7,
+                -1.6
+            ],
+            "raio": 0.2,
+            "forca": 12,
+            "canal": "B",
+            "corSite": [
+                1.0,
+                0.25,
+                0.82
+            ]
+        }
+    ]
 }

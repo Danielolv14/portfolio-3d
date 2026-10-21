@@ -28,12 +28,18 @@ export default function Room({
     const root = useRef();
     useLayoutEffect(() => {
         if (!interactionOnly) return;
+        const hidden = [];
         root.current.traverse((o) => {
-            if (!o.isMesh && !o.isPoints) return;
-            const live = o.name.startsWith('screen-') || insideLive(o);
+            // Luzes que alguns objetos têm (ex.: a luminária de cobre): a luz já está assada
+            const hide = o.isLight || ((o.isMesh || o.isPoints) && !o.name.startsWith('screen-') && !insideLive(o));
             // Invisível não é desenhado, mas o raycaster do three continua acertando (os cliques funcionam)
-            if (!live) o.visible = false;
+            if (hide && o.visible) {
+                o.visible = false;
+                hidden.push(o);
+            }
         });
+        // Se o quarto assado falhar e o Scene voltar para o quarto em código, tudo reaparece
+        return () => hidden.forEach((o) => (o.visible = true));
     }, [interactionOnly]);
     return (
         <group ref={root} onClick={onBackgroundClick}>

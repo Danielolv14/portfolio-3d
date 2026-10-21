@@ -96,6 +96,25 @@ def main():
             exportar.render_referencia(config, rig, camera, 64 if preview else 256)
         tempos[f"ref_{rig}"] = time.time() - t
 
+    # Máscara dos LEDs: cada fonte ajustável assada sozinha, um canal por fonte
+    t = time.time()
+    por_grupo = {nome: [] for nome in grupos}
+    coberturas = {}
+    for led in config["leds"]:
+        luzes.montar_led(led)
+        for nome, lista in grupos.items():
+            tam = int(config["grupos"][nome]["luz"] * escala)
+            img = assar._imagem(f"led_{led['canal']}_{nome}", tam, True)
+            assar.assar(lista, img, "luz", amostras_luz, max(4, margem // 2))
+            coberturas.setdefault(nome, assar.cobertura(img))
+            por_grupo[nome].append(assar.tirar_ruido(img))
+    for nome, imgs in por_grupo.items():
+        arquivo, escalas = assar.salvar_mascara(imgs, f"leds_{nome}", coberturas[nome])
+        manifesto["grupos"][nome]["leds"] = os.path.basename(arquivo)
+        manifesto["grupos"][nome]["escala_leds"] = escalas
+    manifesto["leds"] = [{"nome": l["nome"], "canal": l["canal"], "cor": l["corSite"]} for l in config["leds"]]
+    tempos["leds"] = time.time() - t
+
     exportar.exportar_glb(objs, os.path.join(SAIDA, "room.glb"))
     manifesto["glb"] = "room.glb"
     # Exposição de cada clima (em stops, como no Blender): o site usa a mesma

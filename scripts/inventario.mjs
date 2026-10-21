@@ -5,7 +5,8 @@
 //   node scripts/inventario.mjs --json     (também grava capturas/inventario.json, malha por malha)
 import { mkdirSync, writeFileSync } from 'node:fs';
 
-const url = process.env.URL || 'http://localhost:5173/';
+// ?render=source: o quarto em código com tudo visível (no padrão, o assado, as malhas do GLB não têm marcação)
+const url = process.env.URL || 'http://localhost:5173/?render=source';
 const asJson = process.argv.includes('--json');
 
 async function launch() {

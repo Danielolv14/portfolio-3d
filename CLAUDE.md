@@ -56,6 +56,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   - Menu no topo no computador e abas embaixo no celular.
   - Seções abrem num painel lateral (computador) ou numa folha de baixo (celular).
   - Tema e idioma ficam salvos no `localStorage` (`portfolio-theme`, `portfolio-lang`). Um script inline no `index.html` aplica o tema antes da primeira pintura.
+- **Quarto assado (padrão desde 21/10):** o site desenha o modelo assado no Blender (`src/baked/BakedRoom.jsx` + `BakedMaterial.js`, arquivos em `public/room/`, gerados pelo `pipeline/`). O quarto em código continua montado, **invisível**, como camada de interação (`<Room interactionOnly>`): cliques, etiquetas, telas (`screen-*`, desenhadas ao vivo), hover e cadeira vêm dele, e o assado copia o movimento. `?render=source` mostra o quarto em código com luz em tempo real; se o assado falhar ao carregar, o Scene volta para ele sozinho. **Mudou algo no quarto em código? Rode o pipeline de novo** (`pipeline/README.md`), senão o visual não muda.
 - **`src/scene/Scene.jsx`:**
   - `Canvas` com `shadows="soft"`, `dpr` menor no celular e `<BakeShadows/>`.
   - `CameraRig`: um ponto de vista por seção em `SPOTS`, com `setFocalOffset` para o objeto não ficar atrás do painel. No **modo tela**, posiciona a câmera de frente para a malha `screen-<seção>` e avisa `onParked` quando para.

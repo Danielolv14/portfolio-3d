@@ -106,6 +106,10 @@ def _salvar_png(dados, nome):
     img.filepath_raw = caminho
     img.file_format = "WEBP"
     img.save(quality=90)
+    # Versão do celular, com metade do tamanho (4x menos memória na placa de vídeo)
+    img.scale(max(1, w // 2), max(1, h // 2))
+    img.filepath_raw = os.path.join(SAIDA, nome + "-mobile.webp")
+    img.save(quality=90)
     bpy.data.images.remove(img)
     return caminho
 
@@ -134,6 +138,21 @@ def salvar_luz(img, nome, cobertura):
     cod = np.power(np.clip(luz / escala, 0, 1), 1 / GAMA)
     out = np.concatenate([cod, np.ones_like(px[..., :1])], axis=-1)
     return _salvar_png(out, nome), escala
+
+
+def salvar_mascara(imgs, nome, cobertura):
+    """Máscara dos LEDs: a luz de cada fonte (assada sozinha, branca) num canal R, G ou B.
+    Cada canal tem a sua escala, como os lightmaps (luz = valor^2,2 × escala)."""
+    canais = []
+    escalas = []
+    for img in imgs:
+        luz = np.maximum(_pixels(img)[..., :3], 0).mean(axis=-1)
+        validos = luz[cobertura]
+        s = max(float(np.percentile(validos, 99.9)) if validos.size else 1.0, 1e-4)
+        canais.append(np.power(np.clip(luz / s, 0, 1), 1 / GAMA))
+        escalas.append(s)
+    out = np.stack(canais + [np.ones_like(canais[0])], axis=-1)
+    return _salvar_png(out, nome), escalas
 
 
 def cobertura(img):

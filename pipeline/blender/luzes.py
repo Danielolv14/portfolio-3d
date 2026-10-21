@@ -76,6 +76,15 @@ def _portal(col, janela):
     return obj
 
 
+def montar_led(led):
+    """Só uma fonte acesa, branca, com o céu preto: o bake mostra até onde a luz dela chega.
+    No site, essa luz é multiplicada pela cor e pela potência escolhidas (máscara de LEDs)."""
+    col = _limpar_rig()
+    _mundo()[1].inputs[1].default_value = 0.0
+    _luz(col, {**led, "cor": [1.0, 1.0, 1.0]})
+    log(f"led: {led['nome']} (canal {led['canal']})")
+
+
 def montar(config, nome):
     rig = config["rigs"][nome]
     col = _limpar_rig()
