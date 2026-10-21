@@ -5,9 +5,11 @@ import Desk from './Desk';
 import Floor from './Floor';
 import Lights from './Lights';
 import Niche from './Niche';
+import { useFrame } from '@react-three/fiber';
 import { useLayoutEffect, useRef } from 'react';
+import * as THREE from 'three';
 
-import { Bake } from './shared';
+import { Bake, dayNight, lerp } from './shared';
 import Shell from './Shell';
 
 // `interactionOnly`: modo do quarto assado (src/baked). O quarto em código continua montado, mas
@@ -26,9 +28,11 @@ export default function Room({
     interactionOnly
 }) {
     const root = useRef();
+    const unlit = useRef([]);
     useLayoutEffect(() => {
         if (!interactionOnly) return;
         const hidden = [];
+        const swapped = [];
         root.current.traverse((o) => {
             // Luzes que alguns objetos têm (ex.: a luminária de cobre): a luz já está assada
             const hide = o.isLight || ((o.isMesh || o.isPoints) && !o.name.startsWith('screen-') && !insideLive(o));
@@ -36,11 +40,29 @@ export default function Room({
             if (hide && o.visible) {
                 o.visible = false;
                 hidden.push(o);
+            } else if (o.isMesh && insideLive(o) && !o.material.isMeshBasicMaterial) {
+                // O que fica lá fora (a casa do vizinho) usava material com luz, e no modo assado não
+                // há luz em tempo real: ficava preto. Vira um material sem luz, escurecido à noite
+                const basic = new THREE.MeshBasicMaterial({ color: o.material.color.clone(), map: o.material.map });
+                swapped.push({ mesh: o, original: o.material, base: o.material.color.clone() });
+                o.material = basic;
             }
         });
+        unlit.current = swapped;
         // Se o quarto assado falhar e o Scene voltar para o quarto em código, tudo reaparece
-        return () => hidden.forEach((o) => (o.visible = true));
+        return () => {
+            hidden.forEach((o) => (o.visible = true));
+            swapped.forEach(({ mesh, original }) => {
+                mesh.material.dispose();
+                mesh.material = original;
+            });
+            unlit.current = [];
+        };
     }, [interactionOnly]);
+    useFrame(() => {
+        const shade = lerp(0.85, 0.12, dayNight.mix);
+        for (const { mesh, base } of unlit.current) mesh.material.color.copy(base).multiplyScalar(shade);
+    });
     return (
         <group ref={root} onClick={onBackgroundClick}>
             {!interactionOnly && <Lights night={night} />}

@@ -1,7 +1,7 @@
 // Canvas 3D + câmera. Cada seção tem um "ponto de vista"; navegar = mover a câmera.
 import { BakeShadows, CameraControls } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Bloom, EffectComposer, N8AO, ToneMapping } from '@react-three/postprocessing';
+import { Bloom, BrightnessContrast, EffectComposer, HueSaturation, N8AO, ToneMapping } from '@react-three/postprocessing';
 import CameraControlsImpl from 'camera-controls';
 import { ToneMappingMode } from 'postprocessing';
 import { Component, useCallback, useEffect, useRef, useState } from 'react';
@@ -247,14 +247,28 @@ class BakedBoundary extends Component {
 // Brilho nas luzes (RGB, lâmpadas, telas) e sombra de contato entre os objetos.
 // No celular fica só o brilho, para não pesar. No quarto assado, a sombra de contato já vem do
 // Blender, e o tone mapping é o AgX, o mesmo do Blender, para as cores baterem.
+// Só em desenvolvimento, para comparar a cor: ?tm=agx | punch | aces | neutral
+const TONE_TEST = import.meta.env.DEV ? new URLSearchParams(window.location.search).get('tm') : null;
+const TONE_MODES = {
+    agx: ToneMappingMode.AGX,
+    punch: ToneMappingMode.AGX,
+    aces: ToneMappingMode.ACES_FILMIC,
+    neutral: ToneMappingMode.NEUTRAL
+};
+
 function Effects({ compact, baked }) {
+    const tone = TONE_TEST && TONE_MODES[TONE_TEST] !== undefined ? TONE_TEST : null;
     return (
         <EffectComposer multisampling={compact ? 0 : 4} disableNormalPass>
             {!compact && !baked && <N8AO halfRes aoRadius={0.55} intensity={1.8} distanceFalloff={0.6} />}
             {/* No quarto assado, superfícies muito iluminadas (a mancha de sol) passam um pouco de 1; o limiar
                 maior deixa o brilho só para as lâmpadas e LEDs */}
             <Bloom mipmapBlur luminanceThreshold={baked ? 1.6 : 1} luminanceSmoothing={0.2} intensity={0.75} />
-            <ToneMapping mode={baked ? ToneMappingMode.AGX : ToneMappingMode.ACES_FILMIC} />
+            <ToneMapping mode={tone ? TONE_MODES[tone] : baked ? ToneMappingMode.AGX : ToneMappingMode.ACES_FILMIC} />
+            {/* AgX "punch": o AgX puro deixa as cores lavadas; um pouco mais de saturação e contraste
+                devolve vida às paredes e firmeza aos pretos (escolhido comparando agx, aces e neutral) */}
+            {(tone ? tone === 'punch' : baked) && <HueSaturation saturation={0.18} />}
+            {(tone ? tone === 'punch' : baked) && <BrightnessContrast contrast={0.12} />}
         </EffectComposer>
     );
 }

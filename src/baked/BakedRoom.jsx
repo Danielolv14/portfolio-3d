@@ -84,6 +84,37 @@ function BakedScene({ manifest, night, compact }) {
         followers.current = list;
     }, [scene, world]);
 
+    // Reflexo: o quarto assado é fotografado em 360° do meio do quarto, uma vez de dia e uma de noite,
+    // e vira o mapa de ambiente (scene.environment). Piso, cromado e vidro refletem o próprio quarto.
+    // A luz difusa desse mapa é descartada no material (já está no bake); só o reflexo é usado.
+    const gl = useThree((state) => state.gl);
+    const envs = useRef(null);
+    const exposure = manifest.exposicao ?? { dia: 0, noite: 0 };
+    useEffect(() => {
+        const target = new THREE.WebGLCubeRenderTarget(256, { type: THREE.HalfFloatType });
+        const camera = new THREE.CubeCamera(0.05, 60, target);
+        camera.position.set(0, 2.4, 0);
+        const pmrem = new THREE.PMREMGenerator(gl);
+        const capture = (n) => {
+            shared.uNight.value = n;
+            shared.uExposure.value = Math.pow(2, n ? exposure.noite : exposure.dia);
+            shared.ledPower.value.set(n, n, n ? 1 : 0.08);
+            camera.update(gl, scene);
+            return pmrem.fromCubemap(target.texture).texture;
+        };
+        envs.current = { day: capture(0), night: capture(1) };
+        target.dispose();
+        pmrem.dispose();
+        return () => {
+            envs.current.day.dispose();
+            envs.current.night.dispose();
+            envs.current = null;
+            world.environment = null;
+        };
+        // a captura é feita uma vez, depois que os materiais assados entram
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [scene, lightByGroup, shared, gl, world]);
+
     // O quarto já começa no tema atual (o tema fica guardado); só as trocas depois são animadas
     useLayoutEffect(() => {
         dayNight.mix = night ? 1 : 0;
@@ -91,7 +122,6 @@ function BakedScene({ manifest, night, compact }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const exposure = manifest.exposicao ?? { dia: 0, noite: 0 };
     useFrame((_, dt) => {
         // dayNight.mix: 0 = dia, 1 = noite. Antes quem animava eram as luzes em tempo real
         dayNight.mix = THREE.MathUtils.damp(dayNight.mix, night ? 1 : 0, 3, dt);
@@ -101,6 +131,7 @@ function BakedScene({ manifest, night, compact }) {
         const power = [smoothstep(m, 0.35, 0.85), smoothstep(m, 0.55, 1), lerp(0.08, 1, smoothstep(m, 0.7, 1))];
         // Exposição em stops, como no Blender: 2^exposição, misturada entre dia e noite
         const gain = Math.pow(2, lerp(exposure.dia, exposure.noite, m));
+        if (envs.current) world.environment = m < 0.5 ? envs.current.day : envs.current.night;
         shared.uNight.value = m;
         shared.uExposure.value = gain;
         shared.ledPower.value.set(...power);

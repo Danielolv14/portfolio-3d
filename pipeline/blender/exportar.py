@@ -17,8 +17,10 @@ def _chave_material(m):
     if not bsdf:
         return ("outro", m.name)
     base = bsdf.inputs["Base Color"]
+    # Rugosidade e metal decidem o reflexo no site: arredondados em degraus, para juntar o que é parecido
+    acabamento = (round(bsdf.inputs["Roughness"].default_value * 10) / 10, round(bsdf.inputs["Metallic"].default_value * 2) / 2)
     if not base.is_linked:
-        return ("cor", tuple(round(c, 3) for c in base.default_value))
+        return ("cor", acabamento, tuple(round(c, 3) for c in base.default_value))
     partes = []
     pilha = [base.links[0].from_node]
     vistos = set()
@@ -36,20 +38,26 @@ def _chave_material(m):
                 v = entrada.default_value
                 v = tuple(round(x, 4) for x in v) if hasattr(v, "__len__") else round(v, 4) if isinstance(v, float) else v
                 partes.append((no.bl_idname, entrada.identifier, v))
-    return ("tex", tuple(sorted(partes, key=str)))
+    return ("tex", acabamento, tuple(sorted(partes, key=str)))
 
 
-def _material_liso():
-    """Material único para as superfícies só de cor: a cor vai em cada vértice (atributo cor_base)."""
-    m = bpy.data.materials.get("liso")
+def _material_liso(acabamento):
+    """Material para as superfícies só de cor, um por acabamento (rugosidade, metal): a cor vai em
+    cada vértice (atributo cor_base)."""
+    rug, metal = acabamento
+    nome = f"liso_r{rug:.1f}_m{metal:.1f}"
+    m = bpy.data.materials.get(nome)
     if m:
         return m
-    m = bpy.data.materials.new("liso")
+    m = bpy.data.materials.new(nome)
     m.use_nodes = True
     nos = m.node_tree.nodes
     cor = nos.new("ShaderNodeVertexColor")
     cor.layer_name = "cor_base"
-    m.node_tree.links.new(cor.outputs["Color"], nos["Principled BSDF"].inputs["Base Color"])
+    bsdf = nos["Principled BSDF"]
+    m.node_tree.links.new(cor.outputs["Color"], bsdf.inputs["Base Color"])
+    bsdf.inputs["Roughness"].default_value = rug
+    bsdf.inputs["Metallic"].default_value = metal
     return m
 
 
@@ -71,7 +79,7 @@ def simplificar_materiais(obj):
                 k = chaves[poly.material_index]
                 if k[0] == "cor":
                     for li in poly.loop_indices:
-                        attr.data[li].color = k[1]
+                        attr.data[li].color = k[2]
                     cor_de[poly.index] = True
         malha.color_attributes.active_color = attr
         malha.color_attributes.render_color_index = malha.color_attributes.find("cor_base")
@@ -79,10 +87,10 @@ def simplificar_materiais(obj):
     novos = []
     indice_de = {}
     for i, k in enumerate(chaves):
-        alvo = ("liso",) if (k[0] == "cor" and not tem_cor) else k
+        alvo = ("liso", k[1]) if (k[0] == "cor" and not tem_cor) else k
         if alvo not in indice_de:
             indice_de[alvo] = len(novos)
-            novos.append(_material_liso() if alvo == ("liso",) else obj.material_slots[i].material)
+            novos.append(_material_liso(k[1]) if alvo[0] == "liso" else obj.material_slots[i].material)
         chaves[i] = indice_de[alvo]
     indices = [chaves[p.material_index] if p.material_index < len(chaves) else 0 for p in malha.polygons]
     malha.materials.clear()
@@ -116,7 +124,8 @@ def exportar_glb(objs, caminho):
         export_format="GLB",
         use_selection=True,
         export_texcoords=True,
-        export_normals=False,
+        # Normais: o site calcula o reflexo (piso, cromado, vidro) a partir delas
+        export_normals=True,
         export_materials="EXPORT",
         export_image_format="WEBP",
         export_image_quality=90,
