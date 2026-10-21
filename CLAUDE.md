@@ -4,13 +4,13 @@ Este arquivo é lido automaticamente pelo Claude Code. Ele reúne o que é preci
 
 ## O projeto
 
-- **Trabalho:** LAB01 – Portfólio Profissional (15 pontos, −1 ponto por dia de atraso), da disciplina DIAW (Desenvolvimento e Integração de Aplicações Web) do curso de Engenharia de Software da PUC Minas, com o prof. João Paulo Carneiro Aramuni.
-- **Aluno:** Daniel Oliveira de Menezes, 4º período, GitHub `Danielolv14`.
+- **Fase atual (desde 21/10/2026): portfólio profissional.** O trabalho da faculdade (LAB01 da disciplina DIAW, PUC Minas) já foi entregue e avaliado. Não há mais sprints nem prazos de professor. A meta agora é qualidade de projeto de referência: algo que as pessoas vejam e queiram replicar. Requisitos da disciplina (template do README, wireframes, protótipos) não precisam mais ser mantidos.
+- **Autor:** Daniel Oliveira de Menezes, GitHub `Danielolv14`.
 - **Ideia:** o portfólio é uma recriação em 3D do quarto real do Daniel, montada a partir de fotos. Cada objeto do quarto abre uma seção, e a câmera "voa" até ele.
 - **Referência visual:** [Room_Portfolio](https://github.com/AT010303/Room_Portfolio) ([site](https://at010303.vercel.app/)). Esse repositório **não tem licença** (todos os direitos reservados): só estudamos as técnicas e reimplementamos do nosso jeito. Nunca copie código, modelos, texturas, vídeos, músicas ou a ROM dele.
 - **Repositório:** github.com/Danielolv14/portfolio-3d (branch `main`). Hospedagem prevista: Vercel.
 
-### O que o enunciado pede
+### O que o enunciado pedia (histórico, já entregue)
 
 Site com menu de navegação para 4 seções:
 1. **Sobre Mim** em português **e** inglês (formação, área, interesses, objetivos).
@@ -128,14 +128,14 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 
 ## Decisões já tomadas (não mude sem perguntar)
 
-1. **O quarto segue as fotos do quarto real**, com as cores do quarto.
+1. **O quarto parte das fotos do quarto real, com direção de arte** (decidido em 21/10): o layout e os objetos seguem o quarto, mas tons, contraste e detalhes podem ser ajustados para a imagem ficar mais bonita.
    - A paleta cinza foi descartada.
    - Os pôsteres são versões minimalistas próprias, porque as artes originais têm direitos autorais.
    - O globo saiu, porque não existe no quarto real.
 2. **Conteúdo dentro das telas:** é uma **camada HTML sobre a tela 3D** quando a câmera para. Não usar `<Html transform>`. Monitor = Projetos, TV = Experiências, celular = Contato.
 3. **Sobre mim** fica no painel lateral.
 4. **No celular** as seções abrem na folha de baixo, e o modo tela vale só no computador (pelo menos 900×560) e fora do modo sem 3D.
-5. **Iluminação:** é melhorada no navegador até 02/11. O bake no Blender fica para depois da apresentação.
+5. **Iluminação (decidido em 21/10): bake no Blender por script.** Um pipeline automático exporta o quarto feito em código, assa a luz (dia, noite e máscara dos LEDs) no Cycles e volta como GLB com texturas. O código continua sendo a fonte da verdade, e refazer o bake é um comando. Ver [`docs/planejamento/plano-profissional.md`](docs/planejamento/plano-profissional.md).
 6. **MinhaReceita** aparece sem link, porque o repositório da disciplina é privado. Os contatos não incluem o WhatsApp.
 7. **Celular (Contato), decidido em 07/10:**
    - o celular é um iPhone 17 preto com a interface inspirada no iOS 26, sem nenhum recurso da Apple;
@@ -200,4 +200,6 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 
 ## Plano
 
-O plano completo, com o estudo do Room_Portfolio e as etapas E1 a E13, está em [`docs/planejamento/plano-room-portfolio.md`](docs/planejamento/plano-room-portfolio.md).
+- **Plano atual:** [`docs/planejamento/plano-profissional.md`](docs/planejamento/plano-profissional.md), com as fases da versão profissional.
+- **Estudo visual da referência:** [`docs/planejamento/estudo-visual-room-portfolio.md`](docs/planejamento/estudo-visual-room-portfolio.md).
+- **Histórico (fase da faculdade):** [`docs/planejamento/plano-room-portfolio.md`](docs/planejamento/plano-room-portfolio.md), com o estudo de interação e as etapas E1 a E13. As datas de lá não valem mais.
