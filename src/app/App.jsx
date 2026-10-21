@@ -1,12 +1,12 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { content, profile, SECTIONS } from './content';
+import { content, profile, SECTIONS } from '../content/content';
 import { IconClose, IconCube, IconList, IconMoon, IconSun, sectionIcon } from './Icons';
-import ScreenOverlay from './screens/ScreenOverlay';
-import { hasScreen } from './screens/screens';
-import { SectionHeader, sectionComponents } from './Sections';
+import ScreenOverlay from '../screens/ScreenOverlay';
+import { hasScreen } from '../screens/screens';
+import { SectionHeader, sectionComponents } from '../sections/Sections';
 
-const Scene = lazy(() => import('./Scene'));
+const Scene = lazy(() => import('../scene/Scene'));
 
 const MOBILE_MAX = 760;
 const PANEL_W = 460;

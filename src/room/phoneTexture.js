@@ -7,7 +7,7 @@
 // ícones saem na tela 3D iguais ao HTML, sem calibrar cor por cor.
 import * as THREE from 'three';
 
-import { channels, profile } from '../content';
+import { channels, profile } from '../content/content';
 import { APP_ART, APP_IDS, PHONE_WHITE, SQUIRCLE } from '../screens/AppIcons';
 import { phoneDate, phoneTime } from '../screens/phoneClock';
 

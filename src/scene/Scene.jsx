@@ -7,9 +7,9 @@ import { ToneMappingMode } from 'postprocessing';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-import Room from './Room';
-import { findScreen } from './screens/screens';
-import ScreenTracker from './screens/ScreenTracker';
+import Room from '../room/Room';
+import { findScreen } from '../screens/screens';
+import ScreenTracker from '../screens/ScreenTracker';
 
 // Posição da câmera e ponto para onde ela olha, por seção
 const SPOTS = {

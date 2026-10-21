@@ -11,7 +11,7 @@ import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
-import { chromeEnvTexture } from '../textures';
+import { chromeEnvTexture } from './textures';
 import { dayNight, lerp } from './shared';
 
 // ---------------------------------------------------------------------------------------------

@@ -1,10 +1,10 @@
 // As quatro seções do portfólio. São usadas no painel do modo 3D, nas telas do quarto e no modo 2D.
 import { useRef } from 'react';
 
-import { monthLabel, profile } from './content';
-import { IconArrow, IconLock, IconPin, IconPlay, IconUsers, sectionIcon } from './Icons';
-import { ContactApps } from './screens/AppIcons';
-import MailCompose from './screens/MailCompose';
+import { monthLabel, profile } from '../content/content';
+import { IconArrow, IconLock, IconPin, IconPlay, IconUsers, sectionIcon } from '../app/Icons';
+import { ContactApps } from '../screens/AppIcons';
+import MailCompose from '../screens/MailCompose';
 
 // Ícone + título da seção. O título recebe o foco quando a seção abre (headingRef).
 export function SectionHeader({ id, t, headingRef, headingId }) {

@@ -228,49 +228,21 @@ O deploy será feito na **Vercel** (plano gratuito), que detecta projetos Vite a
 
 ```
 .
-├── .env.example               # 🧩 Variáveis do EmailJS (sem valores).
-├── .gitignore                 # 🧹 Ignora node_modules, dist, .env etc.
-├── LICENSE                    # ⚖️ Licença MIT.
-├── README.md                  # 📘 Este arquivo.
-├── index.html                 # 🌐 Página base que o Vite usa (fontes e o <div id="root">).
-├── package.json               # 📦 Dependências e scripts (dev, build, preview).
-├── vite.config.js             # ⚙️ Configuração do Vite.
-│
-├── /public
-│   └── favicon.svg            # 🏷️ Ícone da aba do navegador.
-│
-├── /docs                      # 📚 Documentação
-│   ├── logo.svg               # 🏷️ Logo do projeto.
-│   ├── /prototipos            # 🖼️ Capturas do protótipo usadas neste README.
-│   └── /wireframes            # ✏️ Wireframes: .svg para importar no Figma e .png para o README.
-│
-├── /scripts
-│   ├── artifact-page.mjs      # 📜 Gera uma versão de página única do build (usada para compartilhar o protótipo).
-│   └── wireframes.mjs         # ✏️ Gera os wireframes em docs/wireframes.
-│
-└── /src                       # 📂 Código-fonte React
-    ├── main.jsx               # 🚪 Ponto de entrada: monta o <App />.
-    ├── App.jsx                # 🧠 Estado global, menu, painel das seções e modo sem 3D.
-    ├── Scene.jsx              # 🎥 Canvas 3D e câmera (pontos de vista de cada seção).
-    ├── Room.jsx               # 🛋️ Junta as partes do quarto.
-    ├── /room                  # 🧱 O quarto, dividido por área
-    │   ├── shared.jsx         #    Peças básicas, cores do quarto e o objeto clicável (Hotspot).
-    │   ├── Lights.jsx         #    Luzes de dia e de noite e os reflexos.
-    │   ├── Shell.jsx          #    Piso, paredes, rodapé de granito, janela com persiana, porta e pôster do CS.
-    │   ├── Desk.jsx           #    Painel, TV, mesa, gabinete, monitor, periféricos e cadeira.
-    │   ├── Niche.jsx          #    Nicho com luminária "&", JBL, robô, troféu, Stormtrooper, porta-retrato e pelúcias.
-    │   ├── Bed.jsx            #    Cama com cabeceira, criado-mudo, celular, pôsteres, tapete felpudo e bola de futevôlei.
-    │   ├── Floor.jsx          #    Mochila e tênis no chão.
-    │   ├── wallTextures.js    #    Texturas da parede, da porta, do granito e do nicho.
-    │   └── bedTextures.js     #    Texturas da cama, do criado-mudo e do tapete.
-    ├── /assets
-    │   └── foto.jpg           # 📷 Minha foto (Sobre mim e porta-retrato).
-    ├── textures.js            # 🎨 Texturas desenhadas em <canvas> (madeira, camuflado, porcelanato, pôsteres...).
-    ├── Sections.jsx           # 🧱 As quatro seções (usadas no painel e no modo sem 3D).
-    ├── Icons.jsx              # 💡 Ícones em SVG.
-    ├── content.js             # 🌎 Todo o texto e os dados do site, em português e inglês.
-    ├── email.js               # ✉️ Envio do formulário pelo EmailJS.
-    └── styles.css             # 🎨 Estilos globais e tokens de cor (dia e noite).
+├── /public                    # 🌐 Arquivos servidos como estão (favicon)
+├── /docs
+│   ├── /plano                 # 🗺️ Plano da versão profissional (fases, pipeline do Blender, luz, arte, telas)
+│   ├── /metricas              # 📏 Capturas e números de antes e depois
+│   ├── /historico             # 🗄️ Material da fase da faculdade (wireframes, protótipos, plano antigo)
+│   └── logo.svg
+├── /scripts                   # 🧪 Capturas (captura.mjs) e medição de desempenho (desempenho.mjs)
+└── /src
+    ├── main.jsx               # 🚪 Ponto de entrada
+    ├── /app                   # 🧠 App.jsx (estado global, menu, painel, modo sem 3D), ícones e estilos
+    ├── /scene                 # 🎥 Scene.jsx: Canvas 3D, câmera e efeitos (carregado sob demanda)
+    ├── /room                  # 🛋️ O quarto em código: Room.jsx, cada área num arquivo e texturas em canvas
+    ├── /screens               # 🖥️ Conteúdo dentro do monitor e do celular (camada HTML sobre a tela)
+    ├── /sections              # 📄 Sobre mim, Projetos, Experiências e Contato (formulário e EmailJS)
+    └── /content               # ✍️ Textos em PT/EN, dados dos projetos e a foto
 ```
 
 ---
@@ -279,31 +251,31 @@ O deploy será feito na **Vercel** (plano gratuito), que detecta projetos Vite a
 
 ### 🎨 Wireframes (Figma)
 
-Wireframes de média fidelidade, em tons de cinza, com anotações numeradas explicando cada interação. Os arquivos `.svg` em [`docs/wireframes/`](docs/wireframes) podem ser arrastados para o Figma, onde viram formas e textos editáveis. Eles são gerados pelo script [`scripts/wireframes.mjs`](scripts/wireframes.mjs).
+Wireframes de média fidelidade, em tons de cinza, com anotações numeradas explicando cada interação. Os arquivos `.svg` em [`docs/historico/wireframes/`](docs/historico/wireframes) podem ser arrastados para o Figma, onde viram formas e textos editáveis. Eles são gerados pelo script [`scripts/wireframes.mjs`](scripts/wireframes.mjs).
 
 | Visão geral (computador) | Seção Projetos aberta |
 | :---: | :---: |
-| <img src="docs/wireframes/01-computador-visao-geral.png" alt="Wireframe da visão geral do quarto no computador, com menu, ferramentas e etiquetas nos objetos" width="420px"> | <img src="docs/wireframes/02-computador-projetos.png" alt="Wireframe da câmera no monitor com o painel de Projetos e a linha do tempo" width="420px"> |
+| <img src="docs/historico/wireframes/01-computador-visao-geral.png" alt="Wireframe da visão geral do quarto no computador, com menu, ferramentas e etiquetas nos objetos" width="420px"> | <img src="docs/historico/wireframes/02-computador-projetos.png" alt="Wireframe da câmera no monitor com o painel de Projetos e a linha do tempo" width="420px"> |
 | **Seção Contato aberta** | **Modo sem 3D** |
-| <img src="docs/wireframes/03-computador-contato.png" alt="Wireframe do painel de Contato com os canais e o formulário" width="420px"> | <img src="docs/wireframes/06-computador-sem-3d.png" alt="Wireframe da versão em página comum, sem 3D" width="420px"> |
+| <img src="docs/historico/wireframes/03-computador-contato.png" alt="Wireframe do painel de Contato com os canais e o formulário" width="420px"> | <img src="docs/historico/wireframes/06-computador-sem-3d.png" alt="Wireframe da versão em página comum, sem 3D" width="420px"> |
 
 | Celular: visão geral | Celular: Sobre mim |
 | :---: | :---: |
-| <img src="docs/wireframes/04-celular-visao-geral.png" alt="Wireframe do quarto na tela do celular, com abas embaixo" height="420px"> | <img src="docs/wireframes/05-celular-sobre-mim.png" alt="Wireframe da folha de Sobre mim subindo de baixo, com o botão Português/English" height="420px"> |
+| <img src="docs/historico/wireframes/04-celular-visao-geral.png" alt="Wireframe do quarto na tela do celular, com abas embaixo" height="420px"> | <img src="docs/historico/wireframes/05-celular-sobre-mim.png" alt="Wireframe da folha de Sobre mim subindo de baixo, com o botão Português/English" height="420px"> |
 
 ### 💻 Protótipo do Front-end
 
 | Visão geral (dia) | Visão geral (noite) |
 | :---: | :---: |
-| <img src="docs/prototipos/desktop-visao-geral-dia.jpg" alt="Quarto 3D visto de cima, no modo dia, com etiquetas nos objetos clicáveis" width="420px"> | <img src="docs/prototipos/desktop-visao-geral-noite.jpg" alt="O mesmo quarto no modo noite, com a luminária e o RGB rosa do gabinete acesos" width="420px"> |
+| <img src="docs/historico/prototipos/desktop-visao-geral-dia.jpg" alt="Quarto 3D visto de cima, no modo dia, com etiquetas nos objetos clicáveis" width="420px"> | <img src="docs/historico/prototipos/desktop-visao-geral-noite.jpg" alt="O mesmo quarto no modo noite, com a luminária e o RGB rosa do gabinete acesos" width="420px"> |
 | **Projetos (dentro do monitor)** | **Contato (câmera no celular)** |
-| <img src="docs/prototipos/desktop-projetos.jpg" alt="Projetos aberto dentro da tela do monitor, com a linha do tempo e os botões Ler em 2D e Voltar ao quarto" width="420px"> | <img src="docs/prototipos/desktop-contato.jpg" alt="Câmera aproximada do celular com o painel de Contato e o formulário" width="420px"> |
+| <img src="docs/historico/prototipos/desktop-projetos.jpg" alt="Projetos aberto dentro da tela do monitor, com a linha do tempo e os botões Ler em 2D e Voltar ao quarto" width="420px"> | <img src="docs/historico/prototipos/desktop-contato.jpg" alt="Câmera aproximada do celular com o painel de Contato e o formulário" width="420px"> |
 | **Sobre mim (noite)** | **Modo sem 3D** |
-| <img src="docs/prototipos/desktop-sobre-noite.jpg" alt="Painel Sobre mim aberto no modo noite" width="420px"> | <img src="docs/prototipos/desktop-sem-3d.jpg" alt="Versão em página comum, sem 3D" width="420px"> |
+| <img src="docs/historico/prototipos/desktop-sobre-noite.jpg" alt="Painel Sobre mim aberto no modo noite" width="420px"> | <img src="docs/historico/prototipos/desktop-sem-3d.jpg" alt="Versão em página comum, sem 3D" width="420px"> |
 
 | Celular: visão geral | Celular: Experiências |
 | :---: | :---: |
-| <img src="docs/prototipos/celular-visao-geral.jpg" alt="Quarto 3D na tela do celular, com abas de navegação embaixo" height="420px"> | <img src="docs/prototipos/celular-experiencias.jpg" alt="Painel de Experiências subindo de baixo no celular" height="420px"> |
+| <img src="docs/historico/prototipos/celular-visao-geral.jpg" alt="Quarto 3D na tela do celular, com abas de navegação embaixo" height="420px"> | <img src="docs/historico/prototipos/celular-experiencias.jpg" alt="Painel de Experiências subindo de baixo no celular" height="420px"> |
 
 ---
 

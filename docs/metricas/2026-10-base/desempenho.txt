@@ -1,0 +1,2 @@
+computador {"readyMs":7856,"frame":{"calls":459,"triangles":492861,"shadowAutoUpdate":false},"meshes":422,"shadowCasters":309,"lights":8,"sceneTris":489381,"fps":172}
+celular-cpu4x {"readyMs":8318,"frame":{"calls":447,"triangles":392055,"shadowAutoUpdate":false},"meshes":416,"shadowCasters":309,"lights":8,"sceneTris":388581,"fps":37}

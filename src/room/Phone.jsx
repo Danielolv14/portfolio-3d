@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
-import { content } from '../content';
+import { content } from '../content/content';
 import { msToNextMinute } from '../screens/phoneClock';
 import { PHONE_SCREEN_DAY, phoneScreenTexture } from './phoneTexture';
 import { dayNight, Hotspot, lerp } from './shared';

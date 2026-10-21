@@ -1,8 +1,8 @@
 // Monitor = Projetos. Uma "janela" maximizada: barra de título, a seção com rolagem própria
 // e a barra de tarefas com as saídas. A textura do monitor em repouso (monitorScreenTexture,
 // em textures.js) desenha a mesma barra de título e as mesmas cores, para a troca não aparecer.
-import { IconClose, IconList } from '../Icons';
-import { Projects, SectionHeader } from '../Sections';
+import { IconClose, IconList } from '../app/Icons';
+import { Projects, SectionHeader } from '../sections/Sections';
 
 export default function MonitorScreen({ t, headingRef, onClose, onRead2d }) {
     const s = t.ui.screen;

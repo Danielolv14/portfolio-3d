@@ -2,9 +2,9 @@
 // "De:", e-mail e a mensagem separados por linhas finas e o botão redondo de enviar no topo.
 // É o mesmo no app E-mail do celular 3D (PhoneScreen) e no Contato do painel e do modo 2D.
 // A lógica (validação, envio, avisos) fica no hook useContactForm.
-import { profile } from '../content';
-import { IconArrow, IconArrowUp, IconCheck, IconCopy } from '../Icons';
-import { useContactForm } from '../useContactForm';
+import { profile } from '../content/content';
+import { IconArrow, IconArrowUp, IconCheck, IconCopy } from '../app/Icons';
+import { useContactForm } from '../sections/useContactForm';
 
 // O e-mail não cabe numa linha no celular: o <wbr> deixa a quebra cair antes do @
 // (e não no meio de uma palavra). Ele não entra no texto quando a pessoa copia.

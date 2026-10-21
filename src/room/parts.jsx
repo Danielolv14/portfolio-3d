@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { useMemo } from 'react';
 import * as THREE from 'three';
 
-import { chromeEnvTexture } from '../textures';
+import { chromeEnvTexture } from './textures';
 import { C, dayNight, lerp } from './shared';
 
 // Gira a textura 90° (para o veio ou o desenho seguir o comprimento da peça)

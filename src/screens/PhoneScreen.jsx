@@ -5,8 +5,8 @@
 // desenha a mesma tela inicial, com as mesmas medidas (phone.css, em cqw), para a troca não aparecer.
 import { useEffect, useRef, useState } from 'react';
 
-import { profile } from '../content';
-import { IconList } from '../Icons';
+import { profile } from '../content/content';
+import { IconList } from '../app/Icons';
 import { ContactApps } from './AppIcons';
 import MailCompose from './MailCompose';
 import { phoneDate, phoneTime, useNow } from './phoneClock';

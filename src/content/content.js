@@ -1,4 +1,4 @@
-import foto from './assets/foto.jpg';
+import foto from './foto.jpg';
 
 // Todo o texto e os dados do site.
 // O que muda com o idioma fica em `pt` / `en`; links, datas e tecnologias ficam uma vez só em cada item.

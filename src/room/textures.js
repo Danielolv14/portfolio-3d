@@ -2,7 +2,7 @@
 // As cores seguem as fotos do quarto do Daniel.
 import * as THREE from 'three';
 
-import { monthLabel } from './content';
+import { monthLabel } from '../content/content';
 
 function canvasTexture(width, height, draw, { repeat } = {}) {
     const canvas = document.createElement('canvas');

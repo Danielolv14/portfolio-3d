@@ -93,7 +93,7 @@ Hoje existe a tela inicial com relógio, um cartão com foto, os 4 ícones e o a
 
 **Detalhes do iOS 26 que fazem diferença:** Dynamic Island com animação quando o e-mail é enviado; a barra de início em baixo; vibração simulada (leve tremida) no envio; ícones com o brilho de vidro.
 
-**Decisão a rever:** em 07/10 ficou "sem dock". Um iPhone de verdade tem dock (pergunta P9).
+**Dock (P9, 21/10):** o celular tem dock com 4 apps (Contatos, E-mail, Fotos, Música), como um iPhone de verdade. Isso substitui o "sem dock" de 07/10.
 
 **Continua valendo:** nenhum recurso da Apple (sem SF Pro, papéis de parede, ícones ou sons oficiais).
 

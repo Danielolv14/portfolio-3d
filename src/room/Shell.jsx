@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
-import { posterTexture, tilesTexture } from '../textures';
+import { posterTexture, tilesTexture } from './textures';
 import { Box, C, Cyl, dayNight, Rounded, WALL_H } from './shared';
 import { doorWoodTexture, graniteTexture } from './wallTextures';
 

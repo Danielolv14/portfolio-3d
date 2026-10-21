@@ -15,7 +15,7 @@ import {
     oakTexture,
     tvScreenTexture,
     walnutTexture
-} from '../textures';
+} from './textures';
 import { Chair } from './Chair';
 import { Keyboard } from './Keyboard';
 import { Mouse } from './Mouse';

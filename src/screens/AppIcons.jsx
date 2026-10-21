@@ -5,7 +5,7 @@
 // desenhar exatamente o mesmo no canvas, com new Path2D(d).
 import { useId } from 'react';
 
-import { channels } from '../content';
+import { channels } from '../content/content';
 
 // Contorno dos ícones: uma superelipse (|x|^5 + |y|^5 = 1). É o "canto contínuo" do iOS: a curva
 // começa devagar, sem o degrau que um border-radius comum deixa entre a reta e o arco.

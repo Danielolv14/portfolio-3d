@@ -19,7 +19,7 @@ Começou em 21/10/2026. Não tem datas: cada fase termina quando cumpre os crit�
 | [08-telas.md](08-telas.md) | Monitor no estilo GitHub, TV no estilo LinkedIn e celular no estilo iPhone, com navegação dentro de cada um |
 | [09-estante-sobre-mim.md](09-estante-sobre-mim.md) | A estante como o "Sobre mim": objetos que contam quem o Daniel é |
 
-O porquê de tudo isso está no [estudo visual do Room_Portfolio](../planejamento/estudo-visual-room-portfolio.md).
+O porquê de tudo isso está no [estudo visual do Room_Portfolio](estudo-visual-referencia.md).
 
 ---
 
@@ -67,6 +67,7 @@ Os números de hoje são medidos de novo na Fase 0, porque viram a linha de base
 | D7 | **Cada tela é um aparelho imersivo com identidade própria:** monitor = GitHub, TV = LinkedIn, celular = iPhone 17/iOS 26. Sai o roxo genérico | 21/10 |
 | D8 | **A estante vira o "Sobre mim"** com objetos que representam o Daniel | 21/10 |
 | D9 | **A vista da janela vira paisagem viva** em camadas com paralaxe | 21/10 |
+| D11 | **Respostas P1–P6, P9, P12, P13:** Blender 4.5 LTS; orgânicos podem ser feitos à mão em `art/`; repositório em inglês com tradução PT; arte em CC BY 4.0; domínio próprio no lançamento; dia = fim de tarde; celular com dock; vista = BH estilizada; dados reais do GitHub no build | 21/10 |
 | D10 | **Modelagem detalhada no Blender** (por script, e à mão só onde o script não alcança) para acabar com o visual genérico. O código continua dono do layout | 21/10 |
 | D6 | Continuam valendo: conteúdo das telas como camada HTML, monitor = Projetos, TV = Experiências, celular = Contato, porta-retrato = Sobre mim, luminária "&" = dia/noite, modo sem 3D, sem WhatsApp, MinhaReceita sem link, `referencias/` privada | antes |
 
@@ -132,20 +133,22 @@ As Fases 2 e 3 podem andar em paralelo depois da 1b, porque mexem em partes dife
 | Modelagem orgânica (pelúcias, tênis) difícil por script | Médio | Tecidos por simulação em script; o resto decidido na pergunta P2 |
 | O escopo crescer sem fim | Alto | Cada fase com critérios de pronto; ideias novas entram pela [lista de ideias](07-ideias.md) e são encaixadas numa fase |
 
-## 7. Perguntas em aberto (decisões do Daniel)
+## 7. Perguntas (decisões do Daniel)
+
+**Respostas de 21/10:** P1–P6, P9, P12 e P13 aceitas como recomendado (✅). P8, P10 e P11 o Daniel manda depois (⏳).
 
 | # | Pergunta | Recomendação |
 |---|---|---|
-| P1 | Blender 4.5 LTS ou 5.2? | **4.5 LTS**: o pipeline é um script, e a API do LTS não muda até 2027 |
-| P2 | Objetos orgânicos (pelúcias, tênis, mochila, robô) podem ser modelados à mão no Blender, num `.blend` versionado em `art/`? | **Sim, só para esses**. Tecidos (edredom, travesseiros) saem por simulação em script |
-| P3 | O repositório fica em inglês com tradução em português, ou o contrário? | **Inglês principal** (`README.md`) e `README.pt-BR.md`, para alcance internacional |
-| P4 | Licença dos arquivos 3D e texturas assadas | Código MIT; **arte em CC BY 4.0** (podem usar com crédito) |
-| P5 | Domínio próprio (ex.: `danieloliveira.dev`, cerca de US$ 12/ano)? | Sim, no lançamento |
-| P6 | Clima do "dia": meio-dia claro ou fim de tarde dourado? | **Fim de tarde**: luz baixa e quente pela janela, o que dá mais contraste e beleza |
+| P1 ✅ | Blender 4.5 LTS ou 5.2? | **4.5 LTS**: o pipeline é um script, e a API do LTS não muda até 2027 |
+| P2 ✅ | Objetos orgânicos (pelúcias, tênis, mochila, robô) podem ser modelados à mão no Blender, num `.blend` versionado em `art/`? | **Sim, só para esses**. Tecidos (edredom, travesseiros) saem por simulação em script |
+| P3 ✅ | O repositório fica em inglês com tradução em português, ou o contrário? | **Inglês principal** (`README.md`) e `README.pt-BR.md`, para alcance internacional |
+| P4 ✅ | Licença dos arquivos 3D e texturas assadas | Código MIT; **arte em CC BY 4.0** (podem usar com crédito) |
+| P5 ✅ | Domínio próprio (ex.: `danieloliveira.dev`, cerca de US$ 12/ano)? | Sim, no lançamento |
+| P6 ✅ | Clima do "dia": meio-dia claro ou fim de tarde dourado? | **Fim de tarde**: luz baixa e quente pela janela, o que dá mais contraste e beleza |
 | P7 | ~~Quais são as ideias novas?~~ | Respondida em 21/10: telas imersivas, estante, janela, modelagem ([07](07-ideias.md)) |
-| P8 | Lista de gostos para a estante (séries, filmes, jogos, esportes e time, música e DJ, hobbies, valores, conquistas), com uma frase por item | Mandar antes do ciclo 3 da Fase 2 ([09](09-estante-sobre-mim.md#4-o-que-o-daniel-precisa-mandar-pergunta-p8)) |
-| P9 | O celular passa a ter dock, como um iPhone de verdade? (em 07/10 ficou "sem dock") | **Sim**, com 4 apps: Telefone→Contatos, E-mail, Fotos, Música |
-| P10 | Fotos para o app Fotos do celular | 6–12 fotos que o Daniel aprove publicar |
-| P11 | Certificados, cursos e formação para a TV (LinkedIn) | Mandar o que tiver; senão, só Formação e Experiência |
-| P12 | A vista da janela: horizonte de BH com a Serra do Curral estilizada, ou parecida com a vista real da janela? | **BH estilizada** (personalidade sem expor onde ele mora) |
-| P13 | Buscar os dados reais do GitHub no build (precisa de um token na Vercel para o gráfico de contribuições)? | **Sim** |
+| P8 ⏳ | Lista de gostos para a estante (séries, filmes, jogos, esportes e time, música e DJ, hobbies, valores, conquistas), com uma frase por item | Mandar antes do ciclo 3 da Fase 2 ([09](09-estante-sobre-mim.md#4-o-que-o-daniel-precisa-mandar-pergunta-p8)) |
+| P9 ✅ | O celular passa a ter dock, como um iPhone de verdade? (em 07/10 ficou "sem dock") | **Sim**, com 4 apps: Telefone→Contatos, E-mail, Fotos, Música |
+| P10 ⏳ | Fotos para o app Fotos do celular | 6–12 fotos que o Daniel aprove publicar |
+| P11 ⏳ | Certificados, cursos e formação para a TV (LinkedIn) | Mandar o que tiver; senão, só Formação e Experiência |
+| P12 ✅ | A vista da janela: horizonte de BH com a Serra do Curral estilizada, ou parecida com a vista real da janela? | **BH estilizada** (personalidade sem expor onde ele mora) |
+| P13 ✅ | Buscar os dados reais do GitHub no build (precisa de um token na Vercel para o gráfico de contribuições)? | **Sim** |

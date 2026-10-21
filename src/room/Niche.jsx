@@ -8,8 +8,8 @@ import fontJson from 'three/examples/fonts/helvetiker_bold.typeface.json';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 
-import foto from '../assets/foto.jpg';
-import { camoTexture } from '../textures';
+import foto from '../content/foto.jpg';
+import { camoTexture } from './textures';
 import { Box, C, Cyl, dayNight, Hotspot, lerp, Rounded } from './shared';
 import { stripesTexture, trooperFaceTexture, trophyPrintTexture } from './wallTextures';
 

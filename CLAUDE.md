@@ -51,11 +51,11 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 
 ## Arquitetura
 
-- **`src/App.jsx`:** guarda o estado global: `lang`, `night`, `focus` (seção aberta), `flat` (modo sem 3D), `mobile` (largura < 760) e `parked` (a câmera parou na tela).
+- **`src/app/App.jsx`:** guarda o estado global: `lang`, `night`, `focus` (seção aberta), `flat` (modo sem 3D), `mobile` (largura < 760) e `parked` (a câmera parou na tela).
   - Menu no topo no computador e abas embaixo no celular.
   - Seções abrem num painel lateral (computador) ou numa folha de baixo (celular).
   - Tema e idioma ficam salvos no `localStorage` (`portfolio-theme`, `portfolio-lang`). Um script inline no `index.html` aplica o tema antes da primeira pintura.
-- **`src/Scene.jsx`:**
+- **`src/scene/Scene.jsx`:**
   - `Canvas` com `shadows="soft"`, `dpr` menor no celular e `<BakeShadows/>`.
   - `CameraRig`: um ponto de vista por seção em `SPOTS`, com `setFocalOffset` para o objeto não ficar atrás do painel. No **modo tela**, posiciona a câmera de frente para a malha `screen-<seção>` e avisa `onParked` quando para.
   - `Effects`: N8AO só no computador, Bloom com `luminanceThreshold` 1 (só o que passa de 1 brilha) e ToneMapping ACES.
@@ -67,17 +67,17 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   - `MonitorScreen`: Projetos dentro do monitor.
   - `PhoneScreen` (tela inicial), `MailCompose` (app E-mail), `AppIcons` (ícones dos apps, também usados no painel), `phoneClock.js` (hora e data) e `phone.css`: Contato dentro do celular (decisão 7). As saídas "Voltar ao quarto" e "Ler em 2D" ficam fora da tela, ao lado do celular.
   - O monitor e o celular já têm tela. A TV (Experiências) ainda abre no painel: é a etapa E7.
-- **`src/Sections.jsx`:**
+- **`src/sections/Sections.jsx`:**
   - `About`;
   - `Projects`: linha do tempo ordenada por data, vários links, selos "em equipe" e "repositório privado";
   - `Experience`: com `highlights`;
   - `Contact`: no painel, na folha e no modo 2D, com o mesmo visual do celular: os ícones dos apps em linha e o formulário estilo Mail.
-- **`src/useContactForm.js`:** a lógica do formulário, usada no painel e no app E-mail do celular: validação, campo-isca anti-robô, EmailJS, estados do envio e o rascunho do celular guardado em memória.
-- **`src/content.js`:** todo o texto em PT e EN.
+- **`src/sections/useContactForm.js`:** a lógica do formulário, usada no painel e no app E-mail do celular: validação, campo-isca anti-robô, EmailJS, estados do envio e o rascunho do celular guardado em memória.
+- **`src/content/content.js`:** todo o texto em PT e EN.
   - `PROJECTS` e `EXPERIENCES` guardam os dados uma vez só e passam por `localize`.
-  - `profile` usa a foto `src/assets/foto.jpg`.
+  - `profile` usa a foto `src/content/foto.jpg`.
   - `channels`: e-mail, LinkedIn, GitHub e Instagram.
-- **`src/styles.css`:** tokens de cor com as cores do quarto. De dia, madeira e bege; à noite, o rosa do RGB (`--accent: #ff6ad9`). `@property --bg` faz o fundo trocar junto com o 3D.
+- **`src/app/styles.css`:** tokens de cor com as cores do quarto. De dia, madeira e bege; à noite, o rosa do RGB (`--accent: #ff6ad9`). `@property --bg` faz o fundo trocar junto com o 3D.
 - **`src/room/`, o quarto:**
   - **`shared.jsx`:** `Box`, `Rounded`, `Cyl`, `Hotspot` (objeto clicável com etiqueta `<button>` e prop `active`), cores `C`, `dayNight.mix` (0 = dia, 1 = noite, animado com `damp`), `lerp`, `WALL_H` e `MONITOR_POS`.
   - **`parts.jsx`:** formas e peças reutilizáveis (contornos, cabo, cromado, caixa com textura numa face).
@@ -101,7 +101,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
     - criado-mudo com luminária de cobre;
     - pôsteres minimalistas de filmes, tapete felpudo em camadas, bola de futevôlei.
   - **`Floor.jsx`:** mochila e tênis.
-  - **Texturas:** `wallTextures.js` e `bedTextures.js`, mais o `src/textures.js` geral. Todas são desenhadas em canvas.
+  - **Texturas:** `wallTextures.js` e `bedTextures.js`, mais o `src/room/textures.js` geral. Todas são desenhadas em canvas.
 - **Objetos clicáveis (`Hotspot` id):**
   - `projects`: monitor
   - `experience`: TV
@@ -140,13 +140,14 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 7. **Celular (Contato), decidido em 07/10:**
    - o celular é um iPhone 17 preto com a interface inspirada no iOS 26, sem nenhum recurso da Apple;
    - ele fica deitado na cama, e a câmera para olhando de cima;
-   - a tela inicial tem relógio, um cartão com a foto, os ícones de LinkedIn, GitHub, Instagram e E-mail, e não tem dock;
+   - a tela inicial tem relógio, um cartão com a foto, os ícones de LinkedIn, GitHub, Instagram e E-mail; **desde 21/10 tem dock**, como um iPhone de verdade (ver `docs/plano/08-telas.md`);
    - o app E-mail é o formulário, no estilo do Mail;
    - no celular de verdade, a folha de baixo usa o mesmo visual.
-   - A especificação completa está na seção 4 de `docs/planejamento/prompt-continuacao-nuvem.md`.
+   - A especificação completa está na seção 4 de `docs/historico/prompt-continuacao-nuvem.md`.
 8. **Telas com identidade própria (decidido em 21/10):** cada tela é um aparelho imersivo, navegável por dentro. O monitor (Projetos) é inspirado no GitHub, a TV (Experiências) no LinkedIn e o celular (Contato e mais apps) no iPhone 17/iOS 26. Sai o roxo genérico. É só inspiração: sem logos como marca da interface e só com ícones e fontes de licença livre. Ver [`docs/plano/08-telas.md`](docs/plano/08-telas.md).
 9. **A estante é o "Sobre mim" (21/10):** objetos que representam o Daniel, cada um com uma frase; modelados por nós, sem logos nem arte oficial. Ver [`docs/plano/09-estante-sobre-mim.md`](docs/plano/09-estante-sobre-mim.md).
-10. **Modelagem detalhada no Blender (21/10):** por script Python no pipeline, e à mão só onde o script não alcança. O código continua dono do layout.
+10. **Respostas de 21/10:** Blender 4.5 LTS fixado; objetos orgânicos podem ser modelados à mão em `art/*.blend`; repositório em inglês com tradução PT; arte (GLB e texturas) em CC BY 4.0, código MIT; domínio próprio no lançamento; o "dia" é fim de tarde dourado; a vista da janela é BH estilizada (Serra do Curral); dados reais do GitHub buscados no build (token na Vercel).
+11. **Modelagem detalhada no Blender (21/10):** por script Python no pipeline, e à mão só onde o script não alcança. O código continua dono do layout.
 
 ## Como verificar
 
@@ -165,14 +166,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   npm i --no-save playwright@1.56.1
   ```
   Não rode `npx playwright install` nem `npm install` depois disso, porque eles apagam essa instalação. Os scripts usam WebGL por software (SwiftShader): cada quadro leva segundos, o FPS medido não vale e os draw calls valem. Na nuvem, um servidor em segundo plano é encerrado depois de 2 horas, então suba o Vite junto com cada teste.
-- **Wireframes:**
-  ```bash
-  node scripts/wireframes.mjs
-  ```
-  Gera os SVG em `docs/wireframes/`, que dá para colar ou arrastar no Figma. Depois, para gerar os PNG do README:
-  ```bash
-  node scripts/wireframes-png.mjs
-  ```
+- **Wireframes e protótipos da faculdade:** ficaram em `docs/historico/` (não são mais mantidos).
 - **Ângulos úteis** para `__view` e `captura.mjs`:
   - mesa: `-0.5,4.5,-1.2` → `-4.35,2.45,-2.85`
   - gabinete: `-1.2,3.0,0.8` → `-3.95,2.4,-1.0`
@@ -204,5 +198,5 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 ## Plano
 
 - **Plano atual:** [`docs/plano/`](docs/plano/README.md), com as fases, o pipeline do Blender, a iluminação, a arte, a experiência e o lançamento.
-- **Estudo visual da referência:** [`docs/planejamento/estudo-visual-room-portfolio.md`](docs/planejamento/estudo-visual-room-portfolio.md).
-- **Histórico (fase da faculdade):** [`docs/planejamento/plano-room-portfolio.md`](docs/planejamento/plano-room-portfolio.md), com o estudo de interação e as etapas E1 a E13. As datas de lá não valem mais.
+- **Estudo visual da referência:** [`docs/plano/estudo-visual-referencia.md`](docs/plano/estudo-visual-referencia.md).
+- **Histórico (fase da faculdade):** [`docs/historico/plano-room-portfolio.md`](docs/historico/plano-room-portfolio.md), com o estudo de interação e as etapas E1 a E13. As datas de lá não valem mais.

@@ -5,7 +5,7 @@ import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
-import { ballTexture } from '../textures';
+import { ballTexture } from './textures';
 import {
     creatineTexture,
     cushionTexture,
