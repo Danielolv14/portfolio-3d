@@ -12,3 +12,7 @@ Quarto inteiro assado no Blender (6 atlas), visto em `?render=poc`, com o quarto
 | Tempo de bake | — | 9 min 52 s (final) |
 
 As capturas `01`–`03` estão nesta pasta. O equilíbrio da luz (força e cor) ainda é o primeiro rascunho; o ajuste fino é o ciclo 1 da Fase 2.
+
+## Texturas originais + só a luz assada (21/10)
+
+Os objetos estavam embaçados porque a cor também era assada num atlas dividido por dezenas de objetos. Agora cada objeto usa a própria textura (nítida) e o bake guarda só a luz. **94 draw calls** (antes 38; no começo 459), **118 FPS no celular simulado**, 6,7 MB no total. Capturas 06 e 07.
