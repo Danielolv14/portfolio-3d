@@ -62,19 +62,11 @@ def main():
 
     manifesto = {"versao": time.strftime("%Y%m%d-%H%M%S"), "preview": preview, "grupos": {}}
     margem = max(4, int(config["margemPx"] * escala))
-    imagens_albedo = {}
 
-    # Albedo: a cor pura, sem luz (não depende do rig)
-    t = time.time()
+    # A cor não é mais assada: o site usa os materiais e as texturas originais, que vão no GLB,
+    # nítidos. O bake guarda só a luz (docs/plano/resultados-poc.md, "embaçado")
     for nome, lista in grupos.items():
-        tam = int(config["grupos"][nome]["albedo"] * escala)
-        img = assar._imagem(f"albedo_{nome}", tam, True)
-        assar.assar(lista, img, "albedo", config["amostras"]["albedo"], margem)
-        imagens_albedo[nome] = img
-        arquivo = assar.salvar_albedo(img, f"albedo_{nome}")
-        manifesto["grupos"][nome] = {"albedo": os.path.basename(arquivo), "objetos": [o.name for o in lista]}
-        log(f"albedo {nome}: {tam}px")
-    tempos["albedo"] = time.time() - t
+        manifesto["grupos"][nome] = {"objetos": [o.name for o in lista]}
 
     # Luz: um bake por rig e por grupo, com denoise e codificação em 8 bits
     for rig in ("dia", "noite"):

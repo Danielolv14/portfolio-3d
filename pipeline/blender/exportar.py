@@ -8,19 +8,107 @@ import bpy
 from comum import SAIDA, do_site, log, selecionar
 
 
+def _chave_material(m):
+    """O que importa no site (que não calcula luz): a cor base e as texturas ligadas a ela.
+    Dois materiais com a mesma chave são iguais no site, mesmo sendo diferentes no código."""
+    if not m or not m.use_nodes:
+        return ("vazio",)
+    bsdf = m.node_tree.nodes.get("Principled BSDF")
+    if not bsdf:
+        return ("outro", m.name)
+    base = bsdf.inputs["Base Color"]
+    if not base.is_linked:
+        return ("cor", tuple(round(c, 3) for c in base.default_value))
+    partes = []
+    pilha = [base.links[0].from_node]
+    vistos = set()
+    while pilha:
+        no = pilha.pop()
+        if no.name in vistos:
+            continue
+        vistos.add(no.name)
+        if no.bl_idname == "ShaderNodeTexImage":
+            partes.append(("img", no.image.name if no.image else ""))
+        for entrada in no.inputs:
+            if entrada.is_linked:
+                pilha.extend(l.from_node for l in entrada.links)
+            elif hasattr(entrada, "default_value"):
+                v = entrada.default_value
+                v = tuple(round(x, 4) for x in v) if hasattr(v, "__len__") else round(v, 4) if isinstance(v, float) else v
+                partes.append((no.bl_idname, entrada.identifier, v))
+    return ("tex", tuple(sorted(partes, key=str)))
+
+
+def _material_liso():
+    """Material único para as superfícies só de cor: a cor vai em cada vértice (atributo cor_base)."""
+    m = bpy.data.materials.get("liso")
+    if m:
+        return m
+    m = bpy.data.materials.new("liso")
+    m.use_nodes = True
+    nos = m.node_tree.nodes
+    cor = nos.new("ShaderNodeVertexColor")
+    cor.layer_name = "cor_base"
+    m.node_tree.links.new(cor.outputs["Color"], nos["Principled BSDF"].inputs["Base Color"])
+    return m
+
+
+def simplificar_materiais(obj):
+    """Menos materiais = menos draw calls no site. (1) Materiais iguais viram um só. (2) As faces só
+    de cor (sem textura) passam a usar o material `liso`, com a cor guardada nos vértices.
+    Objetos que já têm cor por vértice (celular, cadeira) só passam pelo passo 1."""
+    malha = obj.data
+    tem_cor = len(malha.color_attributes) > 0
+    chaves = [_chave_material(s.material) for s in obj.material_slots]
+    cor_de = {}
+    if not tem_cor:
+        attr = malha.color_attributes.new("cor_base", "FLOAT_COLOR", "CORNER")
+        # Branco nas faces com textura: o three multiplica pela cor do vértice em toda a malha
+        for item in attr.data:
+            item.color = (1.0, 1.0, 1.0, 1.0)
+        for poly in malha.polygons:
+            if poly.material_index < len(chaves):
+                k = chaves[poly.material_index]
+                if k[0] == "cor":
+                    for li in poly.loop_indices:
+                        attr.data[li].color = k[1]
+                    cor_de[poly.index] = True
+        malha.color_attributes.active_color = attr
+        malha.color_attributes.render_color_index = malha.color_attributes.find("cor_base")
+    # Slots finais: um por chave de textura, mais o `liso`
+    novos = []
+    indice_de = {}
+    for i, k in enumerate(chaves):
+        alvo = ("liso",) if (k[0] == "cor" and not tem_cor) else k
+        if alvo not in indice_de:
+            indice_de[alvo] = len(novos)
+            novos.append(_material_liso() if alvo == ("liso",) else obj.material_slots[i].material)
+        chaves[i] = indice_de[alvo]
+    indices = [chaves[p.material_index] if p.material_index < len(chaves) else 0 for p in malha.polygons]
+    malha.materials.clear()
+    for m in novos:
+        malha.materials.append(m)
+    for p, i in zip(malha.polygons, indices):
+        p.material_index = i
+    return len(novos)
+
+
 def exportar_glb(objs, caminho):
     copias = []
     for o in objs:
         c = o.copy()
         c.data = o.data.copy()
         bpy.context.scene.collection.objects.link(c)
-        c.name = o.name  # o nome (grupo__unidade) vai para o GLB
-        o.name = o.name + "_orig"
-        uvs = c.data.uv_layers
-        for uv in [u for u in uvs if u.name != "bake"]:
-            uvs.remove(uv)
-        # Sem material: no site, cada grupo ganha o material assado (1 primitiva por malha)
-        c.data.materials.clear()
+        # O nome (grupo__unidade) vai para o GLB: o original sai do caminho antes, senão a cópia
+        # ganharia o sufixo ".001" e o site não acharia o objeto clicável pelo nome
+        nome = o.name
+        o.name = nome + "_orig"
+        c.name = nome
+        # Mantém os materiais e as texturas originais (nítidas) e os dois UVs:
+        # TEXCOORD_0 = UV das texturas (UVMap), TEXCOORD_1 = UV do atlas de luz (bake)
+        antes = len(c.material_slots)
+        depois = simplificar_materiais(c)
+        log(f"materiais de {c.name}: {antes} -> {depois}")
         copias.append(c)
     selecionar(copias)
     bpy.ops.export_scene.gltf(
@@ -29,7 +117,9 @@ def exportar_glb(objs, caminho):
         use_selection=True,
         export_texcoords=True,
         export_normals=False,
-        export_materials="NONE",
+        export_materials="EXPORT",
+        export_image_format="WEBP",
+        export_image_quality=90,
         export_extras=True,
         export_apply=True,
         export_yup=True,

@@ -7,7 +7,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 import { dayNight } from '../room/shared';
-import { createBakedMaterial } from './BakedMaterial';
+import { createBakedMaterial, createSharedUniforms } from './BakedMaterial';
 
 const BASE = '/room/';
 const { smoothstep, lerp } = THREE.MathUtils;
@@ -16,61 +16,61 @@ const { smoothstep, lerp } = THREE.MathUtils;
 const fileFor = (name, compact) => BASE + (compact ? name.replace(/\.webp$/, '-mobile.webp') : name);
 
 function BakedScene({ manifest, night, compact }) {
-    // Geometria comprimida com Draco; o decodificador fica em public/draco (nada vem de CDN)
+    // Geometria comprimida com Draco; o decodificador fica em public/draco (nada vem de CDN).
+    // O GLB traz os materiais e as texturas originais; as texturas de luz vêm à parte
     const { scene } = useGLTF(BASE + manifest.glb, '/draco/');
     const groups = Object.entries(manifest.grupos);
-    // Todas as texturas de uma vez (o useTexture espera a lista inteira carregar)
-    const files = groups.flatMap(([, g]) => [g.albedo, g.luz_dia, g.luz_noite, g.leds].map((f) => fileFor(f, compact)));
+    // Todas as texturas de luz de uma vez (o useTexture espera a lista inteira carregar)
+    const files = groups.flatMap(([, g]) => [g.luz_dia, g.luz_noite, g.leds].map((f) => fileFor(f, compact)));
     const textures = useTexture(files);
 
-    const materials = useMemo(() => {
+    const shared = useMemo(() => createSharedUniforms(manifest.leds.map((l) => l.cor)), [manifest]);
+    const lightByGroup = useMemo(() => {
         const byGroup = {};
-        const ledColors = manifest.leds.map((l) => l.cor);
         groups.forEach(([name, g], i) => {
-            const [albedo, lightDay, lightNight, ledMask] = textures.slice(i * 4, i * 4 + 4);
-            // Padrão do glTF: UV sem inverter. O albedo está em sRGB; a luz já vem codificada à mão
-            [albedo, lightDay, lightNight, ledMask].forEach((tex) => {
+            const [lightDay, lightNight, ledMask] = textures.slice(i * 3, i * 3 + 3);
+            // Padrão do glTF: UV sem inverter. A luz vem codificada à mão (sem conversão de cor)
+            // e é lida no 2º UV, o do atlas (channel 1)
+            [lightDay, lightNight, ledMask].forEach((tex) => {
                 tex.flipY = false;
-                tex.anisotropy = compact ? 4 : 8;
+                tex.channel = 1;
                 tex.colorSpace = THREE.NoColorSpace;
                 tex.needsUpdate = true;
             });
-            albedo.colorSpace = THREE.SRGBColorSpace;
-            byGroup[name] = createBakedMaterial({
-                albedo,
-                lightDay,
-                lightNight,
-                ledMask,
-                scaleDay: g.escala_dia,
-                scaleNight: g.escala_noite,
-                scaleLeds: g.escala_leds,
-                ledColors
-            });
+            byGroup[name] = { lightDay, lightNight, ledMask, scaleDay: g.escala_dia, scaleNight: g.escala_noite, scaleLeds: g.escala_leds };
         });
         return byGroup;
         // as texturas e o manifesto não mudam durante a vida do componente
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [textures]);
 
+    // Cada malha troca o material do GLB por um com a mesma cor e textura, mais a luz assada.
+    // O grupo de atlas vem do nome do objeto no Blender: <grupo>__<unidade> (ex.: furniture__fixo);
+    // com vários materiais, o three cria uma malha por material dentro de um grupo com esse nome
     useEffect(() => {
+        const cache = new Map();
         scene.traverse((o) => {
             if (!o.isMesh) return;
-            // Nome do objeto no Blender: <grupo>__<unidade>, ex.: furniture__fixo
-            const group = o.name.split('__')[0];
-            if (materials[group]) o.material = materials[group];
+            let named = o;
+            while (named && !named.name.includes('__')) named = named.parent;
+            const group = lightByGroup[named?.name.split('__')[0]];
+            if (!group) return;
+            const key = `${o.material.uuid}:${named.name.split('__')[0]}`;
+            if (!cache.has(key)) cache.set(key, createBakedMaterial(o.material, group, shared));
+            o.material = cache.get(key);
         });
-    }, [scene, materials]);
+    }, [scene, lightByGroup, shared]);
 
     // Partes que se mexem: o objeto clicável (cresce no hover) e a cadeira (sai do caminho da câmera)
-    // são animados no quarto em código, invisível. A malha assada copia o movimento:
+    // são animados no quarto em código, invisível. O objeto assado copia o movimento:
     // matriz = (posição atual do objeto do código) × (posição dele no momento do bake)⁻¹
     const world = useThree((state) => state.scene);
     const followers = useRef([]);
     useEffect(() => {
         const list = [];
-        scene.traverse((mesh) => {
-            const match = mesh.isMesh && mesh.name.split('__')[1]?.match(/^(hotspot|dyn)-(.+)$/);
-            if (!match) return;
+        scene.traverse((obj) => {
+            const match = obj.name.split('__')[1]?.match(/^(hotspot|dyn)-(.+)$/);
+            if (!match || obj.parent?.name.includes('__')) return;
             let target = null;
             world.traverse((n) => {
                 const bake = n.userData?.bake;
@@ -78,8 +78,8 @@ function BakedScene({ manifest, night, compact }) {
             });
             if (!target) return;
             target.updateWorldMatrix(true, false);
-            mesh.matrixAutoUpdate = false;
-            list.push({ mesh, target, rest: target.matrixWorld.clone().invert() });
+            obj.matrixAutoUpdate = false;
+            list.push({ mesh: obj, target, rest: target.matrixWorld.clone().invert() });
         });
         followers.current = list;
     }, [scene, world]);
@@ -101,11 +101,9 @@ function BakedScene({ manifest, night, compact }) {
         const power = [smoothstep(m, 0.35, 0.85), smoothstep(m, 0.55, 1), lerp(0.08, 1, smoothstep(m, 0.7, 1))];
         // Exposição em stops, como no Blender: 2^exposição, misturada entre dia e noite
         const gain = Math.pow(2, lerp(exposure.dia, exposure.noite, m));
-        Object.values(materials).forEach((mat) => {
-            mat.uniforms.uNight.value = m;
-            mat.uniforms.uExposure.value = gain;
-            mat.uniforms.ledPower.value.set(...power);
-        });
+        shared.uNight.value = m;
+        shared.uExposure.value = gain;
+        shared.ledPower.value.set(...power);
         for (const f of followers.current) {
             f.mesh.matrix.multiplyMatrices(f.target.matrixWorld, f.rest);
             f.mesh.matrixWorldNeedsUpdate = true;
