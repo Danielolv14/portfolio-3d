@@ -16,6 +16,8 @@ Começou em 21/10/2026. Não tem datas: cada fase termina quando cumpre os crit�
 | [05-experiencia.md](05-experiencia.md) | Fase 3: abertura, interações, sons, navegação e desempenho |
 | [06-vitrine-e-lancamento.md](06-vitrine-e-lancamento.md) | Fase 4: README, estudo de caso, SEO, domínio e lançamento no LinkedIn |
 | [07-ideias.md](07-ideias.md) | Ideias do Daniel e ideias extras, com o lugar de cada uma no plano |
+| [08-telas.md](08-telas.md) | Monitor no estilo GitHub, TV no estilo LinkedIn e celular no estilo iPhone, com navegação dentro de cada um |
+| [09-estante-sobre-mim.md](09-estante-sobre-mim.md) | A estante como o "Sobre mim": objetos que contam quem o Daniel é |
 
 O porquê de tudo isso está no [estudo visual do Room_Portfolio](../planejamento/estudo-visual-room-portfolio.md).
 
@@ -62,6 +64,10 @@ Os números de hoje são medidos de novo na Fase 0, porque viram a linha de base
 | D3 | Replicar = **vitrine + estudo de caso**, não um template genérico | 21/10 |
 | D4 | O site oficial é o projeto Vercel `portfolio-3d-wyhb` | 21/10 |
 | D5 | EmailJS só no lançamento no LinkedIn | 21/10 |
+| D7 | **Cada tela é um aparelho imersivo com identidade própria:** monitor = GitHub, TV = LinkedIn, celular = iPhone 17/iOS 26. Sai o roxo genérico | 21/10 |
+| D8 | **A estante vira o "Sobre mim"** com objetos que representam o Daniel | 21/10 |
+| D9 | **A vista da janela vira paisagem viva** em camadas com paralaxe | 21/10 |
+| D10 | **Modelagem detalhada no Blender** (por script, e à mão só onde o script não alcança) para acabar com o visual genérico. O código continua dono do layout | 21/10 |
 | D6 | Continuam valendo: conteúdo das telas como camada HTML, monitor = Projetos, TV = Experiências, celular = Contato, porta-retrato = Sobre mim, luminária "&" = dia/noite, modo sem 3D, sem WhatsApp, MinhaReceita sem link, `referencias/` privada | antes |
 
 **Decisões técnicas propostas neste plano** (explicadas nos documentos de cada fase):
@@ -80,8 +86,10 @@ flowchart LR
     F1a -->|"decisões técnicas validadas"| F1b["Fase 1b<br/>Pipeline completo<br/>(quarto inteiro)"]
     F1b --> F2["Fase 2<br/>Direção de arte<br/>e modelagem"]
     F1b --> F3["Fase 3<br/>Experiência"]
+    F0 --> F3a["Fase 3a<br/>Telas imersivas<br/>(GitHub, LinkedIn, iPhone)"]
     F2 --> F4["Fase 4<br/>Vitrine e lançamento"]
     F3 --> F4
+    F3a --> F4
 ```
 
 | Fase | Entrega | Esforço | Documento |
@@ -90,10 +98,14 @@ flowchart LR
 | **1a — Prova de conceito** | Paredes, piso e cama assados e rodando no site, com as escolhas de cor, compressão e resolução validadas | M | [02](02-pipeline-blender.md) |
 | **1b — Pipeline completo** | Quarto inteiro assado com um comando, dia e noite, LEDs ao vivo, site trocando para a versão assada | G | [02](02-pipeline-blender.md), [03](03-iluminacao.md) |
 | **2 — Arte e modelagem** | Paleta e luz finais, chanfros, tecidos simulados, objetos novos e mais detalhes | G (em ciclos) | [04](04-modelagem-e-arte.md) |
-| **3 — Experiência** | Abertura cinematográfica, contorno no hover, TV = Experiências, sons, URL por seção, acessibilidade por teclado, celular afinado | G | [05](05-experiencia.md) |
+| **3a — Telas imersivas** | Monitor (GitHub), TV (LinkedIn) e celular (iPhone) navegáveis por dentro | G | [08](08-telas.md) |
+| **3b — Estante** | Modo estante com objetos pessoais e cartões | M (+ modelagem na Fase 2) | [09](09-estante-sobre-mim.md) |
+| **3 — Experiência** | Abertura cinematográfica, contorno no hover, sons, URL por seção, acessibilidade por teclado, celular afinado | G | [05](05-experiencia.md) |
 | **4 — Vitrine e lançamento** | README EN/PT, estudo de caso, vídeo, SEO, domínio, EmailJS, post no LinkedIn | M | [06](06-vitrine-e-lancamento.md) |
 
 As Fases 2 e 3 podem andar em paralelo depois da 1b, porque mexem em partes diferentes (arte = `src/room/` e `pipeline/`; experiência = `src/scene/` e UI).
+
+**A Fase 3a (telas) não depende do Blender:** é HTML sobre as telas e funciona igual no quarto atual e no assado. Pode começar logo depois da Fase 0, em paralelo com a Fase 1. É a forma mais rápida de o site ficar visivelmente melhor enquanto o pipeline é construído.
 
 ## 5. Marcos (o que dá para mostrar em cada um)
 
@@ -103,7 +115,8 @@ As Fases 2 e 3 podem andar em paralelo depois da 1b, porque mexem em partes dife
 | M1 — "Funciona!" | A cama e o piso assados aparecem no site, sem emendas visíveis, com dia/noite | Imagem lado a lado antes/depois |
 | M2 — Quarto assado | O site inteiro usa a versão assada, < 80 draw calls, LEDs trocam de cor ao vivo | Vídeo curto + métricas |
 | M3 — Cara de referência | Comparação lado a lado com o Room_Portfolio em que o nosso não perde no visual | Painel de capturas |
-| M4 — Experiência completa | Todas as seções nos objetos, abertura, sons, URL, teclado | Vídeo de 30 s |
+| M3a — Telas imersivas | Monitor, TV e celular navegáveis, cada um com a sua identidade | Vídeo navegando nas três |
+| M4 — Experiência completa | Todas as seções nos objetos (incluindo a estante), abertura, sons, URL, teclado | Vídeo de 30 s |
 | M5 — Lançado | Domínio, README, estudo de caso e post publicados | Links |
 
 ## 6. Riscos e como reduzir
@@ -129,4 +142,10 @@ As Fases 2 e 3 podem andar em paralelo depois da 1b, porque mexem em partes dife
 | P4 | Licença dos arquivos 3D e texturas assadas | Código MIT; **arte em CC BY 4.0** (podem usar com crédito) |
 | P5 | Domínio próprio (ex.: `danieloliveira.dev`, cerca de US$ 12/ano)? | Sim, no lançamento |
 | P6 | Clima do "dia": meio-dia claro ou fim de tarde dourado? | **Fim de tarde**: luz baixa e quente pela janela, o que dá mais contraste e beleza |
-| P7 | Quais são as ideias novas? | Anotar em [07-ideias.md](07-ideias.md) antes de começar a Fase 2 |
+| P7 | ~~Quais são as ideias novas?~~ | Respondida em 21/10: telas imersivas, estante, janela, modelagem ([07](07-ideias.md)) |
+| P8 | Lista de gostos para a estante (séries, filmes, jogos, esportes e time, música e DJ, hobbies, valores, conquistas), com uma frase por item | Mandar antes do ciclo 3 da Fase 2 ([09](09-estante-sobre-mim.md#4-o-que-o-daniel-precisa-mandar-pergunta-p8)) |
+| P9 | O celular passa a ter dock, como um iPhone de verdade? (em 07/10 ficou "sem dock") | **Sim**, com 4 apps: Telefone→Contatos, E-mail, Fotos, Música |
+| P10 | Fotos para o app Fotos do celular | 6–12 fotos que o Daniel aprove publicar |
+| P11 | Certificados, cursos e formação para a TV (LinkedIn) | Mandar o que tiver; senão, só Formação e Experiência |
+| P12 | A vista da janela: horizonte de BH com a Serra do Curral estilizada, ou parecida com a vista real da janela? | **BH estilizada** (personalidade sem expor onde ele mora) |
+| P13 | Buscar os dados reais do GitHub no build (precisa de um token na Vercel para o gráfico de contribuições)? | **Sim** |

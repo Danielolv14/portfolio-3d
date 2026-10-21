@@ -144,6 +144,9 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
    - o app E-mail é o formulário, no estilo do Mail;
    - no celular de verdade, a folha de baixo usa o mesmo visual.
    - A especificação completa está na seção 4 de `docs/planejamento/prompt-continuacao-nuvem.md`.
+8. **Telas com identidade própria (decidido em 21/10):** cada tela é um aparelho imersivo, navegável por dentro. O monitor (Projetos) é inspirado no GitHub, a TV (Experiências) no LinkedIn e o celular (Contato e mais apps) no iPhone 17/iOS 26. Sai o roxo genérico. É só inspiração: sem logos como marca da interface e só com ícones e fontes de licença livre. Ver [`docs/plano/08-telas.md`](docs/plano/08-telas.md).
+9. **A estante é o "Sobre mim" (21/10):** objetos que representam o Daniel, cada um com uma frase; modelados por nós, sem logos nem arte oficial. Ver [`docs/plano/09-estante-sobre-mim.md`](docs/plano/09-estante-sobre-mim.md).
+10. **Modelagem detalhada no Blender (21/10):** por script Python no pipeline, e à mão só onde o script não alcança. O código continua dono do layout.
 
 ## Como verificar
 

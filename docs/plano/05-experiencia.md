@@ -30,12 +30,14 @@ O visual chama a atenção; a experiência faz a pessoa ficar. Esta fase cuida d
 
 ## 3. Seções nos objetos
 
+O detalhe de cada tela (GitHub, LinkedIn, iPhone) está em [08-telas.md](08-telas.md), e o da estante em [09-estante-sobre-mim.md](09-estante-sobre-mim.md).
+
 | Seção | Objeto | Hoje | Plano |
 |---|---|---|---|
-| Projetos | Monitor | Dentro da tela ✓ | Polir a transição e o "liga a tela" |
-| Experiências | TV | Painel | **Dentro da TV**, como o monitor (era a etapa E7) |
-| Contato | Celular | Dentro da tela ✓ | Polir; EmailJS no lançamento |
-| Sobre mim | Porta-retrato | Painel lateral | Manter (decisão antiga); avaliar uma animação do porta-retrato "virando" para o painel |
+| Projetos | Monitor | Dentro da tela ✓ | Nova interface no estilo GitHub |
+| Experiências | TV | Painel | **Dentro da TV**, no estilo LinkedIn (era a etapa E7) |
+| Contato | Celular | Dentro da tela ✓ | Celular completo com apps, no estilo iOS 26; EmailJS no lançamento |
+| Sobre mim | Estante | Painel lateral | **Modo estante** com objetos pessoais e cartões; "Ler tudo" mantém o texto completo |
 
 ## 4. Detalhes vivos (pequenos, mas fazem o quarto parecer habitado)
 

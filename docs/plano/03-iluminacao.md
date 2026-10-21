@@ -81,10 +81,30 @@ npm run lookdev
 
 ## 7. A janela e o lado de fora
 
-- Hoje a janela mostra um céu desenhado. Na versão nova:
-  - **de dia**, o vidro vira uma fonte acima de 1 (âmbar quente) e o Bloom faz o halo de luz entrando;
-  - **à noite**, mostra um céu escuro com algumas silhuetas (prédios ou árvores desenhados por nós) e a lua.
-- A vista de fora é uma textura nossa, pintada em canvas ou renderizada no Blender. Nada baixado.
+Ideia do Daniel (21/10): a vista de hoje parece **uma imagem parada**. Vira uma **paisagem viva, com profundidade**.
+
+**Vista em camadas com paralaxe.** Atrás da janela, 4–5 planos em distâncias diferentes, que se deslocam entre si quando a câmera gira. Assim a vista parece um lugar de verdade, não um adesivo.
+
+| Camada | Distância | Conteúdo |
+|---|---|---|
+| Perto | logo atrás do vidro | Galho de árvore ou parapeito do prédio vizinho, em silhueta |
+| Meio | média | Prédios e casas baixos, com janelas que acendem à noite |
+| Longe | grande | Horizonte de Belo Horizonte com a **Serra do Curral** estilizada (pergunta P12) |
+| Céu | fundo | Degradê do céu, sol ou lua, nuvens |
+
+**Céu vivo:**
+- nuvens em movimento lento (shader com ruído, barato);
+- de dia, o sol do tamanho e na posição coerentes com a luz assada (a mancha no chão "vem" dele);
+- à noite, estrelas cintilando, a lua e as janelas dos prédios acendendo aos poucos, uma a uma, durante a transição;
+- de vez em quando, um avião piscando ou pássaros passando (raro, para surpreender).
+
+**Luz coerente:**
+- **de dia**, o vidro vira uma fonte acima de 1 (âmbar quente) e o Bloom faz o halo de luz entrando;
+- **à noite**, o brilho da cidade dá um leve tom alaranjado no horizonte.
+
+**Como é feita:** as camadas são renderizadas no Blender pelo próprio pipeline (prédios e serra gerados por script), ou pintadas em canvas. É tudo nosso, nada baixado. No site, são planos com textura e um shader de nuvens, com custo de poucas draw calls.
+
+Se o Daniel preferir, a vista pode lembrar a **vista real da janela dele** (pergunta P12).
 
 ## 8. Transição entre dia e noite
 

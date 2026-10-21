@@ -33,7 +33,28 @@ Com o pipeline pronto, cada melhoria de arte vira um ciclo curto: **mudar → lo
 - **Nenhuma área grande lisa:** paredes com textura sutil, tapete com pelo e edredom com matelassê real.
 - **Linhas que levam o olho:** cabos, a borda da mancha de sol e as listras da persiana apontando para os objetos clicáveis.
 
-## 2. Técnicas de modelagem (todas por script, no pipeline)
+## 2. Auditoria: acabar com o "genérico e feio"
+
+Pedido do Daniel (21/10): no geral, a modelagem está genérica e feia. O primeiro passo da Fase 2 é medir isso objeto por objeto, para não depender de impressão.
+
+1. **Capturas de perto de cada objeto** (script automático: um ângulo por objeto, de dia, com a mesma luz).
+2. **Nota de 1 a 5** em quatro critérios:
+   - **forma**: proporção e silhueta batem com o objeto real?
+   - **detalhe**: tem as partes que fazem o objeto ser reconhecido (puxador, costura, botões)?
+   - **acabamento**: quinas chanfradas, nada de caixa crua?
+   - **material**: a superfície parece madeira, tecido ou metal de verdade?
+3. **Tudo abaixo de 4 entra na lista de refazer**, começando pelos heróis.
+4. A planilha fica em `docs/metricas/auditoria-objetos.md` e é refeita no fim de cada ciclo, para mostrar a evolução (vira material do estudo de caso).
+
+### Quem modela e como
+
+O código em React chegou ao limite para formas detalhadas: caixas, cilindros e perfis não fazem uma pelúcia ou um tênis convincentes. Por isso, para os objetos que pedem mais:
+
+- **Modelagem por script Python no Blender**, escrita pelo Claude e versionada em `pipeline/blender/modelos/`. Funciona muito bem para peças rígidas (teclado, cadeira, gabinete, luminárias, puxadores, molduras) e para tecidos (simulação). Cada modelo é revisado por render de perto antes de entrar.
+- **Modelagem à mão** em `art/*.blend` só para o que o script não alcança bem (rostos de pelúcia, tênis, mochila). Pode ser o Daniel aprendendo Blender, o que também rende história para o estudo de caso (pergunta P2).
+- No pipeline, o objeto do código vira só um **marcador de posição** com o mesmo nome. O passo `35_arte.py` troca o marcador pelo modelo detalhado. O layout continua no código.
+
+## 3. Técnicas de modelagem (todas por script, no pipeline)
 
 | Técnica | Onde | Como |
 |---|---|---|
@@ -56,7 +77,7 @@ Com o pipeline pronto, cada melhoria de arte vira um ciclo curto: **mudar → lo
 
 Travesseiros e almofada: um cubo achatado + pano com pressão = forma estufada com rugas naturais.
 
-## 3. Inventário dos objetos
+## 4. Inventário dos objetos
 
 Prioridade pelo que mais aparece: **H** = herói (a câmera chega perto), **M** = visto da visão geral, **F** = fundo.
 
@@ -84,7 +105,7 @@ Prioridade pelo que mais aparece: **H** = herói (a câmera chega perto), **M** 
 | Piso de porcelanato, rodapé de granito | `Shell.jsx` | M | Textura de canvas | Procedural; rejunte com leve relevo |
 | Mochila e tênis | `Floor.jsx` | F | Formas simples | Conforme a pergunta P2 (à mão ou simplificados com chanfro) |
 
-## 4. Mais detalhe (sempre com base no quarto real)
+## 5. Mais detalhe (sempre com base no quarto real)
 
 Uma rodada só para densidade, **validada com o Daniel e as fotos**, porque é base real:
 
@@ -93,13 +114,13 @@ Uma rodada só para densidade, **validada com o Daniel e as fotos**, porque é b
 - objetos do dia a dia no criado-mudo e na mesa (garrafa, fone, livros);
 - objetos que contam a história do Daniel (ideias em [07](07-ideias.md)).
 
-## 5. Ciclos da Fase 2
+## 6. Ciclos da Fase 2
 
 | Ciclo | Foco | Pronto quando |
 |---|---|---|
-| 1 | Luz e paleta: rigs finais, fundo, laje de maquete | O painel de look dev aprovado pelo Daniel, de dia e de noite |
-| 2 | Heróis: cama com tecidos, mesa e setup, janela | Capturas de perto nos ângulos mesa, cama e janela sem nada "de caixa" |
-| 3 | Nicho e objetos: pelúcias, decoração, porta | Ângulos nicho e porta aprovados |
+| 1 | Auditoria de todos os objetos; luz e paleta: rigs finais, fundo, laje de maquete | Planilha de notas feita; painel de look dev aprovado pelo Daniel, de dia e de noite |
+| 2 | Heróis: cama com tecidos, mesa e setup, janela com a **vista em camadas** ([03](03-iluminacao.md#7-a-janela-e-o-lado-de-fora)) | Capturas de perto nos ângulos mesa, cama e janela sem nada "de caixa" |
+| 3 | **Estante "Sobre mim"** com os objetos pessoais ([09](09-estante-sobre-mim.md)), pelúcias, porta | Ângulos nicho e porta aprovados; todos os objetos com nota ≥ 4 |
 | 4 | Densidade e acabamento: cabos, detalhes, texturas finais | Painel lado a lado com o Room_Portfolio em que o nosso não perde |
 
 Cada ciclo termina com capturas nos 8 ângulos em `docs/metricas/` e um commit próprio.
