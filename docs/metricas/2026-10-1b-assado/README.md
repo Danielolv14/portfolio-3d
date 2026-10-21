@@ -16,3 +16,7 @@ As capturas `01`–`03` estão nesta pasta. O equilíbrio da luz (força e cor) 
 ## Texturas originais + só a luz assada (21/10)
 
 Os objetos estavam embaçados porque a cor também era assada num atlas dividido por dezenas de objetos. Agora cada objeto usa a própria textura (nítida) e o bake guarda só a luz. **94 draw calls** (antes 38; no começo 459), **118 FPS no celular simulado**, 6,7 MB no total. Capturas 06 e 07.
+
+## Contra o aspecto de massinha (21/10)
+
+Reflexos (mapa 360° do próprio quarto), cor AgX "punch", janela consertada, móveis com um atlas de luz por área e mais amostras (shell 3072, móveis 1536, resto 1024). Bake de ~35 min. Capturas 08 e 09.

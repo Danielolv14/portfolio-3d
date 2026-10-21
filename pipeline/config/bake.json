@@ -7,10 +7,6 @@
             "albedo": 4096,
             "luz": 2048
         },
-        "furniture": {
-            "albedo": 4096,
-            "luz": 2048
-        },
         "props-desk": {
             "albedo": 4096,
             "luz": 2048
@@ -26,14 +22,28 @@
         "props-floor": {
             "albedo": 2048,
             "luz": 1024
+        },
+        "furniture-desk": {
+            "albedo": 4096,
+            "luz": 2048
+        },
+        "furniture-niche": {
+            "albedo": 4096,
+            "luz": 2048
+        },
+        "furniture-bed": {
+            "albedo": 4096,
+            "luz": 2048
         }
     },
     "amostras": {
         "albedo": 16,
-        "luz": 512,
+        "luz": 1024,
         "porGrupo": {
-            "shell": 1024,
-            "furniture": 768
+            "shell": 3072,
+            "furniture-desk": 1536,
+            "furniture-niche": 1536,
+            "furniture-bed": 1536
         }
     },
     "preview": {

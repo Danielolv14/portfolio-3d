@@ -60,9 +60,10 @@ def preparar(areas=None):
 
     # Objetos pequenos: um atlas por área (props-desk, props-bed...). Com um atlas só para
     # todos, os detalhes ficavam borrados de perto (docs/plano/resultados-poc.md)
+    # O mesmo para os móveis (mesa, nicho, cama): o lightmap de um grupo só deixava a luz manchada
     for o in ficam:
-        if o["bk_group"] == "props" and o["bk_area"]:
-            o["bk_group"] = f'props-{o["bk_area"]}'
+        if o["bk_group"] in ("props", "furniture") and o["bk_area"]:
+            o["bk_group"] = f'{o["bk_group"]}-{o["bk_area"]}'
 
     # Solta dos pais mantendo a posição, depois apaga o que não é malha
     for o in ficam:
