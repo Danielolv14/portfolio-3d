@@ -59,7 +59,7 @@
 ---
 
 ## 🔗 Links Úteis
-* 🌐 **Demo Online:** _em breve_ (será publicado na **Vercel** na Sprint 2)
+* 🌐 **Demo Online:** [portfolio-3d-wyhb.vercel.app](https://portfolio-3d-wyhb.vercel.app)
   > 💻 **Descrição:** link do portfólio em produção.
 * 🎨 **Protótipo no Figma:** _link a adicionar_
   > 🖼️ **Descrição:** wireframes de média fidelidade da visão do quarto, do painel de cada seção e da versão de celular.

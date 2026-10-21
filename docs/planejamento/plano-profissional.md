@@ -65,5 +65,5 @@ Primeiro faço um protótipo só com paredes e piso, para validar o pipeline, e 
 
 ## Pendências fora do código
 
-- **EmailJS:** criar a conta e configurar as variáveis na Vercel. Sem isso o formulário não envia.
-- **Vercel:** há dois projetos (`portfolio-3d` e `portfolio-3d-wyhb`). Manter só um.
+- **EmailJS:** fica para quando o portfólio for divulgado no LinkedIn. Até lá, o formulário avisa que o envio não está configurado.
+- **Vercel:** o site oficial é o projeto `portfolio-3d-wyhb` ([portfolio-3d-wyhb.vercel.app](https://portfolio-3d-wyhb.vercel.app)). Em 21/10 ele ainda servia uma versão antiga (sem o Contato no celular), então é preciso conferir se ele publica a cada push na `main`. O projeto `portfolio-3d` (404) pode ser apagado.
