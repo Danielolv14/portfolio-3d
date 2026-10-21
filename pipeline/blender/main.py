@@ -115,6 +115,8 @@ def main():
 
     exportar.exportar_glb(objs, os.path.join(SAIDA, "room.glb"))
     manifesto["glb"] = "room.glb"
+    # Como a luz foi codificada (o site desfaz igual): curva logarítmica com este K
+    manifesto["codificacao"] = {"tipo": "log", "k": assar.K_LOG}
     # Exposição de cada clima (em stops, como no Blender): o site usa a mesma
     manifesto["exposicao"] = {rig: config["rigs"][rig].get("exposicao", 0) for rig in ("dia", "noite")}
     manifesto["tempos"] = {k: round(v, 1) for k, v in tempos.items()}

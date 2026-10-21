@@ -24,7 +24,14 @@ function BakedScene({ manifest, night, compact }) {
     const files = groups.flatMap(([, g]) => [g.luz_dia, g.luz_noite, g.leds].map((f) => fileFor(f, compact)));
     const textures = useTexture(files);
 
-    const shared = useMemo(() => createSharedUniforms(manifest.leds.map((l) => l.cor)), [manifest]);
+    const shared = useMemo(
+        () =>
+            createSharedUniforms(
+                manifest.leds.map((l) => l.cor),
+                manifest.codificacao?.tipo === 'log' ? manifest.codificacao.k : 0
+            ),
+        [manifest]
+    );
     const lightByGroup = useMemo(() => {
         const byGroup = {};
         groups.forEach(([name, g], i) => {

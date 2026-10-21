@@ -19,13 +19,21 @@ uniform vec3 ledColor[3];
 uniform vec3 ledPower;
 uniform float uNight;
 uniform float uExposure;
+uniform float uLogK;
+
+// Desfaz a codificação da luz (pipeline/blender/assar.py): curva logarítmica com K, ou a raiz
+// 1/2,2 dos bakes antigos (uLogK = 0)
+vec3 decodeLight(vec3 v, vec3 scale) {
+    if (uLogK > 0.0) return scale / uLogK * (exp(v * log(1.0 + uLogK)) - 1.0);
+    return pow(v, vec3(2.2)) * scale;
+}
 `;
 
 // Irradiância = luz assada × π (o three divide por π no difuso: BRDF_Lambert)
 const LIGHT = /* glsl */ `
-vec3 lmDay = pow(lightMapTexel.rgb, vec3(2.2)) * scaleDay;
-vec3 lmNight = pow(texture2D(lightNight, vLightMapUv).rgb, vec3(2.2)) * scaleNight;
-vec3 leds = pow(texture2D(ledMask, vLightMapUv).rgb, vec3(2.2)) * scaleLeds * ledPower;
+vec3 lmDay = decodeLight(lightMapTexel.rgb, vec3(scaleDay));
+vec3 lmNight = decodeLight(texture2D(lightNight, vLightMapUv).rgb, vec3(scaleNight));
+vec3 leds = decodeLight(texture2D(ledMask, vLightMapUv).rgb, scaleLeds) * ledPower;
 vec3 lightMapIrradiance = (mix(lmDay, lmNight, uNight) + leds.r * ledColor[0] + leds.g * ledColor[1] + leds.b * ledColor[2]) * uExposure * PI;
 `;
 
@@ -34,8 +42,9 @@ const LIGHTS_CHUNK = THREE.ShaderChunk.lights_fragment_maps
     .replace('iblIrradiance += getIBLIrradiance( geometryNormal );', '');
 
 // Uniforms que mudam a cada quadro e valem para o quarto todo (o mesmo objeto em todos os materiais)
-export function createSharedUniforms(ledColors) {
+export function createSharedUniforms(ledColors, logK = 0) {
     return {
+        uLogK: { value: logK },
         uNight: { value: 0 },
         uExposure: { value: 1 },
         ledPower: { value: new THREE.Vector3() },
@@ -63,6 +72,9 @@ export function createBakedMaterial(original, group, shared) {
         lightMap: group.lightDay
     });
     material.userData.baseEmissive = material.emissiveIntensity;
+    // Só o que é liso reflete (piso, metal, vidro). Em parede e tecido, o reflexo do mapa 360° virava
+    // manchas redondas; a luz deles já está toda no bake
+    material.envMapIntensity = 1 - THREE.MathUtils.smoothstep(material.roughness, 0.35, 0.6);
     material.onBeforeCompile = (shader) => {
         Object.assign(shader.uniforms, shared, {
             lightNight: { value: group.lightNight },

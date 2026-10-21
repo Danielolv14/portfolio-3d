@@ -7,9 +7,30 @@ import numpy as np
 from comum import SAIDA, log, selecionar
 
 GAMA = 2.2
-# Qualidade do WebP da luz. Com 90, os blocos da compressão viravam quadriculados nos degradês
-# escuros (parede, porta); 98 fica igual ao sem perda (100) com metade do peso. Teste: QUALIDADE_LUZ
+# Codificação da luz em 8 bits: curva logarítmica + dithering (estudo de 21/10). Com a raiz 1/2,2,
+# o degradê suave da parede virava faixas concêntricas em volta da janela.
+#   valor = log(1 + K·luz/S) / log(1 + K)        no site: luz = S/K · (exp(valor·log(1 + K)) − 1)
+K_LOG = 64.0
+_rng = np.random.default_rng(7)
+
+
+def codificar(luz, escala):
+    """luz (float, >= 0) -> 0..1, com dithering triangular de ±1 nível de 8 bits antes de arredondar:
+    o erro vira um ruído fino, invisível, em vez de degraus."""
+    v = np.log1p(K_LOG * np.clip(luz / escala, 0, 1)) / np.log1p(K_LOG)
+    # Dithering só quando pedido: ele tira as faixas, mas o ruído não comprime (73 MB). A curva
+    # logarítmica sozinha já tira quase todas
+    if os.environ.get("DITHER", "0") == "0":
+        return np.clip(v, 0, 1)
+    ruido = (_rng.random(v.shape, dtype=np.float32) + _rng.random(v.shape, dtype=np.float32) - 1.0) / 255.0
+    return np.clip(v + ruido, 0, 1)
+# Qualidade do WebP da luz: 100 = sem perda. Com perda, mesmo em 98, a compressão reduz a resolução
+# das cores pela metade (4:2:0) e mistura tons nas bordas de luz e sombra (os "verdes" em volta da
+# janela) e, com 90, fazia quadriculados. Teste outra com a variável QUALIDADE_LUZ
 QUALIDADE = int(os.environ.get("QUALIDADE_LUZ", "98"))
+# Grupos sem perda: as paredes e o piso têm os degradês grandes e suaves, onde qualquer perda aparece
+# (13 MB com tudo em 98; 32 MB com tudo sem perda; só a estrutura sem perda fica no meio)
+SEM_PERDA = ("shell",)
 
 
 def _imagem(nome, tamanho, flutuante):
@@ -108,11 +129,12 @@ def _salvar_png(dados, nome):
     caminho = os.path.join(SAIDA, nome + ".webp")
     img.filepath_raw = caminho
     img.file_format = "WEBP"
-    img.save(quality=QUALIDADE)
+    qualidade = 100 if any(nome.endswith(f"_{g}") for g in SEM_PERDA) else QUALIDADE
+    img.save(quality=qualidade)
     # Versão do celular, com metade do tamanho (4x menos memória na placa de vídeo)
     img.scale(max(1, w // 2), max(1, h // 2))
     img.filepath_raw = os.path.join(SAIDA, nome + "-mobile.webp")
-    img.save(quality=QUALIDADE)
+    img.save(quality=qualidade)
     bpy.data.images.remove(img)
     return caminho
 
@@ -138,7 +160,7 @@ def salvar_luz(img, nome, cobertura):
     validos = maximo[cobertura]
     escala = float(np.percentile(validos, 99.9)) if validos.size else 1.0
     escala = max(escala, 1e-4)
-    cod = np.power(np.clip(luz / escala, 0, 1), 1 / GAMA)
+    cod = codificar(luz, escala)
     out = np.concatenate([cod, np.ones_like(px[..., :1])], axis=-1)
     return _salvar_png(out, nome), escala
 
@@ -152,7 +174,7 @@ def salvar_mascara(imgs, nome, cobertura):
         luz = np.maximum(_pixels(img)[..., :3], 0).mean(axis=-1)
         validos = luz[cobertura]
         s = max(float(np.percentile(validos, 99.9)) if validos.size else 1.0, 1e-4)
-        canais.append(np.power(np.clip(luz / s, 0, 1), 1 / GAMA))
+        canais.append(codificar(luz, s))
         escalas.append(s)
     out = np.stack(canais + [np.ones_like(canais[0])], axis=-1)
     return _salvar_png(out, nome), escalas
