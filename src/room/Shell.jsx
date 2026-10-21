@@ -224,13 +224,31 @@ function Door() {
 
             {/* Alizares (batentes) da mesma madeira, um tom mais escuros para destacar a folha */}
             {[DOOR.z0 - CASING / 2, DOOR.z1 + CASING / 2].map((z) => (
-                <Varnished key={z} size={[0.075, DOOR.top + CASING, CASING]} position={[-4.9925, (DOOR.top + CASING) / 2, z]} map={wood} tint="#f0dcc4" />
+                <Varnished
+                    key={z}
+                    size={[0.075, DOOR.top + CASING, CASING]}
+                    position={[-4.9925, (DOOR.top + CASING) / 2, z]}
+                    map={wood}
+                    tint="#f0dcc4"
+                />
             ))}
-            <Varnished size={[0.075, CASING, width + CASING * 2]} position={[-4.9925, DOOR.top + CASING / 2, cz]} map={wood} tint="#f0dcc4" />
+            <Varnished
+                size={[0.075, CASING, width + CASING * 2]}
+                position={[-4.9925, DOOR.top + CASING / 2, cz]}
+                map={wood}
+                tint="#f0dcc4"
+            />
 
             {/* Dobradiças do lado do gabinete */}
             {[0.7, 2.2, 3.7].map((y) => (
-                <Cyl key={y} args={[0.024, 0.024, 0.22, 12]} position={[-5.02, y, DOOR.z0 + 0.012]} color="#b48a52" roughness={0.3} metalness={0.85} />
+                <Cyl
+                    key={y}
+                    args={[0.024, 0.024, 0.22, 12]}
+                    position={[-5.02, y, DOOR.z0 + 0.012]}
+                    color="#b48a52"
+                    roughness={0.3}
+                    metalness={0.85}
+                />
             ))}
 
             {/* Maçaneta de alavanca cromada com espelho redondo */}

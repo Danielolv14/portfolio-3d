@@ -50,12 +50,7 @@ export function About({ t, lang, setLang }) {
             <div className="lang-switch" role="group" aria-label={a.readIn}>
                 <span className="lang-switch-label">{a.readIn}</span>
                 {['pt', 'en'].map((code) => (
-                    <button
-                        key={code}
-                        type="button"
-                        aria-pressed={lang === code}
-                        onClick={() => setLang(code)}
-                    >
+                    <button key={code} type="button" aria-pressed={lang === code} onClick={() => setLang(code)}>
                         {code === 'pt' ? 'Português' : 'English'}
                     </button>
                 ))}
@@ -149,13 +144,7 @@ export function Projects({ t }) {
                                 </ul>
                                 <div className="project-links">
                                     {item.links.map((link) => (
-                                        <a
-                                            key={link.url}
-                                            className="text-link"
-                                            href={link.url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
+                                        <a key={link.url} className="text-link" href={link.url} target="_blank" rel="noreferrer">
                                             {p.links[link.kind]} <IconArrow />
                                         </a>
                                     ))}

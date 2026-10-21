@@ -89,7 +89,7 @@ function phoneBody() {
         const pill = new THREE.CapsuleGeometry(radius, length * MM - 2 * radius, 3, 8).toNonIndexed();
         pill.rotateX(Math.PI / 2);
         pill.scale(out / radius, 1, 1);
-        pill.translate(side * WIDTH / 2, BOTTOM + THICK / 2, -LENGTH / 2 + center * MM);
+        pill.translate((side * WIDTH) / 2, BOTTOM + THICK / 2, -LENGTH / 2 + center * MM);
         return paint(pill, FRAME);
     });
 

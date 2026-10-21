@@ -17,16 +17,18 @@ export function turned(tex) {
 // Contorno com os cantos cortados na diagonal (frente do gabinete), com a base em y0
 export function chamferShape(w, h, top, bottom, y0 = 0) {
     const x = w / 2;
-    return new THREE.Shape([
-        [-x + bottom, y0],
-        [x - bottom, y0],
-        [x, y0 + bottom],
-        [x, y0 + h - top],
-        [x - top, y0 + h],
-        [-x + top, y0 + h],
-        [-x, y0 + h - top],
-        [-x, y0 + bottom]
-    ].map(([px, py]) => new THREE.Vector2(px, py)));
+    return new THREE.Shape(
+        [
+            [-x + bottom, y0],
+            [x - bottom, y0],
+            [x, y0 + bottom],
+            [x, y0 + h - top],
+            [x - top, y0 + h],
+            [-x + top, y0 + h],
+            [-x, y0 + h - top],
+            [-x, y0 + bottom]
+        ].map(([px, py]) => new THREE.Vector2(px, py))
+    );
 }
 
 // Retângulo de cantos arredondados centrado em (cx, cy)

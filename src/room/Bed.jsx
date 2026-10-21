@@ -16,7 +16,7 @@ import {
     rugTextures,
     teakTexture
 } from './bedTextures';
-import { Box, C, Cyl, dayNight, Hotspot, lerp, Rounded } from './shared';
+import { Box, C, Cyl, dayNight, lerp, Rounded } from './shared';
 import { Phone } from './Phone';
 import { Poster } from './Shell';
 
@@ -126,7 +126,13 @@ function Headboard() {
     return (
         <group>
             <mesh geometry={panel} position={[5.08, 0, -3.5]} castShadow receiveShadow>
-                <meshStandardMaterial ref={(m) => (woods.current[0] = m)} map={panelWood} emissive="#ffffff" emissiveMap={panelWood} roughness={0.42} />
+                <meshStandardMaterial
+                    ref={(m) => (woods.current[0] = m)}
+                    map={panelWood}
+                    emissive="#ffffff"
+                    emissiveMap={panelWood}
+                    roughness={0.42}
+                />
             </mesh>
             {columns.map((geo, i) => (
                 <mesh key={i} geometry={geo} position={[5.19, 0, i ? -2.15 : -4.85]} castShadow receiveShadow>
@@ -141,7 +147,15 @@ function Headboard() {
             ))}
             {[-4.665, -2.335].flatMap((z) =>
                 [1.92, 2.12].map((y) => (
-                    <Cyl key={`${z}${y}`} args={[0.021, 0.021, 0.2, 14]} position={[5.1, y, z]} rotation-x={Math.PI / 2} color={C.chrome} roughness={0.18} metalness={1} />
+                    <Cyl
+                        key={`${z}${y}`}
+                        args={[0.021, 0.021, 0.2, 14]}
+                        position={[5.1, y, z]}
+                        rotation-x={Math.PI / 2}
+                        color={C.chrome}
+                        roughness={0.18}
+                        metalness={1}
+                    />
                 ))
             )}
         </group>
@@ -237,7 +251,14 @@ function Cap(props) {
                 <cylinderGeometry args={[0.17, 0.17, 0.016, 24, 1, false, 0, Math.PI]} />
                 <meshStandardMaterial color="#17181b" roughness={0.85} />
             </mesh>
-            <Box size={[0.012, 0.055, 0.085]} position={[0.168, 0.07, 0]} rotation-z={0.75} color="#c9cacd" roughness={0.6} shadow={false} />
+            <Box
+                size={[0.012, 0.055, 0.085]}
+                position={[0.168, 0.07, 0]}
+                rotation-z={0.75}
+                color="#c9cacd"
+                roughness={0.6}
+                shadow={false}
+            />
             <Cyl args={[0.014, 0.014, 0.012, 10]} position={[0, 0.137, 0]} color="#17181b" roughness={0.85} />
         </group>
     );
@@ -276,7 +297,14 @@ function CopperLamp(props) {
         <group {...props}>
             <Cyl args={[0.13, 0.14, 0.03, 32]} position={[0, 0.015, 0]} color={C.black} roughness={0.35} metalness={0.4} />
             <Cyl args={[0.012, 0.012, 0.74, 10]} position={[0, 0.4, 0]} color={C.black} roughness={0.35} metalness={0.4} />
-            <Cyl args={[0.01, 0.01, 0.12, 8]} position={[-0.06, 0.76, 0]} rotation-z={Math.PI / 2} color={C.black} roughness={0.35} metalness={0.4} />
+            <Cyl
+                args={[0.01, 0.01, 0.12, 8]}
+                position={[-0.06, 0.76, 0]}
+                rotation-z={Math.PI / 2}
+                color={C.black}
+                roughness={0.35}
+                metalness={0.4}
+            />
             <group position={[-0.13, 0.7, 0]} rotation-z={-0.28}>
                 <Cyl args={[0.052, 0.052, 0.1, 28]} position={[0, 0.14, 0]} color={COPPER} roughness={0.3} metalness={0.5} />
                 <mesh position={[0, 0.09, 0]} rotation-x={-Math.PI / 2}>
@@ -289,7 +317,14 @@ function CopperLamp(props) {
                 </mesh>
                 <mesh>
                     <cylinderGeometry args={[0.083, 0.083, 0.178, 32, 1, true]} />
-                    <meshStandardMaterial ref={inner} color="#d9a27a" emissive="#ffb066" emissiveIntensity={0} roughness={0.5} side={THREE.BackSide} />
+                    <meshStandardMaterial
+                        ref={inner}
+                        color="#d9a27a"
+                        emissive="#ffb066"
+                        emissiveIntensity={0}
+                        roughness={0.5}
+                        side={THREE.BackSide}
+                    />
                 </mesh>
                 <mesh position={[0, -0.03, 0]}>
                     <sphereGeometry args={[0.045, 16, 12]} />
@@ -341,7 +376,9 @@ function Nightstand() {
         <group>
             {/* base de teca */}
             {[4.2, 5.16].flatMap((x) =>
-                [-1.89, -0.91].map((z) => <Box key={`${x}${z}`} size={[0.1, 0.22, 0.1]} position={[x, 0.11, z]} map={teak} color="#ffffff" roughness={0.5} />)
+                [-1.89, -0.91].map((z) => (
+                    <Box key={`${x}${z}`} size={[0.1, 0.22, 0.1]} position={[x, 0.11, z]} map={teak} color="#ffffff" roughness={0.5} />
+                ))
             )}
             <Box size={[0.07, 0.12, 1.08]} position={[4.185, 0.26, -1.4]} map={teak} color="#ffffff" roughness={0.5} />
             <Box size={[1.06, 0.12, 0.07]} position={[4.69, 0.26, -0.885]} map={teak} color="#ffffff" roughness={0.5} />
@@ -356,7 +393,13 @@ function Nightstand() {
                 const y = 0.335 + k * 0.305;
                 return (
                     <group key={k}>
-                        <Rounded size={[0.05, 0.215, 1.04]} radius={0.01} position={[4.155, y + 0.108, -1.4]} color={GRAPHITE} roughness={0.6} />
+                        <Rounded
+                            size={[0.05, 0.215, 1.04]}
+                            radius={0.01}
+                            position={[4.155, y + 0.108, -1.4]}
+                            color={GRAPHITE}
+                            roughness={0.6}
+                        />
                         <Box size={[0.04, 0.072, 1.04]} position={[4.165, y + 0.253, -1.4]} map={teak} color="#ffffff" roughness={0.45} />
                     </group>
                 );
@@ -375,10 +418,23 @@ function Nightstand() {
             <group position={[4.4, top + 0.016, -1.55]} rotation-y={0.45}>
                 <Rounded size={[0.42, 0.032, 0.1]} radius={0.014} color="#141518" roughness={0.45} />
                 {[-0.12, -0.06, 0, 0.06].map((x) => (
-                    <Cyl key={x} args={[0.012, 0.012, 0.01, 10]} position={[x, 0.018, 0]} color={x < -0.1 ? '#b8322c' : '#55575c'} roughness={0.5} />
+                    <Cyl
+                        key={x}
+                        args={[0.012, 0.012, 0.01, 10]}
+                        position={[x, 0.018, 0]}
+                        color={x < -0.1 ? '#b8322c' : '#55575c'}
+                        roughness={0.5}
+                    />
                 ))}
             </group>
-            <Rounded size={[0.32, 0.06, 0.15]} radius={0.028} position={[4.46, top + 0.03, -1.8]} rotation-y={-0.25} color="#202124" roughness={0.7} />
+            <Rounded
+                size={[0.32, 0.06, 0.15]}
+                radius={0.028}
+                position={[4.46, top + 0.03, -1.8]}
+                rotation-y={-0.25}
+                color="#202124"
+                roughness={0.7}
+            />
         </group>
     );
 }

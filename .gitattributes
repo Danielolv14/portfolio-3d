@@ -1,0 +1,7 @@
+# Fim de linha LF no repositório, em qualquer sistema
+* text=auto eol=lf
+*.jpg binary
+*.png binary
+*.webp binary
+*.glb binary
+*.ktx2 binary

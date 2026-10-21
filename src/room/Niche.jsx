@@ -71,7 +71,9 @@ function Edge({ front, back = EDGE_R, height, length, y, z }) {
 
 // Tábua grossa: um filete em cima e outro embaixo da frente, com o branco no meio
 function BoardEdges({ front, top, length, z }) {
-    return [top - EDGE_H / 2, top - BOARD + EDGE_H / 2].map((y) => <Edge key={y} front={front} height={EDGE_H} length={length} y={y} z={z} />);
+    return [top - EDGE_H / 2, top - BOARD + EDGE_H / 2].map((y) => (
+        <Edge key={y} front={front} height={EDGE_H} length={length} y={y} z={z} />
+    ));
 }
 
 function Frame() {
@@ -98,11 +100,23 @@ function Frame() {
             <Box size={[depth - 0.08, plinth, inner]} position={[cx - 0.04, plinth / 2, cz]} color="#e2dcd2" roughness={0.7} />
             {LEVELS.map((y) => (
                 <group key={y}>
-                    <Rounded size={[depth, BOARD, inner]} radius={EDGE_R} position={[cx, y - BOARD / 2, cz]} color={C.shelf} roughness={0.55} />
+                    <Rounded
+                        size={[depth, BOARD, inner]}
+                        radius={EDGE_R}
+                        position={[cx, y - BOARD / 2, cz]}
+                        color={C.shelf}
+                        roughness={0.55}
+                    />
                     <BoardEdges front={X1} top={y} length={inner} z={cz} />
                 </group>
             ))}
-            <Rounded size={[depth + 0.04, BOARD, Z1 - Z0 + 0.04]} radius={EDGE_R} position={[cx + 0.02, TAMPO, cz]} color={C.shelf} roughness={0.55} />
+            <Rounded
+                size={[depth + 0.04, BOARD, Z1 - Z0 + 0.04]}
+                radius={EDGE_R}
+                position={[cx + 0.02, TAMPO, cz]}
+                color={C.shelf}
+                roughness={0.55}
+            />
             <BoardEdges front={X1 + 0.04} top={TAMPO + BOARD / 2} length={Z1 - Z0 + 0.04} z={cz} />
         </group>
     );
@@ -231,8 +245,21 @@ function JBL(props) {
             <Cyl args={[0.12, 0.12, 0.5, 32]} rotation-x={Math.PI / 2} map={camo} color="#ffffff" roughness={0.9} />
             {[-1, 1].map((s) => (
                 <group key={s}>
-                    <Cyl args={[0.126, 0.126, 0.05, 32]} position={[0, 0, s * 0.27]} rotation-x={Math.PI / 2} color={C.black} roughness={0.6} />
-                    <Cyl args={[0.085, 0.085, 0.012, 32]} position={[0, 0, s * 0.297]} rotation-x={Math.PI / 2} color="#3a3b3f" roughness={0.35} metalness={0.4} />
+                    <Cyl
+                        args={[0.126, 0.126, 0.05, 32]}
+                        position={[0, 0, s * 0.27]}
+                        rotation-x={Math.PI / 2}
+                        color={C.black}
+                        roughness={0.6}
+                    />
+                    <Cyl
+                        args={[0.085, 0.085, 0.012, 32]}
+                        position={[0, 0, s * 0.297]}
+                        rotation-x={Math.PI / 2}
+                        color="#3a3b3f"
+                        roughness={0.35}
+                        metalness={0.4}
+                    />
                 </group>
             ))}
             <Rounded size={[0.1, 0.03, 0.42]} radius={0.012} position={[0, -0.115, 0]} color={C.black} />
@@ -364,7 +391,13 @@ function Trophy(props) {
         s.lineTo(0.14, 0.56);
         s.lineTo(-0.14, 0.62);
         s.closePath();
-        return new THREE.ExtrudeGeometry(s, { depth: 0.024, bevelEnabled: true, bevelThickness: 0.006, bevelSize: 0.006, bevelSegments: 2 });
+        return new THREE.ExtrudeGeometry(s, {
+            depth: 0.024,
+            bevelEnabled: true,
+            bevelThickness: 0.006,
+            bevelSize: 0.006,
+            bevelSegments: 2
+        });
     }, []);
     return (
         <group {...props}>
@@ -388,7 +421,14 @@ function Keys(props) {
                 <torusGeometry args={[0.035, 0.006, 8, 20]} />
                 <meshStandardMaterial {...CHROME} />
             </mesh>
-            <Box size={[0.03, 0.01, 0.12]} position={[0.03, 0.006, 0.08]} rotation-y={0.4} color="#d4b25a" roughness={0.3} metalness={0.8} />
+            <Box
+                size={[0.03, 0.01, 0.12]}
+                position={[0.03, 0.006, 0.08]}
+                rotation-y={0.4}
+                color="#d4b25a"
+                roughness={0.3}
+                metalness={0.8}
+            />
             <Box size={[0.03, 0.01, 0.11]} position={[-0.02, 0.006, 0.08]} rotation-y={-0.3} {...CHROME} />
             <Rounded size={[0.07, 0.03, 0.1]} radius={0.012} position={[-0.02, 0.015, -0.08]} color={C.black} roughness={0.5} />
         </group>
@@ -493,7 +533,13 @@ function Star(props) {
             else s.lineTo(Math.cos(a) * r, Math.sin(a) * r);
         }
         s.closePath();
-        const g = new THREE.ExtrudeGeometry(s, { depth: 0.12, bevelEnabled: true, bevelThickness: 0.07, bevelSize: 0.06, bevelSegments: 5 });
+        const g = new THREE.ExtrudeGeometry(s, {
+            depth: 0.12,
+            bevelEnabled: true,
+            bevelThickness: 0.07,
+            bevelSize: 0.06,
+            bevelSegments: 5
+        });
         g.center();
         return g;
     }, []);

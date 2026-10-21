@@ -9,7 +9,6 @@ import {
     camoTexture,
     caseBadgeTexture,
     caseStickersTexture,
-    chromeEnvTexture,
     clockTexture,
     monitorScreenTexture,
     oakTexture,
@@ -23,7 +22,6 @@ import { Cable, chamferShape, Chrome, FacedBox, fittedShapeGeometry, ring, round
 import { Box, C, Cyl, dayNight, Hotspot, lerp, MONITOR_POS, Rounded } from './shared';
 
 const SILVER = { color: '#f2f3f5', roughness: 0.3, metalness: 0.55 };
-
 
 // Extrusões com a borda levemente arredondada (moldura do gabinete e do relógio)
 const BEZEL_EXTRUDE = { depth: 0.05, bevelThickness: 0.012, bevelSize: 0.01, bevelSegments: 2 };
@@ -58,7 +56,14 @@ function PC() {
             bezel: ring(chamferShape(0.62, 1.76, 0.1, 0.06), chamferShape(0.52, 1.58, 0.075, 0.045, 0.08)),
             panel: fittedShapeGeometry(chamferShape(0.53, 1.5, 0.07, 0.045, 0.075)),
             strip: new THREE.ShapeGeometry(
-                new THREE.Shape([[-0.235, 1.588], [0.235, 1.588], [0.2, 1.624], [-0.2, 1.624]].map(([x, y]) => new THREE.Vector2(x, y)))
+                new THREE.Shape(
+                    [
+                        [-0.235, 1.588],
+                        [0.235, 1.588],
+                        [0.2, 1.624],
+                        [-0.2, 1.624]
+                    ].map(([x, y]) => new THREE.Vector2(x, y))
+                )
             )
         }),
         []
@@ -212,33 +217,85 @@ function Clock() {
 
 // Fones intra-auriculares transparentes largados no caderninho, com o fio subindo até o topo do gabinete
 const EARPHONE_WIRES = [
-    [[-3.68, 1.648, -2.0], [-3.63, 1.63, -1.93], [-3.57, 1.572, -1.78], [-3.5, 1.567, -1.62]],
-    [[-3.7, 1.648, -1.77], [-3.62, 1.625, -1.72], [-3.55, 1.567, -1.66], [-3.5, 1.567, -1.62]],
-    [[-3.5, 1.567, -1.62], [-3.4, 1.567, -1.45], [-3.33, 1.6, -1.36], [-3.32, 2.4, -1.345], [-3.33, 3.3, -1.34], [-3.42, 3.345, -1.2]]
+    [
+        [-3.68, 1.648, -2.0],
+        [-3.63, 1.63, -1.93],
+        [-3.57, 1.572, -1.78],
+        [-3.5, 1.567, -1.62]
+    ],
+    [
+        [-3.7, 1.648, -1.77],
+        [-3.62, 1.625, -1.72],
+        [-3.55, 1.567, -1.66],
+        [-3.5, 1.567, -1.62]
+    ],
+    [
+        [-3.5, 1.567, -1.62],
+        [-3.4, 1.567, -1.45],
+        [-3.33, 1.6, -1.36],
+        [-3.32, 2.4, -1.345],
+        [-3.33, 3.3, -1.34],
+        [-3.42, 3.345, -1.2]
+    ]
 ];
 
 // Cabos pretos saindo de trás do monitor e indo para o gabinete
 const MONITOR_CABLES = [
-    [[-4.44, 2.2, -2.6], [-4.62, 1.8, -2.4], [-4.74, 1.575, -2.05], [-4.72, 1.575, -1.6], [-4.55, 1.7, -1.33]],
-    [[-4.44, 2.05, -2.75], [-4.66, 1.7, -2.5], [-4.78, 1.575, -2.1], [-4.79, 1.575, -1.55], [-4.68, 1.8, -1.33]]
+    [
+        [-4.44, 2.2, -2.6],
+        [-4.62, 1.8, -2.4],
+        [-4.74, 1.575, -2.05],
+        [-4.72, 1.575, -1.6],
+        [-4.55, 1.7, -1.33]
+    ],
+    [
+        [-4.44, 2.05, -2.75],
+        [-4.66, 1.7, -2.5],
+        [-4.78, 1.575, -2.1],
+        [-4.79, 1.575, -1.55],
+        [-4.68, 1.8, -1.33]
+    ]
 ];
 
 // Os 2 cabos da TV: saem de baixo dela e descem rentes ao painel até a mesa, por trás do monitor
 const TV_CABLES = [
-    [[-4.85, 3.45, -2.15], [-4.848, 3.26, -2.16], [-4.848, 3.05, -2.26], [-4.848, 2.75, -2.4], [-4.848, 2.2, -2.45], [-4.848, 1.6, -2.4]],
-    [[-4.85, 3.45, -3.22], [-4.848, 3.24, -3.22], [-4.848, 3.0, -3.18], [-4.848, 2.6, -3.1], [-4.848, 2.1, -3.06], [-4.848, 1.6, -3.0]]
+    [
+        [-4.85, 3.45, -2.15],
+        [-4.848, 3.26, -2.16],
+        [-4.848, 3.05, -2.26],
+        [-4.848, 2.75, -2.4],
+        [-4.848, 2.2, -2.45],
+        [-4.848, 1.6, -2.4]
+    ],
+    [
+        [-4.85, 3.45, -3.22],
+        [-4.848, 3.24, -3.22],
+        [-4.848, 3.0, -3.18],
+        [-4.848, 2.6, -3.1],
+        [-4.848, 2.1, -3.06],
+        [-4.848, 1.6, -3.0]
+    ]
 ];
 
 function Earphones() {
     return (
         <group>
-            {[[-3.68, 1.648, -2.0, 0.5], [-3.7, 1.648, -1.77, -0.4]].map(([x, y, z, r]) => (
+            {[
+                [-3.68, 1.648, -2.0, 0.5],
+                [-3.7, 1.648, -1.77, -0.4]
+            ].map(([x, y, z, r]) => (
                 <group key={z} position={[x, y, z]} rotation-y={r}>
                     <mesh scale={[0.05, 0.028, 0.038]} castShadow>
                         <sphereGeometry args={[1, 18, 12]} />
                         <meshStandardMaterial color="#e9eef0" roughness={0.12} transparent opacity={0.75} />
                     </mesh>
-                    <Cyl args={[0.012, 0.014, 0.05, 10]} position={[0.035, 0, 0]} rotation-z={Math.PI / 2} color="#cfd6d8" roughness={0.2} />
+                    <Cyl
+                        args={[0.012, 0.014, 0.05, 10]}
+                        position={[0.035, 0, 0]}
+                        rotation-z={Math.PI / 2}
+                        color="#cfd6d8"
+                        roughness={0.2}
+                    />
                 </group>
             ))}
             {EARPHONE_WIRES.map((points, i) => (
@@ -258,8 +315,23 @@ function Peripherals() {
             <Mouse />
             <Clock />
             {/* caderninho com a calculadora em cima */}
-            <Rounded size={[0.64, 0.06, 0.46]} radius={0.02} position={[-3.95, 1.59, -1.85]} rotation-y={0.05} color={C.black} roughness={0.6} />
-            <FacedBox size={[0.42, 0.03, 0.24]} position={[-3.95, 1.635, -1.84]} rotation-y={-0.08} faceIndex={2} faceMap={calc} color="#2c2e33" roughness={0.5} />
+            <Rounded
+                size={[0.64, 0.06, 0.46]}
+                radius={0.02}
+                position={[-3.95, 1.59, -1.85]}
+                rotation-y={0.05}
+                color={C.black}
+                roughness={0.6}
+            />
+            <FacedBox
+                size={[0.42, 0.03, 0.24]}
+                position={[-3.95, 1.635, -1.84]}
+                rotation-y={-0.08}
+                faceIndex={2}
+                faceMap={calc}
+                color="#2c2e33"
+                roughness={0.5}
+            />
             <Earphones />
             {[...MONITOR_CABLES, ...TV_CABLES].map((points, i) => (
                 <Cable key={i} points={points} />
@@ -279,7 +351,15 @@ export default function DeskWall({ t, onSelect, showLabels, focus, screen, reduc
             <Box size={[0.14, 4.9, 4.1]} position={[-4.93, 2.5, -2.8]} map={oak} color="#ffffff" roughness={0.6} />
 
             {/* tampo (o veio de cima segue o comprimento da mesa), lateral e gaveteiro */}
-            <FacedBox size={[1.51, 0.1, 3.1]} position={[-4.105, 1.51, -3.0]} faceIndex={2} faceMap={walnutTop} map={walnut} color="#ffffff" roughness={0.3} />
+            <FacedBox
+                size={[1.51, 0.1, 3.1]}
+                position={[-4.105, 1.51, -3.0]}
+                faceIndex={2}
+                faceMap={walnutTop}
+                map={walnut}
+                color="#ffffff"
+                roughness={0.3}
+            />
             <Box size={[1.46, 1.46, 0.08]} position={[-4.13, 0.73, -4.51]} map={walnut} color="#ffffff" roughness={0.35} />
             <Drawers walnut={walnut} chrome={chrome} />
 

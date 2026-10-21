@@ -140,7 +140,12 @@ export function pillowTexture(color, seed = 3) {
             ctx.lineWidth = 10 + rand() * 16;
             ctx.beginPath();
             ctx.moveTo(x, y);
-            ctx.quadraticCurveTo(x + Math.cos(a + 0.5) * l * 0.5, y + Math.sin(a + 0.5) * l * 0.5, x + Math.cos(a) * l, y + Math.sin(a) * l);
+            ctx.quadraticCurveTo(
+                x + Math.cos(a + 0.5) * l * 0.5,
+                y + Math.sin(a + 0.5) * l * 0.5,
+                x + Math.cos(a) * l,
+                y + Math.sin(a) * l
+            );
             ctx.stroke();
         }
         ctx.strokeStyle = 'rgba(250,248,244,0.95)';

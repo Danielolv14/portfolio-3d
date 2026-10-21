@@ -1,0 +1,29 @@
+# Em cada push e Pull Request: lint, formatação e build, e o tamanho dos arquivos gerados no resumo
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+jobs:
+    check:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+            - run: npm ci
+            - run: npm run lint
+            - run: npm run format:check
+            - run: npm run build
+            - name: Tamanho do build
+              run: |
+                  echo "### Tamanho do build" >> "$GITHUB_STEP_SUMMARY"
+                  echo '```' >> "$GITHUB_STEP_SUMMARY"
+                  for f in dist/assets/*.js dist/assets/*.css; do
+                      printf "%-40s %8s KB  (gzip %s KB)\n" "$(basename "$f")" "$(( $(wc -c < "$f") / 1024 ))" "$(( $(gzip -c "$f" | wc -c) / 1024 ))"
+                  done >> "$GITHUB_STEP_SUMMARY"
+                  echo '```' >> "$GITHUB_STEP_SUMMARY"

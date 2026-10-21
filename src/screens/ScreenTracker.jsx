@@ -40,7 +40,10 @@ export default function ScreenTracker({ section, box }) {
         let bottom = -Infinity;
         for (const [cx, cy] of CORNERS) {
             // canto do plano -> mundo -> coordenadas da câmera (-1 a 1) -> px da página
-            point.set(cx * width, cy * height, 0).applyMatrix4(screen.matrixWorld).project(camera);
+            point
+                .set(cx * width, cy * height, 0)
+                .applyMatrix4(screen.matrixWorld)
+                .project(camera);
             const x = ((point.x + 1) / 2) * size.width;
             const y = ((1 - point.y) / 2) * size.height;
             left = Math.min(left, x);

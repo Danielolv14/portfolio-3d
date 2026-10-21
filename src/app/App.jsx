@@ -90,10 +90,7 @@ export default function App() {
     const { w, h } = useViewport();
     const t = content[lang];
     const mobile = w < MOBILE_MAX;
-    const reducedMotion = useMemo(
-        () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false,
-        []
-    );
+    const reducedMotion = useMemo(() => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false, []);
     // Tela de toque sem mouse (celular, tablet): a dica fala em "toque", mesmo em tela larga
     const touch = useMemo(() => window.matchMedia?.('(hover: none)').matches ?? false, []);
 

@@ -51,11 +51,23 @@ const MAIL_FLAP = 'M24.5 37.5 50 55.5l25.5-18';
 // Instagram, que é radial (centro perto do canto de baixo à esquerda). Cores atingíveis pela textura.
 export const APP_ART = {
     linkedin: {
-        background: { type: 'linear', stops: [[0, '#2a7fd0'], [1, '#0a5cad']] },
+        background: {
+            type: 'linear',
+            stops: [
+                [0, '#2a7fd0'],
+                [1, '#0a5cad']
+            ]
+        },
         logo: { paths: [LINKEDIN_PATH], circles: [LINKEDIN_DOT], fill: PHONE_WHITE }
     },
     github: {
-        background: { type: 'linear', stops: [[0, '#3a4048'], [1, '#1d2127']] },
+        background: {
+            type: 'linear',
+            stops: [
+                [0, '#3a4048'],
+                [1, '#1d2127']
+            ]
+        },
         // 24 -> 60 unidades, centrado
         logo: { paths: [GITHUB_PATH], scale: 2.5, offset: [20, 20], fill: PHONE_WHITE }
     },
@@ -76,7 +88,13 @@ export const APP_ART = {
         logo: { paths: [INSTAGRAM_PATH], scale: 2.4, offset: [21.2, 21.2], fill: PHONE_WHITE }
     },
     email: {
-        background: { type: 'linear', stops: [[0, '#e78bd0'], [1, '#a54791']] },
+        background: {
+            type: 'linear',
+            stops: [
+                [0, '#e78bd0'],
+                [1, '#a54791']
+            ]
+        },
         logo: { strokes: [MAIL_PATH, MAIL_FLAP], width: 5.5, stroke: PHONE_WHITE }
     }
 };
@@ -112,9 +130,15 @@ export function AppIcon({ app }) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
             >
-                {logo.paths?.map((d) => <path key={d} d={d} />)}
-                {logo.circles?.map((c) => <circle key={c.cx} {...c} />)}
-                {logo.strokes?.map((d) => <path key={d} d={d} />)}
+                {logo.paths?.map((d) => (
+                    <path key={d} d={d} />
+                ))}
+                {logo.circles?.map((c) => (
+                    <circle key={c.cx} {...c} />
+                ))}
+                {logo.strokes?.map((d) => (
+                    <path key={d} d={d} />
+                ))}
             </g>
         </svg>
     );

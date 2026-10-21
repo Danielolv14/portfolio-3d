@@ -364,7 +364,10 @@ h3 {
     font-weight: 600;
     white-space: nowrap;
     box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.35);
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
     user-select: none;
 }
 
@@ -1024,12 +1027,7 @@ img.avatar {
     font-family: var(--font-mono);
     font-size: 0.72em;
     background:
-        repeating-linear-gradient(
-            -45deg,
-            transparent 0 10px,
-            color-mix(in srgb, var(--line) 70%, transparent) 10px 11px
-        ),
-        var(--surface);
+        repeating-linear-gradient(-45deg, transparent 0 10px, color-mix(in srgb, var(--line) 70%, transparent) 10px 11px), var(--surface);
     border: 1px solid var(--line);
 }
 

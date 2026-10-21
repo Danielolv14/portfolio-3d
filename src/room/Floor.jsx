@@ -11,7 +11,14 @@ function Backpack(props) {
             <Soft size={[0.56, 0.48, 0.16]} position={[0, 0.32, 0.17]} color="#242529" roughness={0.8} pinch={0.3} />
             <Box size={[0.42, 0.012, 0.02]} position={[0, 0.53, 0.235]} rotation-x={-0.35} color="#3b3c42" roughness={0.5} shadow={false} />
             <Box size={[0.03, 0.07, 0.012]} position={[0.17, 0.5, 0.25]} color={C.chrome} roughness={0.3} metalness={0.8} shadow={false} />
-            <Rounded size={[0.15, 0.05, 0.012]} radius={0.005} position={[0, 0.71, 0.2]} rotation-x={-0.18} color="#2e3a33" roughness={0.6} />
+            <Rounded
+                size={[0.15, 0.05, 0.012]}
+                radius={0.005}
+                position={[0, 0.71, 0.2]}
+                rotation-x={-0.18}
+                color="#2e3a33"
+                roughness={0.6}
+            />
             <mesh position={[0, 0.955, 0]} castShadow>
                 <torusGeometry args={[0.08, 0.018, 8, 20, Math.PI]} />
                 <meshStandardMaterial color={C.black} roughness={0.8} />
@@ -42,7 +49,15 @@ function Sneaker(props) {
             </group>
             <Box size={[0.2, 0.045, 0.236]} position={[-0.06, 0.12, 0]} color="#d3d5d9" roughness={0.7} shadow={false} />
             {[-0.02, 0.035, 0.09].map((x) => (
-                <Box key={x} size={[0.022, 0.014, 0.12]} position={[x, 0.28 - (x + 0.02) * 0.4, 0]} rotation-z={-0.4} color="#dcdcd9" roughness={0.8} shadow={false} />
+                <Box
+                    key={x}
+                    size={[0.022, 0.014, 0.12]}
+                    position={[x, 0.28 - (x + 0.02) * 0.4, 0]}
+                    rotation-z={-0.4}
+                    color="#dcdcd9"
+                    roughness={0.8}
+                    shadow={false}
+                />
             ))}
             <Rounded size={[0.06, 0.12, 0.12]} radius={0.025} position={[-0.29, 0.21, 0]} color="#f2f1ed" roughness={0.7} />
         </group>

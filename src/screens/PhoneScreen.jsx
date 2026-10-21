@@ -37,7 +37,17 @@ function StatusIcons() {
             {WIFI.map((d) => (
                 <path key={d} d={d} />
             ))}
-            <rect x="107.2" y="6.7" width="49.6" height="21.6" rx="6.6" fill="none" stroke="currentColor" strokeWidth="2.4" opacity="0.45" />
+            <rect
+                x="107.2"
+                y="6.7"
+                width="49.6"
+                height="21.6"
+                rx="6.6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                opacity="0.45"
+            />
             <rect x="110.6" y="10.1" width="36" height="14.8" rx="3.8" />
             <rect x="160.4" y="13.5" width="3.8" height="7.6" rx="1.9" opacity="0.45" />
         </svg>

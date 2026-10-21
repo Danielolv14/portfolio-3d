@@ -56,13 +56,7 @@ export default function MailCompose({ t, lang, idPrefix, onCancel, nameRef }) {
                 <h3 className="mail-title" id={titleId}>
                     {f.title}
                 </h3>
-                <button
-                    type="submit"
-                    className="mail-send"
-                    disabled={sending}
-                    aria-label={sending ? f.sending : f.send}
-                    title={f.send}
-                >
+                <button type="submit" className="mail-send" disabled={sending} aria-label={sending ? f.sending : f.send} title={f.send}>
                     <IconArrowUp />
                 </button>
             </div>

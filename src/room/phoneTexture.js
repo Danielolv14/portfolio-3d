@@ -109,9 +109,15 @@ function saturate(image, amount) {
     const d = image.data;
     const s = amount;
     const m = [
-        0.213 + 0.787 * s, 0.715 - 0.715 * s, 0.072 - 0.072 * s,
-        0.213 - 0.213 * s, 0.715 + 0.285 * s, 0.072 - 0.072 * s,
-        0.213 - 0.213 * s, 0.715 - 0.715 * s, 0.072 + 0.928 * s
+        0.213 + 0.787 * s,
+        0.715 - 0.715 * s,
+        0.072 - 0.072 * s,
+        0.213 - 0.213 * s,
+        0.715 + 0.285 * s,
+        0.072 - 0.072 * s,
+        0.213 - 0.213 * s,
+        0.715 - 0.715 * s,
+        0.072 + 0.928 * s
     ];
     for (let p = 0; p < d.length; p += 4) {
         const r = d[p];
@@ -213,7 +219,12 @@ export function phoneScreenTexture() {
         // Papel de parede: degradê de ameixa para marrom, o tom da madeira embaixo à esquerda e o
         // rosa do RGB em cima à direita (as 3 camadas do background do .phone-display)
         const base = ctx.createLinearGradient(0, 0, 0, scale.bottom * u);
-        [[0, '#2a1230'], [0.4, '#4b1d4a'], [0.72, '#6a3346'], [1, '#6e4630']].forEach(([at, c]) => base.addColorStop(at, c));
+        [
+            [0, '#2a1230'],
+            [0.4, '#4b1d4a'],
+            [0.72, '#6a3346'],
+            [1, '#6e4630']
+        ].forEach(([at, c]) => base.addColorStop(at, c));
         ctx.fillStyle = base;
         ctx.fillRect(0, 0, W, H);
         const glow = (cx, cy, r, rgb, alpha) => {
@@ -456,7 +467,11 @@ function drawStatusIcons(ctx, x, y, scale) {
     });
     // Wi-Fi: 3 faixas de um setor de 90° apontando para cima, com centro em (76; 30,5)
     const deg = Math.PI / 180;
-    [[0, 8.5], [11.5, 18], [21, 27.5]].forEach(([r1, r2]) => {
+    [
+        [0, 8.5],
+        [11.5, 18],
+        [21, 27.5]
+    ].forEach(([r1, r2]) => {
         ctx.beginPath();
         ctx.arc(76, 30.5, r2, 225 * deg, 315 * deg);
         if (r1 > 0) ctx.arc(76, 30.5, r1, 315 * deg, 225 * deg, true);

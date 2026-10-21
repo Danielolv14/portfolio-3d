@@ -206,7 +206,22 @@ export const content = {
                 }
             ],
             stackTitle: 'Tecnologias',
-            stack: ['Java', 'Spring Boot', 'PHP', 'JavaScript', 'TypeScript', 'Vue.js', 'React', 'HTML e CSS', 'PostgreSQL', 'MySQL', 'SQL Server', 'MongoDB', 'C e C++', 'Git'],
+            stack: [
+                'Java',
+                'Spring Boot',
+                'PHP',
+                'JavaScript',
+                'TypeScript',
+                'Vue.js',
+                'React',
+                'HTML e CSS',
+                'PostgreSQL',
+                'MySQL',
+                'SQL Server',
+                'MongoDB',
+                'C e C++',
+                'Git'
+            ],
             interestsTitle: 'Interesses',
             interests: ['Back-end', 'Full stack', 'Arquitetura limpa', 'Performance', 'Integrações entre sistemas'],
             goalTitle: 'Objetivo',
@@ -313,7 +328,22 @@ export const content = {
                 }
             ],
             stackTitle: 'Tech stack',
-            stack: ['Java', 'Spring Boot', 'PHP', 'JavaScript', 'TypeScript', 'Vue.js', 'React', 'HTML & CSS', 'PostgreSQL', 'MySQL', 'SQL Server', 'MongoDB', 'C & C++', 'Git'],
+            stack: [
+                'Java',
+                'Spring Boot',
+                'PHP',
+                'JavaScript',
+                'TypeScript',
+                'Vue.js',
+                'React',
+                'HTML & CSS',
+                'PostgreSQL',
+                'MySQL',
+                'SQL Server',
+                'MongoDB',
+                'C & C++',
+                'Git'
+            ],
             interestsTitle: 'Interests',
             interests: ['Back end', 'Full stack', 'Clean architecture', 'Performance', 'System integrations'],
             goalTitle: 'Goal',
@@ -377,7 +407,12 @@ export const content = {
 // Canais de contato (iguais nos dois idiomas). O WhatsApp fica de fora por escolha do Daniel.
 export const channels = [
     { id: 'email', label: 'E-mail', value: profile.email, copy: true },
-    { id: 'linkedin', label: 'LinkedIn', value: 'linkedin.com/in/daniel-oliveira14', href: 'https://www.linkedin.com/in/daniel-oliveira14/' },
+    {
+        id: 'linkedin',
+        label: 'LinkedIn',
+        value: 'linkedin.com/in/daniel-oliveira14',
+        href: 'https://www.linkedin.com/in/daniel-oliveira14/'
+    },
     { id: 'github', label: 'GitHub', value: 'github.com/Danielolv14', href: 'https://github.com/Danielolv14' },
     { id: 'instagram', label: 'Instagram', value: '@danielolvz', href: 'https://www.instagram.com/danielolvz/' }
 ];

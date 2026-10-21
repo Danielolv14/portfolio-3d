@@ -13,9 +13,29 @@ import { drawTexture, MeshBuilder } from './Keyboard';
 const LENGTH = 120.6;
 // Metade da largura ao longo do comprimento (s = 0 na ponta da frente, 1 no fim da traseira):
 // frente larga, uma cintura leve no meio e a parte mais larga (64,1 mm) embaixo da palma
-const HALF_WIDTH = [[0, 29.4], [0.16, 30.5], [0.34, 29.6], [0.5, 29.2], [0.68, 31.2], [0.8, 32.05], [0.92, 31.4], [1, 30]];
+const HALF_WIDTH = [
+    [0, 29.4],
+    [0.16, 30.5],
+    [0.34, 29.6],
+    [0.5, 29.2],
+    [0.68, 31.2],
+    [0.8, 32.05],
+    [0.92, 31.4],
+    [1, 30]
+];
 // Altura do meio do casco: sobe devagar desde os botões até a corcova (37,6 mm), um pouco atrás do meio
-const TOP_HEIGHT = [[0, 19.5], [0.1, 23], [0.22, 27], [0.36, 31.2], [0.5, 35.2], [0.62, 37.6], [0.72, 37.1], [0.83, 33.8], [0.93, 27.5], [1, 21]];
+const TOP_HEIGHT = [
+    [0, 19.5],
+    [0.1, 23],
+    [0.22, 27],
+    [0.36, 31.2],
+    [0.5, 35.2],
+    [0.62, 37.6],
+    [0.72, 37.1],
+    [0.83, 33.8],
+    [0.93, 27.5],
+    [1, 21]
+];
 // Arredondamento das pontas (mm): a frente é mais reta, a traseira mais redonda
 const ENDS = { plan: [12, 30], side: [7, 15] };
 // Seção transversal: superelipse (expoentes maiores = lateral mais reta e topo mais chato)
@@ -25,7 +45,10 @@ const BUTTONS_END = 0.44;
 const WHEEL = { s: 0.19, r: 10, w: 7, rise: 3.6 };
 const SLOT = { s0: 0.075, s1: 0.31, hx: 5.4, depth: 3.2 };
 // Botões laterais (esquerda): começo e fim no comprimento, altura do meio
-const SIDE_BUTTONS = [[0.335, 0.485], [0.5, 0.645]];
+const SIDE_BUTTONS = [
+    [0.335, 0.485],
+    [0.5, 0.645]
+];
 const SIDE_Y = 20;
 
 // Escala do quarto e o atlas de cores (o casco usa a parte da esquerda)
@@ -35,7 +58,15 @@ const SHELL_W = 400;
 const WHEEL_U = [412, 452];
 const SIDE_U = 474;
 const BOTTOM_U = 504;
-const COLORS = { shell: '#17181b', seam: '#060607', slot: '#08080a', wheel: '#2e2f33', ridge: '#111214', side: '#1e1f23', bottom: '#0d0d0f' };
+const COLORS = {
+    shell: '#17181b',
+    seam: '#060607',
+    slot: '#08080a',
+    wheel: '#2e2f33',
+    ridge: '#111214',
+    side: '#1e1f23',
+    bottom: '#0d0d0f'
+};
 
 // Curva suave que passa pelos pontos [s, valor] (Hermite com as inclinações dos vizinhos)
 function smoothCurve(pts) {
@@ -91,7 +122,11 @@ function shellPoint(s, q) {
     let y = h * sn ** (2 / SECTION.y);
     // vinco entre os botões e o vão da roda (afundados no meio do casco)
     y -= 0.9 * Math.exp(-((x / 1.1) ** 2)) * (1 - smoothstep(BUTTONS_END - 0.04, BUTTONS_END + 0.02, s));
-    y -= SLOT.depth * (1 - smoothstep(SLOT.hx - 1.2, SLOT.hx, Math.abs(x))) * smoothstep(SLOT.s0, SLOT.s0 + 0.02, s) * (1 - smoothstep(SLOT.s1 - 0.02, SLOT.s1, s));
+    y -=
+        SLOT.depth *
+        (1 - smoothstep(SLOT.hx - 1.2, SLOT.hx, Math.abs(x))) *
+        smoothstep(SLOT.s0, SLOT.s0 + 0.02, s) *
+        (1 - smoothstep(SLOT.s1 - 0.02, SLOT.s1, s));
     return [x, Math.max(0, y), s * LENGTH - LENGTH / 2];
 }
 const shellUV = (s, q) => [((q + 1) / 2) * (SHELL_W / ATLAS), 1 - s];
@@ -128,22 +163,32 @@ function addWheel(b) {
     const yc = top + WHEEL.rise - WHEEL.r;
     const n = 48;
     // o ângulo começa embaixo (escondido no casco), onde a textura dá a volta
-    const circle = (x, r) => Array.from({ length: n + 1 }, (_, j) => {
-        const a = Math.PI + (j / n) * Math.PI * 2;
-        return [x, yc + r * Math.cos(a), z + r * Math.sin(a)];
-    });
+    const circle = (x, r) =>
+        Array.from({ length: n + 1 }, (_, j) => {
+            const a = Math.PI + (j / n) * Math.PI * 2;
+            return [x, yc + r * Math.cos(a), z + r * Math.sin(a)];
+        });
     const tread = (x, r) => {
         const pts = circle(x, r);
         const u = (WHEEL_U[0] + ((x + WHEEL.w / 2) / WHEEL.w) * (WHEEL_U[1] - WHEEL_U[0])) / ATLAS;
-        return b.add(pts, pts.map((_, j) => [u, 1 - j / n]));
+        return b.add(
+            pts,
+            pts.map((_, j) => [u, 1 - j / n])
+        );
     };
     const hw = WHEEL.w / 2;
     const rings = [tread(-hw, WHEEL.r - 0.8), tread(-hw + 0.7, WHEEL.r), tread(hw - 0.7, WHEEL.r), tread(hw, WHEEL.r - 0.8)];
     for (let i = 1; i < rings.length; i++) b.band(rings[i - 1], rings[i], n + 1, false);
     const flat = [WHEEL_U[0] / ATLAS + 0.004, 0.02];
-    for (const [x, flip] of [[-hw, true], [hw, false]]) {
+    for (const [x, flip] of [
+        [-hw, true],
+        [hw, false]
+    ]) {
         const pts = circle(x, WHEEL.r - 0.8);
-        const ring = b.add(pts, pts.map(() => flat));
+        const ring = b.add(
+            pts,
+            pts.map(() => flat)
+        );
         b.fan(ring, b.add([[x, yc, z]], [flat]), n + 1, flip);
     }
 }
@@ -159,7 +204,12 @@ function addSideButton(b, [s0, s1]) {
     const ha = ((s1 - s0) * LENGTH) / 2;
     const ca = sm * LENGTH - LENGTH / 2;
     const uv = [SIDE_U / ATLAS, 0.5];
-    const layers = [[-1.2, 0, 2.6], [0.7, 0.15, 2.5], [1.3, 0.7, 2.1], [1.5, 1.6, 1.4]];
+    const layers = [
+        [-1.2, 0, 2.6],
+        [0.7, 0.15, 2.5],
+        [1.3, 0.7, 2.1],
+        [1.5, 1.6, 1.4]
+    ];
     let prev = -1;
     let n = 0;
     for (const [d, inset, r] of layers) {
@@ -175,7 +225,10 @@ function addSideButton(b, [s0, s1]) {
             }
         }
         n = pts.length;
-        const first = b.add(pts, pts.map(() => uv));
+        const first = b.add(
+            pts,
+            pts.map(() => uv)
+        );
         if (prev >= 0) b.band(prev, first, n);
         prev = first;
     }

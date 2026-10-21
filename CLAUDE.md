@@ -38,8 +38,9 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 
 ## Stack e comandos
 
-- React 18.3.1, Vite 5.4.10, three 0.164.1, @react-three/fiber 8.16.6, @react-three/drei 9.106.0, camera-controls 2.10.1, @react-three/postprocessing 2.16.3 com postprocessing 6.36.0, @emailjs/browser 4.4.1. Em desenvolvimento: playwright-core 1.61.1.
-- Comandos: `npm install`, `npm run dev` (http://localhost:5173), `npm run build`, `npm run preview` (http://localhost:4173).
+- React 18.3.1, Vite 6.4.5, three 0.164.1, @react-three/fiber 8.16.6, @react-three/drei 9.122.0, camera-controls 2.10.1, @react-three/postprocessing 2.16.3 com postprocessing 6.36.0, @emailjs/browser 4.4.1. Em desenvolvimento: playwright-core 1.61.1, ESLint 9 e Prettier 3.
+- Comandos: `npm install`, `npm run dev` (http://localhost:5173), `npm run build`, `npm run preview` (http://localhost:4173), `npm run lint`, `npm run format` e `npm run check` (lint + formatação + build, o mesmo que o CI do GitHub roda em cada push).
+- **Build:** nomes com hash; o three.js fica no pedaço `three` e só baixa quando o 3D (`src/scene/Scene.jsx`, com `React.lazy`) monta. Não volte a usar nomes fixos nem `inlineDynamicImports`.
 - EmailJS: copie `.env.example` para `.env.local` e preencha:
   - `VITE_EMAILJS_SERVICE_ID`
   - `VITE_EMAILJS_TEMPLATE_ID_FOR_ME`

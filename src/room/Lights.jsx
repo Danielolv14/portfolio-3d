@@ -32,6 +32,8 @@ export default function Lights({ night }) {
     // então abrir o site à noite é comum); só as trocas depois disso são graduais
     useLayoutEffect(() => {
         dayNight.mix = night ? 1 : 0;
+        // Só na montagem, de propósito: as trocas seguintes são animadas no useFrame abaixo
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useFrame((_, dt) => {
@@ -82,7 +84,14 @@ export default function Lights({ night }) {
             <Environment resolution={128} frames={1}>
                 <Lightformer form="rect" intensity={2} color="#fff4e6" position={[0, 8, 0]} rotation-x={Math.PI / 2} scale={[12, 12, 1]} />
                 <Lightformer form="rect" intensity={1.4} color="#ffe2b8" position={[0, 3, -9]} scale={[6, 4, 1]} />
-                <Lightformer form="rect" intensity={0.8} color="#f1f1ff" position={[9, 4, 9]} rotation-y={(Math.PI * 5) / 4} scale={[10, 6, 1]} />
+                <Lightformer
+                    form="rect"
+                    intensity={0.8}
+                    color="#f1f1ff"
+                    position={[9, 4, 9]}
+                    rotation-y={(Math.PI * 5) / 4}
+                    scale={[10, 6, 1]}
+                />
             </Environment>
         </>
     );

@@ -305,14 +305,7 @@ export default function Scene({
             {/* O quarto não se mexe e o sol não muda de lugar (só de cor e força): o mapa de
                 sombra é desenhado uma vez só, em vez de redesenhar todas as peças a cada quadro */}
             <BakeShadows />
-            <CameraRig
-                focus={focus}
-                screen={screen}
-                panel={panel}
-                topInset={topInset}
-                reducedMotion={reducedMotion}
-                onParked={onParked}
-            />
+            <CameraRig focus={focus} screen={screen} panel={panel} topInset={topInset} reducedMotion={reducedMotion} onParked={onParked} />
             {screen && <ScreenTracker section={screen} box={screenBox} />}
             <Effects compact={compact} />
             {import.meta.env.DEV && <DevStats />}

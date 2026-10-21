@@ -148,7 +148,10 @@ function sweep(points, { w, d, up = UP, closed = false, n = 4, sides = 16, taper
         const ringPts = [];
         for (let j = 0; j < sides; j++) {
             const [c, s] = squircle((j / sides) * Math.PI * 2, n);
-            const p = pts[i].clone().addScaledVector(N, c * w * kw).addScaledVector(B, s * d * kd);
+            const p = pts[i]
+                .clone()
+                .addScaledVector(N, c * w * kw)
+                .addScaledVector(B, s * d * kd);
             ringPts.push(p);
             pos.push(p.x, p.y, p.z);
         }
@@ -167,7 +170,10 @@ function sweep(points, { w, d, up = UP, closed = false, n = 4, sides = 16, taper
     }
     // tampas nas pontas (com vértices próprios, para a quina não ficar "borrada")
     if (!closed) {
-        for (const [ri, end] of [[0, false], [count - 1, true]]) {
+        for (const [ri, end] of [
+            [0, false],
+            [count - 1, true]
+        ]) {
             const start = pos.length / 3;
             const center = pts[ri];
             pos.push(center.x, center.y, center.z);
@@ -291,7 +297,14 @@ function buildChair() {
     // ---- assento: moldura, tela e o fundo ----
     const seatRim = outline(seatPoint, SEAT.n).map((p) => p.add(v3(0, -0.03, 0)));
     add(sweep(seatRim, { w: 0.03, d: 0.04, closed: true, n: 3, sides: 14 }));
-    add(panel((u, w) => v3(u * 0.985 * seatHalfWidth(w), SEAT.y - 0.065, SEAT.cz + w * 0.985 * SEAT.hd), SEAT.n, () => [0, 0], { rings: 3 }));
+    add(
+        panel(
+            (u, w) => v3(u * 0.985 * seatHalfWidth(w), SEAT.y - 0.065, SEAT.cz + w * 0.985 * SEAT.hd),
+            SEAT.n,
+            () => [0, 0],
+            { rings: 3 }
+        )
+    );
     seatWeave.push(panel(seatPoint, SEAT.n, (p) => [p.x * WEAVE_SCALE, p.z * WEAVE_SCALE], { flip: true }));
 
     // ---- encosto: moldura, tela, apoio lombar, coluna com o filete claro ----
@@ -345,12 +358,22 @@ function buildChair() {
     // ---- braços 6D: suporte sob o assento, coluna com botão de altura e apoio de PU que gira ----
     for (const s of [-1, 1]) {
         add(
-            sweep([v3(s * 0.14, 0.895, -0.06), v3(s * 0.36, 0.895, -0.06), v3(s * 0.47, 0.92, -0.06), v3(s * 0.505, 1.0, -0.06), v3(s * 0.51, 1.2, -0.05), v3(s * 0.51, 1.38, -0.04)], {
-                w: 0.02,
-                d: 0.045,
-                up: FORWARD,
-                samples: 24
-            })
+            sweep(
+                [
+                    v3(s * 0.14, 0.895, -0.06),
+                    v3(s * 0.36, 0.895, -0.06),
+                    v3(s * 0.47, 0.92, -0.06),
+                    v3(s * 0.505, 1.0, -0.06),
+                    v3(s * 0.51, 1.2, -0.05),
+                    v3(s * 0.51, 1.38, -0.04)
+                ],
+                {
+                    w: 0.02,
+                    d: 0.045,
+                    up: FORWARD,
+                    samples: 24
+                }
+            )
         );
         add(sweep([v3(s * 0.51, 1.04, -0.055), v3(s * 0.51, 1.37, -0.04)], { w: 0.03, d: 0.058, up: FORWARD, n: 3 }));
         add(rbox([0.03, 0.05, 0.03], 0.01, [s * 0.51, 1.33, 0.025]), COLOR.button);
@@ -360,7 +383,10 @@ function buildChair() {
 
     // junta por material e vira a frente para -x (a mesa)
     const merge = (list) => {
-        const geo = mergeGeometries(list.map((item) => (Array.isArray(item) ? prep(item[0], item[1]) : prep(item))), false);
+        const geo = mergeGeometries(
+            list.map((item) => (Array.isArray(item) ? prep(item[0], item[1]) : prep(item))),
+            false
+        );
         geo.rotateY(-Math.PI / 2);
         geo.computeBoundingSphere();
         return geo;

@@ -116,7 +116,16 @@ export function tilesTexture() {
 // Painel de MDF carvalho claro atrás da mesa: bege-acinzentado com veio vertical fino
 export function oakTexture() {
     return canvasTexture(512, 1024, (ctx, w, h) =>
-        woodGrain(ctx, w, h, { base: '#ccb699', dark: '#a08a6e', light: '#ddcfb8', seed: 21, vertical: true, lines: 220, bands: 4, parallel: true })
+        woodGrain(ctx, w, h, {
+            base: '#ccb699',
+            dark: '#a08a6e',
+            light: '#ddcfb8',
+            seed: 21,
+            vertical: true,
+            lines: 220,
+            bands: 4,
+            parallel: true
+        })
     );
 }
 
@@ -147,7 +156,11 @@ export function chromeEnvTexture() {
         ctx.fillStyle = '#fff8ec';
         ctx.fillRect(w * 0.12, h * 0.3, w * 0.1, h * 0.14);
         ctx.fillStyle = 'rgba(30, 24, 20, 0.8)';
-        [[0.42, 0.06], [0.63, 0.03], [0.82, 0.08]].forEach(([x, width]) => ctx.fillRect(w * x, h * 0.38, w * width, h * 0.14));
+        [
+            [0.42, 0.06],
+            [0.63, 0.03],
+            [0.82, 0.08]
+        ].forEach(([x, width]) => ctx.fillRect(w * x, h * 0.38, w * width, h * 0.14));
     });
     texture.mapping = THREE.EquirectangularReflectionMapping;
     return texture;
@@ -286,7 +299,12 @@ export function monitorScreenTexture() {
             ctx.arc((1.9 + i * 1.4) * u, (bar / 2) * u, 0.45 * u, 0, Math.PI * 2);
             ctx.fill();
         });
-        text(t.ui.screen.path.projects, W / 2, (bar / 2) * u, 1.25, { weight: 500, font: 'JetBrains Mono', color: c.muted, align: 'center' });
+        text(t.ui.screen.path.projects, W / 2, (bar / 2) * u, 1.25, {
+            weight: 500,
+            font: 'JetBrains Mono',
+            color: c.muted,
+            align: 'center'
+        });
         ctx.strokeStyle = c.muted;
         ctx.lineWidth = 0.14 * u;
         ctx.lineCap = 'round';
@@ -543,8 +561,7 @@ export function clockTexture() {
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.anisotropy = 8;
     const ink = '#101412';
-    const digits = (text, x, y, w, h, t, step) =>
-        [...text].forEach((ch, i) => sevenSeg(ctx, ch, x + i * step, y, w, h, t, ink));
+    const digits = (text, x, y, w, h, t, step) => [...text].forEach((ch, i) => sevenSeg(ctx, ch, x + i * step, y, w, h, t, ink));
     const label = (text, x, y, size, weight = 700) => {
         ctx.font = `${weight} ${size}px Arial, Helvetica, sans-serif`;
         ctx.fillText(text, x, y);
@@ -633,7 +650,11 @@ export function caseBadgeTexture(kind) {
             ctx.strokeStyle = '#3c3d42';
             ctx.lineWidth = 5;
             // três penas curvas, como uma chama subindo
-            [[0, 0, 1], [10, 30, 0.85], [20, 58, 0.7]].forEach(([dx, dy, s]) => {
+            [
+                [0, 0, 1],
+                [10, 30, 0.85],
+                [20, 58, 0.7]
+            ].forEach(([dx, dy, s]) => {
                 ctx.save();
                 ctx.translate(30 + dx, 30 + dy);
                 ctx.scale(s, s);
@@ -803,7 +824,15 @@ const POSTERS = {
         for (let i = 0; i < 26; i++) {
             ctx.fillStyle = `rgba(${170 + rand() * 50}, 20, 35, 0.9)`;
             ctx.beginPath();
-            ctx.ellipse(w * (0.25 + rand() * 0.5), h * (0.35 + rand() * 0.35), 10 + rand() * 14, 6 + rand() * 9, rand() * 3, 0, Math.PI * 2);
+            ctx.ellipse(
+                w * (0.25 + rand() * 0.5),
+                h * (0.35 + rand() * 0.35),
+                10 + rand() * 14,
+                6 + rand() * 9,
+                rand() * 3,
+                0,
+                Math.PI * 2
+            );
             ctx.fill();
         }
         ctx.fillStyle = '#9e1426';

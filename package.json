@@ -6,11 +6,15 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "lint": "eslint .",
+        "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"*.js\"",
+        "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"*.js\"",
+        "check": "npm run lint && npm run format:check && npm run build"
     },
     "dependencies": {
         "@emailjs/browser": "4.4.1",
-        "@react-three/drei": "9.106.0",
+        "@react-three/drei": "9.122.0",
         "@react-three/fiber": "8.16.6",
         "@react-three/postprocessing": "2.16.3",
         "camera-controls": "2.10.1",
@@ -20,8 +24,15 @@
         "three": "0.164.1"
     },
     "devDependencies": {
-        "@vitejs/plugin-react": "4.3.1",
+        "@eslint/js": "9.39.5",
+        "@vitejs/plugin-react": "4.7.0",
+        "eslint": "9.39.5",
+        "eslint-config-prettier": "10.1.8",
+        "eslint-plugin-react": "7.37.5",
+        "eslint-plugin-react-hooks": "5.2.0",
+        "globals": "17.13.0",
         "playwright-core": "1.61.1",
-        "vite": "5.4.10"
+        "prettier": "3.9.10",
+        "vite": "6.4.5"
     }
 }

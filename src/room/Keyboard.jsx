@@ -118,12 +118,31 @@ const onPlate = ([x, y, z]) => [x, rim(0) - DROP + y * COS - z * SIN, y * SIN + 
 // Layout ANSI 75%: [legenda, largura em u]; um número sozinho é um vão (só na linha de função)
 const chars = (s) => [...s].map((c) => [c, 1]);
 const ROWS = [
-    [['Esc', 1], 0.5, ...['F1', 'F2', 'F3', 'F4'].map((f) => [f, 1]), 0.5, ...['F5', 'F6', 'F7', 'F8'].map((f) => [f, 1]), 0.5, ...['F9', 'F10', 'F11', 'F12'].map((f) => [f, 1])],
+    [
+        ['Esc', 1],
+        0.5,
+        ...['F1', 'F2', 'F3', 'F4'].map((f) => [f, 1]),
+        0.5,
+        ...['F5', 'F6', 'F7', 'F8'].map((f) => [f, 1]),
+        0.5,
+        ...['F9', 'F10', 'F11', 'F12'].map((f) => [f, 1])
+    ],
     [...chars('`1234567890-='), ['Backspace', 2], ['Del', 1]],
     [['Tab', 1.5], ...chars('QWERTYUIOP[]'), ['\\', 1.5], ['PgUp', 1]],
     [['Caps', 1.75], ...chars("ASDFGHJKL;'"), ['Enter', 2.25], ['PgDn', 1]],
     [['Shift', 2.25], ...chars('ZXCVBNM,./'), ['Shift', 1.75], ['↑', 1], ['End', 1]],
-    [['Ctrl', 1.25], ['Win', 1.25], ['Alt', 1.25], ['', 6.25], ['Alt', 1], ['Fn', 1], ['Ctrl', 1], ['←', 1], ['↓', 1], ['→', 1]]
+    [
+        ['Ctrl', 1.25],
+        ['Win', 1.25],
+        ['Alt', 1.25],
+        ['', 6.25],
+        ['Alt', 1],
+        ['Fn', 1],
+        ['Ctrl', 1],
+        ['←', 1],
+        ['↓', 1],
+        ['→', 1]
+    ]
 ];
 // O knob fica no fim da linha de função, na coluna do Del
 const KNOB = { x: -KEYS.hx + 15.5 * U, z: -KEYS.hz + 0.5 * U, r: 9, h: 22 };
@@ -178,7 +197,29 @@ const glowAt = (t) => {
     return new THREE.Color(GLOW[i]).lerp(new THREE.Color(GLOW[i + 1]), t * 2 - i).getStyle();
 };
 
-const SHIFTED = { '`': '~', 1: '!', 2: '@', 3: '#', 4: '$', 5: '%', 6: '^', 7: '&', 8: '*', 9: '(', 0: ')', '-': '_', '=': '+', '[': '{', ']': '}', '\\': '|', ';': ':', "'": '"', ',': '<', '.': '>', '/': '?' };
+const SHIFTED = {
+    '`': '~',
+    1: '!',
+    2: '@',
+    3: '#',
+    4: '$',
+    5: '%',
+    6: '^',
+    7: '&',
+    8: '*',
+    9: '(',
+    0: ')',
+    '-': '_',
+    '=': '+',
+    '[': '{',
+    ']': '}',
+    '\\': '|',
+    ';': ':',
+    "'": '"',
+    ',': '<',
+    '.': '>',
+    '/': '?'
+};
 const ARROWS = { '→': 0, '↓': Math.PI / 2, '←': Math.PI, '↑': -Math.PI / 2 };
 const FONT = 'Arial, Helvetica, sans-serif';
 
@@ -281,7 +322,14 @@ function addKey(b, key) {
     const inner = Math.min(top.hx, top.hz) * 0.55;
     const rings = [
         { cx: key.x, cz: key.z, hx, hz, r: 1, y: () => LIFT },
-        { cx: key.x, cz: at(0.45, key.z, top.cz), hx: at(0.45, hx, top.hx) + 0.25, hz: at(0.45, hz, top.hz) + 0.25, r: 1.6, y: (x, z) => LIFT + 0.45 * (topY(x, z) - LIFT) },
+        {
+            cx: key.x,
+            cz: at(0.45, key.z, top.cz),
+            hx: at(0.45, hx, top.hx) + 0.25,
+            hz: at(0.45, hz, top.hz) + 0.25,
+            r: 1.6,
+            y: (x, z) => LIFT + 0.45 * (topY(x, z) - LIFT)
+        },
         { ...top, r: 2.3, y: topY },
         { ...top, hx: top.hx - 1, hz: top.hz - 1, r: 1.6, y: topY },
         { ...top, hx: top.hx - inner, hz: top.hz - inner, r: 0.8, y: topY }
@@ -353,7 +401,13 @@ function knobGeometry() {
             const rr = r - (j % 2) * knurl;
             return onPlate([KNOB.x + rr * Math.cos(a), y, KNOB.z - rr * Math.sin(a)]);
         });
-    const rings = [circle(KNOB.r, -1, 0.5), circle(KNOB.r, KNOB.h - 1.8, 0.5), circle(KNOB.r - 0.5, KNOB.h - 0.4), circle(KNOB.r - 1.3, KNOB.h), circle(KNOB.r - 4, KNOB.h)];
+    const rings = [
+        circle(KNOB.r, -1, 0.5),
+        circle(KNOB.r, KNOB.h - 1.8, 0.5),
+        circle(KNOB.r - 0.5, KNOB.h - 0.4),
+        circle(KNOB.r - 1.3, KNOB.h),
+        circle(KNOB.r - 4, KNOB.h)
+    ];
     const zero = Array.from({ length: n }, () => [0, 0]);
     let prev = -1;
     for (const pts of rings) {
@@ -392,7 +446,14 @@ export function Keyboard() {
     return (
         <group position={[-3.92, 1.5805, -2.95]} rotation-y={Math.PI / 2 + 0.04}>
             <mesh geometry={parts.body} castShadow receiveShadow>
-                <meshStandardMaterial ref={body} map={parts.legends} emissive="#ffffff" emissiveMap={parts.glow} emissiveIntensity={0} roughness={0.72} />
+                <meshStandardMaterial
+                    ref={body}
+                    map={parts.legends}
+                    emissive="#ffffff"
+                    emissiveMap={parts.glow}
+                    emissiveIntensity={0}
+                    roughness={0.72}
+                />
             </mesh>
             {/* facetado de propósito: cada face da lateral vira um sulco do serrilhado */}
             <mesh geometry={parts.knob} castShadow receiveShadow>
