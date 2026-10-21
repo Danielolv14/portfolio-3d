@@ -4,6 +4,8 @@ Antes de construir o pipeline, deixar o repositório e o deploy prontos para uma
 
 **Esforço total:** M. **Marco:** M0, "casa arrumada".
 
+> **Situação em 21/10/2026:** feita, menos o que depende do painel da Vercel (apagar o projeto duplicado e liberar o acesso do conector) e a atualização opcional da stack (React 19 / R3F 9), que fica para quando o pipeline pedir.
+
 ---
 
 ## 0.1 Deploy confiável
@@ -74,21 +76,24 @@ Passos:
 
 ## 0.5 Preparar o quarto em código para ser exportado
 
-O pipeline precisa reconhecer cada parte do quarto pelo nome. Convenção:
+O pipeline precisa saber o que fazer com cada parte do quarto. **Como ficou:** em vez de renomear centenas de malhas, cada área é embrulhada num `<Bake>` (em `src/room/shared.jsx`), que grava a marcação no `userData`. O exportador do three.js leva o `userData` para o GLB, e o Blender lê como propriedade do objeto. A marcação mais próxima vale para tudo o que estiver dentro.
 
-| Prefixo do nome | Significa | Exemplo |
+| Marcação | Significa | Onde |
 |---|---|---|
-| `bake-<grupo>-…` | Parte fixa, vai para o atlas do grupo (`shell`, `furniture`, `props`) | `bake-shell-wallA` |
-| `dyn-<id>` | Parte que se mexe, ganha malha própria (assada, mas separada) | `dyn-chair` |
-| `hs-<seção>` | Objeto clicável (Hotspot) | `hs-projects` |
-| `screen-<seção>` | Tela onde a camada HTML encaixa (já existe) | `screen-projects` |
-| `emit-<id>` | Superfície que brilha (lâmpada, LED, tela) | `emit-lamp-bulbs` |
-| `glass-<id>` / `metal-<id>` | Recebe reflexo do cubemap em tempo real | `glass-window` |
-| `skip-…` | Não exportar (áreas de clique, ajudantes) | `skip-hit-monitor` |
+| `group: shell` | Vai para o atlas da estrutura | `Shell` (paredes, piso, porta, janela, pôster do CS) |
+| `group: furniture` | Atlas dos móveis | Mesa, painel, gabinete, monitor, TV, nicho, cama, criado-mudo, pôsteres dos filmes |
+| `group: props` | Atlas dos objetos | Periféricos, cadeira, tudo nas prateleiras, celular, tapete, bola, mochila, tênis |
+| `kind: hotspot` + `id` | Objeto clicável (o `Hotspot` marca sozinho) | projects, experience, about, contact, lamp |
+| `kind: dyn` + `id` | Assada, mas em malha separada porque se mexe | cadeira |
+| `kind: live` | Continua desenhada pelo código, não é assada | o céu atrás da janela |
+| `kind: glass` | Vidro com reflexo em tempo real | vidro da janela |
+| `kind: skip` | Não exportar | áreas de clique invisíveis |
+| nome `screen-*` | Tela com a camada HTML (já existia) | monitor, TV, celular |
+| pelo material | Brilho (`emit`), metal e vidro são detectados sozinhos | emissivo > 0, metalness ≥ 0,8, transparente |
 
-- Adicionar os nomes nos componentes de `src/room/`. Os `Box`, `Rounded` e `Cyl` de `shared.jsx` ganham uma prop `bake` que monta o nome.
-- Marcar as partes que hoje usam truques de luz falsa, para remover depois do bake. Exemplo: o brilho emissivo da cabeceira em `Bed.jsx`, que imita a luz rebatida da janela.
-- **Pronto quando:** um script lista todas as malhas da cena e nenhuma está sem prefixo.
+**Conferência:** `node scripts/inventario.mjs` (com o servidor rodando) conta as malhas por grupo e tipo e falha se alguma ficar sem grupo. Em 21/10: 422 malhas (65 shell, 135 furniture, 222 props), todas com grupo; 20 emissivas, 30 de metal e 9 de vidro detectadas pelo material.
+
+- Marcar as partes que hoje usam truques de luz falsa, para remover depois do bake. Exemplo: o brilho emissivo da cabeceira em `Bed.jsx`, que imita a luz rebatida da janela. (Fica para a Fase 1b.)
 
 ## 0.6 Linha de base
 
@@ -98,9 +103,10 @@ O pipeline precisa reconhecer cada parte do quarto pelo nome. Convenção:
 
 ## Checklist de pronto da Fase 0
 
-- [ ] Push na `main` publica sozinho; projeto duplicado removido
-- [ ] Build com hash e chunks; 3D carregado sob demanda
-- [ ] Pastas reorganizadas, histórico da faculdade em `docs/historico/`
-- [ ] Lint e CI rodando
-- [ ] Todas as malhas com prefixo de nome
-- [ ] Linha de base registrada em `docs/metricas/`
+- [x] Push na `main` publica sozinho (conferido em 21/10)
+- [ ] Projeto duplicado `portfolio-3d` removido e conector da Vercel com acesso ao time (painel da Vercel, com o Daniel)
+- [x] Build com hash e chunks; 3D carregado sob demanda (JS inicial: 477 → 93 KB gzip)
+- [x] Pastas reorganizadas, histórico da faculdade em `docs/historico/`
+- [x] Lint, Prettier e CI rodando; `npm audit` sem vulnerabilidades (Vite 6.4.5, drei 9.122.0)
+- [x] Todas as malhas com grupo de bake (`scripts/inventario.mjs`)
+- [x] Linha de base registrada em `docs/metricas/2026-10-base/` (459 draw calls, 37 FPS no celular simulado)

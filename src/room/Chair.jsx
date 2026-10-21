@@ -444,7 +444,12 @@ export function Chair({ away, instant }) {
     const geo = useMemo(() => buildChair(), []);
     const weave = useMemo(() => ({ seat: weaveTexture(false), back: weaveTexture(true) }), []);
     return (
-        <group ref={group} position={[CHAIR_HOME.x, 0, CHAIR_HOME.z]} rotation-y={CHAIR_HOME.rot}>
+        <group
+            ref={group}
+            position={[CHAIR_HOME.x, 0, CHAIR_HOME.z]}
+            rotation-y={CHAIR_HOME.rot}
+            userData={{ bake: { kind: 'dyn', id: 'chair' } }}
+        >
             <mesh geometry={geo.plastic} castShadow receiveShadow>
                 <meshStandardMaterial vertexColors roughness={0.45} />
             </mesh>

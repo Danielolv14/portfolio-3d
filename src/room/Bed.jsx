@@ -16,7 +16,7 @@ import {
     rugTextures,
     teakTexture
 } from './bedTextures';
-import { Box, C, Cyl, dayNight, lerp, Rounded } from './shared';
+import { Bake, Box, C, Cyl, dayNight, lerp, Rounded } from './shared';
 import { Phone } from './Phone';
 import { Poster } from './Shell';
 
@@ -538,7 +538,9 @@ export default function BedWall({ t, onSelect, showLabels, compact, focus }) {
             <Headboard />
             <Bedding />
 
-            <Phone t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'contact'} />
+            <Bake group="props">
+                <Phone t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'contact'} />
+            </Bake>
 
             <Nightstand />
 
@@ -549,11 +551,13 @@ export default function BedWall({ t, onSelect, showLabels, compact, focus }) {
             <Poster kind="basterds" position={[4.25, 2.7, -4.97]} />
 
             {/* tapete felpudo e a bola de futevôlei */}
-            <Rug compact={compact} />
-            <mesh position={[3.15, 0.45, 1.15]} rotation={[0.4, 0.8, 0.2]} castShadow receiveShadow>
-                <sphereGeometry args={[0.4, 32, 24]} />
-                <meshStandardMaterial map={ball} roughness={0.55} />
-            </mesh>
+            <Bake group="props">
+                <Rug compact={compact} />
+                <mesh position={[3.15, 0.45, 1.15]} rotation={[0.4, 0.8, 0.2]} castShadow receiveShadow>
+                    <sphereGeometry args={[0.4, 32, 24]} />
+                    <meshStandardMaterial map={ball} roughness={0.55} />
+                </mesh>
+            </Bake>
         </group>
     );
 }

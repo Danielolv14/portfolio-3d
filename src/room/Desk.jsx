@@ -19,7 +19,7 @@ import { Chair } from './Chair';
 import { Keyboard } from './Keyboard';
 import { Mouse } from './Mouse';
 import { Cable, chamferShape, Chrome, FacedBox, fittedShapeGeometry, ring, roundedRectShape, turned, useChrome } from './parts';
-import { Box, C, Cyl, dayNight, Hotspot, lerp, MONITOR_POS, Rounded } from './shared';
+import { Bake, Box, C, Cyl, dayNight, Hotspot, lerp, MONITOR_POS, Rounded } from './shared';
 
 const SILVER = { color: '#f2f3f5', roughness: 0.3, metalness: 0.55 };
 
@@ -366,8 +366,10 @@ export default function DeskWall({ t, onSelect, showLabels, focus, screen, reduc
             <PC />
             <Monitor t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'projects'} />
             <TV t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'experience'} />
-            <Peripherals />
-            <Chair away={screen === 'projects'} instant={reducedMotion} />
+            <Bake group="props">
+                <Peripherals />
+                <Chair away={screen === 'projects'} instant={reducedMotion} />
+            </Bake>
         </group>
     );
 }

@@ -5,7 +5,7 @@ import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 import { posterTexture, tilesTexture } from './textures';
-import { Box, C, Cyl, dayNight, Rounded, WALL_H } from './shared';
+import { Bake, Box, C, Cyl, dayNight, Rounded, WALL_H } from './shared';
 import { doorWoodTexture, graniteTexture } from './wallTextures';
 
 // Tinta das paredes, o bege-pêssego quente das fotos da cama
@@ -139,29 +139,32 @@ function Window() {
 
     return (
         <group>
-            {/* Lá fora: céu, sol/lua, estrelas e a casa do vizinho, vistos só pelo vão */}
-            <mesh position={[WIN_CX, WIN_CY, -5.55]}>
-                <planeGeometry args={[WIN_W + 1.4, WIN_H + 1.6]} />
-                <meshBasicMaterial ref={sky} toneMapped={false} />
-            </mesh>
-            <mesh position={[WIN.x0 + 0.62, 3.9, -5.53]}>
-                <circleGeometry args={[0.2, 32]} />
-                <meshBasicMaterial ref={disc} toneMapped={false} />
-            </mesh>
-            <points>
-                <bufferGeometry>
-                    <bufferAttribute attach="attributes-position" args={[starPositions, 3]} />
-                </bufferGeometry>
-                <pointsMaterial ref={stars} size={0.035} color="#ffffff" transparent opacity={0} />
-            </points>
-            <mesh position={[WIN_CX, 2.25, -5.5]}>
-                <planeGeometry args={[WIN_W + 1, 0.7]} />
-                <meshStandardMaterial color="#a39a8e" roughness={1} />
-            </mesh>
-            <mesh position={[WIN_CX - 0.3, 2.68, -5.46]} rotation-x={-0.6}>
-                <planeGeometry args={[WIN_W, 0.3]} />
-                <meshStandardMaterial color="#a8553c" roughness={0.9} />
-            </mesh>
+            {/* Lá fora: céu, sol/lua, estrelas e a casa do vizinho, vistos só pelo vão.
+                Fica fora do bake: a vista vai ser refeita como paisagem viva (docs/plano/03-iluminacao.md) */}
+            <Bake kind="live">
+                <mesh position={[WIN_CX, WIN_CY, -5.55]}>
+                    <planeGeometry args={[WIN_W + 1.4, WIN_H + 1.6]} />
+                    <meshBasicMaterial ref={sky} toneMapped={false} />
+                </mesh>
+                <mesh position={[WIN.x0 + 0.62, 3.9, -5.53]}>
+                    <circleGeometry args={[0.2, 32]} />
+                    <meshBasicMaterial ref={disc} toneMapped={false} />
+                </mesh>
+                <points>
+                    <bufferGeometry>
+                        <bufferAttribute attach="attributes-position" args={[starPositions, 3]} />
+                    </bufferGeometry>
+                    <pointsMaterial ref={stars} size={0.035} color="#ffffff" transparent opacity={0} />
+                </points>
+                <mesh position={[WIN_CX, 2.25, -5.5]}>
+                    <planeGeometry args={[WIN_W + 1, 0.7]} />
+                    <meshStandardMaterial color="#a39a8e" roughness={1} />
+                </mesh>
+                <mesh position={[WIN_CX - 0.3, 2.68, -5.46]} rotation-x={-0.6}>
+                    <planeGeometry args={[WIN_W, 0.3]} />
+                    <meshStandardMaterial color="#a8553c" roughness={0.9} />
+                </mesh>
+            </Bake>
 
             {/* Guarnição de alumínio rente à parede */}
             <Box size={[WIN_W + 0.14, 0.07, 0.03]} position={[WIN_CX, WIN.y1 + 0.035, -4.985]} {...ALU} />
@@ -176,7 +179,7 @@ function Window() {
 
             {/* Folha de vidro */}
             {sash(leftX, -5.19)}
-            <mesh position={[(leftX[0] + leftX[1]) / 2, sashCY, -5.19]}>
+            <mesh position={[(leftX[0] + leftX[1]) / 2, sashCY, -5.19]} userData={{ bake: { kind: 'glass' } }}>
                 <planeGeometry args={[leftX[1] - leftX[0] - 0.1, sashH - 0.1]} />
                 <meshStandardMaterial ref={glass} color="#d8ecff" transparent opacity={0.14} roughness={0.5} metalness={0.1} />
             </mesh>

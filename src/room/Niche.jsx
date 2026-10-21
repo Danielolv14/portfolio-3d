@@ -10,7 +10,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 
 import foto from '../content/foto.jpg';
 import { camoTexture } from './textures';
-import { Box, C, Cyl, dayNight, Hotspot, lerp, Rounded } from './shared';
+import { Bake, Box, C, Cyl, dayNight, Hotspot, lerp, Rounded } from './shared';
 import { stripesTexture, trooperFaceTexture, trophyPrintTexture } from './wallTextures';
 
 // Caixa do nicho: x da parede até a frente, z de uma lateral à outra
@@ -724,52 +724,55 @@ export default function Niche({ t, night, onSelect, showLabels, compact, focus }
         <group>
             <Frame />
 
-            {/* prateleira de cima */}
-            <Bottle position={[-4.68, high, 4.66]} />
-            <Item position={[-4.55, high, 4.4]} turn={0.6}>
-                <RubberDuck />
-            </Item>
-            <Item position={[-4.62, high, 3.0]} turn={0.25}>
-                <Motorbike scale={1.3} />
-            </Item>
+            {/* tudo o que fica nas prateleiras vai para o atlas dos objetos */}
+            <Bake group="props">
+                {/* prateleira de cima */}
+                <Bottle position={[-4.68, high, 4.66]} />
+                <Item position={[-4.55, high, 4.4]} turn={0.6}>
+                    <RubberDuck />
+                </Item>
+                <Item position={[-4.62, high, 3.0]} turn={0.25}>
+                    <Motorbike scale={1.3} />
+                </Item>
 
-            {/* luminária "&", JBL e o robô */}
-            <AmpersandLamp t={t} night={night} onSelect={onSelect} showLabels={showLabels} compact={compact} />
-            <JBL position={[-4.68, mid + 0.13, 3.66]} rotation-y={0.08} />
-            <Item position={[-4.64, mid, 2.82]} turn={0.35}>
-                <Robot scale={0.85} />
-            </Item>
+                {/* luminária "&", JBL e o robô */}
+                <AmpersandLamp t={t} night={night} onSelect={onSelect} showLabels={showLabels} compact={compact} />
+                <JBL position={[-4.68, mid + 0.13, 3.66]} rotation-y={0.08} />
+                <Item position={[-4.64, mid, 2.82]} turn={0.35}>
+                    <Robot scale={0.85} />
+                </Item>
 
-            {/* troféu, chaves, porta-retrato e o Stormtrooper */}
-            <Item position={[-4.55, low, 4.74]}>
-                <GreenStand />
-            </Item>
-            <Item position={[-4.72, low, 4.42]} turn={0.35}>
-                <Trophy />
-            </Item>
-            <Keys position={[-4.45, low, 3.98]} rotation-y={0.6} />
-            <Portrait t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'about'} />
-            <Item position={[-4.68, low, 2.74]} turn={0.35}>
-                <Trooper />
-            </Item>
+                {/* troféu, chaves, porta-retrato e o Stormtrooper */}
+                <Item position={[-4.55, low, 4.74]}>
+                    <GreenStand />
+                </Item>
+                <Item position={[-4.72, low, 4.42]} turn={0.35}>
+                    <Trophy />
+                </Item>
+                <Keys position={[-4.45, low, 3.98]} rotation-y={0.6} />
+                <Portrait t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'about'} />
+                <Item position={[-4.68, low, 2.74]} turn={0.35}>
+                    <Trooper />
+                </Item>
 
-            {/* pelúcias amontoadas na base */}
-            <Item position={[-4.66, base, 4.68]} turn={0.55}>
-                <Unicorn />
-            </Item>
-            <Item position={[-4.84, base, 3.98]} turn={0.4}>
-                <SkullPlush />
-            </Item>
-            <Item position={[-4.55, base + 0.33, 4.24]} turn={0.3}>
-                <Star rotation-x={-0.15} rotation-z={0.12} />
-            </Item>
-            <Item position={[-4.72, base, 3.5]} turn={0.3}>
-                <BlackDuck />
-            </Item>
-            <Item position={[-4.62, base, 2.82]} turn={-1.0}>
-                <Rooster />
-            </Item>
-            <Dino position={[-4.4, base, 3.72]} rotation-y={Math.PI - 0.25} scale={0.95} />
+                {/* pelúcias amontoadas na base */}
+                <Item position={[-4.66, base, 4.68]} turn={0.55}>
+                    <Unicorn />
+                </Item>
+                <Item position={[-4.84, base, 3.98]} turn={0.4}>
+                    <SkullPlush />
+                </Item>
+                <Item position={[-4.55, base + 0.33, 4.24]} turn={0.3}>
+                    <Star rotation-x={-0.15} rotation-z={0.12} />
+                </Item>
+                <Item position={[-4.72, base, 3.5]} turn={0.3}>
+                    <BlackDuck />
+                </Item>
+                <Item position={[-4.62, base, 2.82]} turn={-1.0}>
+                    <Rooster />
+                </Item>
+                <Dino position={[-4.4, base, 3.72]} rotation-y={Math.PI - 0.25} scale={0.95} />
+            </Bake>
         </group>
     );
 }

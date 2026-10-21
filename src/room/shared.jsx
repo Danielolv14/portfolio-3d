@@ -11,6 +11,20 @@ export const lerp = THREE.MathUtils.lerp;
 
 export const WALL_H = 5.6;
 
+// Marca uma parte do quarto para o pipeline do Blender (docs/plano/02-pipeline-blender.md).
+// Fica no userData, que o exportador grava no GLB e o Blender lê como propriedade do objeto.
+// `group`: em que atlas a parte vai ser assada (shell, furniture ou props); vale para tudo o que
+// estiver dentro, até o <Bake> mais perto. `kind`: tratamento especial no bake:
+//   dyn     = assada, mas numa malha separada porque se mexe (ex.: a cadeira)
+//   hotspot = objeto clicável (o Hotspot marca sozinho)
+//   live    = continua desenhada pelo código em tempo real, não é assada (ex.: o céu da janela)
+//   glass   = vidro, recebe reflexo em tempo real
+//   skip    = não exportar (áreas de clique invisíveis)
+// Telas (`screen-*`), luzes e metais são reconhecidos pelo nome e pelo material.
+export function Bake({ group, kind, id, children }) {
+    return <group userData={{ bake: { group, kind, id } }}>{children}</group>;
+}
+
 // Posição do monitor no braço (Desk.jsx): a cadeira (Chair.jsx) mede a distância da câmera até ele
 export const MONITOR_POS = [-4.38, 2.46, -2.85];
 
@@ -97,6 +111,7 @@ export function Hotspot({ id, label, onSelect, showLabel, labelPosition, hit, ac
         <group
             ref={ref}
             {...props}
+            userData={{ bake: { kind: 'hotspot', id } }}
             onPointerOver={(e) => {
                 e.stopPropagation();
                 setHover(true);
@@ -118,7 +133,7 @@ export function Hotspot({ id, label, onSelect, showLabel, labelPosition, hit, ac
         >
             {children}
             {hit && (
-                <mesh position={hit.position}>
+                <mesh position={hit.position} userData={{ bake: { kind: 'skip' } }}>
                     <boxGeometry args={hit.size} />
                     <meshBasicMaterial transparent opacity={0} depthWrite={false} />
                 </mesh>

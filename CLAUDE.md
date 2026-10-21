@@ -81,6 +81,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 - **`src/app/styles.css`:** tokens de cor com as cores do quarto. De dia, madeira e bege; à noite, o rosa do RGB (`--accent: #ff6ad9`). `@property --bg` faz o fundo trocar junto com o 3D.
 - **`src/room/`, o quarto:**
   - **`shared.jsx`:** `Box`, `Rounded`, `Cyl`, `Hotspot` (objeto clicável com etiqueta `<button>` e prop `active`), cores `C`, `dayNight.mix` (0 = dia, 1 = noite, animado com `damp`), `lerp`, `WALL_H` e `MONITOR_POS`.
+  - **`<Bake>`** (em `shared.jsx`): marca cada área para o pipeline do Blender (`group`: shell, furniture ou props; `kind`: dyn, hotspot, live, glass ou skip). Toda peça nova precisa ficar dentro de um grupo. Confira com `node scripts/inventario.mjs`, que falha se alguma malha ficar sem grupo.
   - **`parts.jsx`:** formas e peças reutilizáveis (contornos, cabo, cromado, caixa com textura numa face).
   - **`Lights.jsx`:** sol, janela, luminária "&", RGB, monitor, light bar e `Environment` com Lightformers (nada baixado).
   - **`Shell.jsx`:** piso de porcelanato, paredes, rodapé de granito, janela com persiana, porta e pôster do de_dust2. Exporta `Poster`.
@@ -157,6 +158,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   node scripts/captura.mjs capturas/x.jpg [day|night] ["x,y,z da câmera" "x,y,z do alvo"] [--secao="Projetos"] [--celular]
   ```
   A pasta `capturas/` é ignorada pelo git.
+- **Inventário do bake:** `node scripts/inventario.mjs` (servidor rodando) conta as malhas por grupo e tipo.
 - **Desempenho:**
   ```bash
   node scripts/desempenho.mjs
