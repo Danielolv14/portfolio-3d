@@ -1,107 +1,101 @@
 {
-  "versao": "20261021-153533",
-  "preview": false,
+  "versao": "20261021-161030",
+  "preview": true,
   "grupos": {
     "furniture": {
-      "albedo": "albedo_furniture.webp",
       "objetos": [
         "furniture__fixo",
         "furniture__hotspot-experience",
         "furniture__hotspot-projects"
       ],
       "luz_dia": "luz_dia_furniture.webp",
-      "escala_dia": 7.729390796661548,
+      "escala_dia": 9.318828201294226,
       "luz_noite": "luz_noite_furniture.webp",
-      "escala_noite": 0.04206072980910715,
+      "escala_noite": 0.04981474198400977,
       "leds": "leds_furniture.webp",
       "escala_leds": [
-        23.22127569198659,
-        3.372665193080938,
-        0.7395488643646262
+        4.393110275268579,
+        3.8673893017768983,
+        1.0941705141067581
       ]
     },
     "props-bed": {
-      "albedo": "albedo_props-bed.webp",
       "objetos": [
         "props-bed__fixo",
         "props-bed__hotspot-contact"
       ],
       "luz_dia": "luz_dia_props-bed.webp",
-      "escala_dia": 1.1110956144332924,
+      "escala_dia": 1.102987062454224,
       "luz_noite": "luz_noite_props-bed.webp",
-      "escala_noite": 0.0006132093688938779,
+      "escala_noite": 0.0005929119777865717,
       "leds": "leds_props-bed.webp",
       "escala_leds": [
-        0.03131120629608741,
-        0.2149109442532082,
-        0.037863879911601894
+        0.027420196220278942,
+        0.21415913641452952,
+        0.037658924818038966
       ]
     },
     "props-desk": {
-      "albedo": "albedo_props-desk.webp",
       "objetos": [
         "props-desk__dyn-chair",
         "props-desk__fixo"
       ],
       "luz_dia": "luz_dia_props-desk.webp",
-      "escala_dia": 6.223435157775952,
+      "escala_dia": 10.65514129066504,
       "luz_noite": "luz_noite_props-desk.webp",
-      "escala_noite": 0.09987917503714602,
+      "escala_noite": 0.15362408289314564,
       "leds": "leds_props-desk.webp",
       "escala_leds": [
-        0.0222495170459153,
-        1.0334664168357868,
-        0.14271285927296
+        0.023398686332628926,
+        1.27254958236218,
+        0.17719080320000652
       ]
     },
     "props-floor": {
-      "albedo": "albedo_props-floor.webp",
       "objetos": [
         "props-floor__fixo"
       ],
       "luz_dia": "luz_dia_props-floor.webp",
-      "escala_dia": 2.0470208833217693,
+      "escala_dia": 2.0587249209880842,
       "luz_noite": "luz_noite_props-floor.webp",
-      "escala_noite": 0.033340930927545046,
+      "escala_noite": 0.04029310670122524,
       "leds": "leds_props-floor.webp",
       "escala_leds": [
-        0.008726778352633191,
-        0.27033387577533957,
-        0.04492468100413689
+        0.06641227956117056,
+        0.29006369647384234,
+        0.045895312853157774
       ]
     },
     "props-niche": {
-      "albedo": "albedo_props-niche.webp",
       "objetos": [
         "props-niche__fixo",
         "props-niche__hotspot-about",
         "props-niche__hotspot-lamp"
       ],
       "luz_dia": "luz_dia_props-niche.webp",
-      "escala_dia": 0.5695633195638704,
+      "escala_dia": 2.5483232195378855,
       "luz_noite": "luz_noite_props-niche.webp",
-      "escala_noite": 0.003913309682160697,
+      "escala_noite": 0.008513461035676635,
       "leds": "leds_props-niche.webp",
       "escala_leds": [
-        0.009627978524193193,
-        0.11176495581865313,
-        0.03032543171942255
+        0.05804582921043052,
+        0.13654902309179398,
+        0.06217897820472777
       ]
     },
     "shell": {
-      "albedo": "albedo_shell.webp",
       "objetos": [
         "shell__fixo"
       ],
       "luz_dia": "luz_dia_shell.webp",
-      "escala_dia": 9.078805736541755,
+      "escala_dia": 9.197406959533703,
       "luz_noite": "luz_noite_shell.webp",
-      "escala_noite": 0.07380605882406255,
+      "escala_noite": 0.07522302120923996,
       "leds": "leds_shell.webp",
       "escala_leds": [
-        0.0074066930376003376,
-        0.8659457974435494,
-        0.10064402100444059
+        0.017230801820757514,
+        0.9393072056771241,
+        0.1014523021578794
       ]
     }
   },
@@ -140,12 +134,11 @@
     "noite": -0.5
   },
   "tempos": {
-    "montar": 5.4,
-    "albedo": 143.9,
-    "luz_dia": 359.3,
-    "ref_dia": 82.3,
-    "luz_noite": 111.0,
-    "ref_noite": 96.2,
-    "leds": 389.2
+    "montar": 7.2,
+    "luz_dia": 48.1,
+    "ref_dia": 53.9,
+    "luz_noite": 37.3,
+    "ref_noite": 63.1,
+    "leds": 97.4
   }
 }
