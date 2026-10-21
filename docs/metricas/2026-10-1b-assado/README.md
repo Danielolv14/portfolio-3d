@@ -20,3 +20,7 @@ Os objetos estavam embaçados porque a cor também era assada num atlas dividido
 ## Contra o aspecto de massinha (21/10)
 
 Reflexos (mapa 360° do próprio quarto), cor AgX "punch", janela consertada, móveis com um atlas de luz por área e mais amostras (shell 3072, móveis 1536, resto 1024). Bake de ~35 min. Capturas 08 e 09.
+
+## Quadriculado na parede e na porta (21/10)
+
+Era a compressão WebP com perda (q90) nos degradês escuros da luz. Com q98, some, e o download fica em ~10 MB no computador (sem perda seriam 20,7 MB). Também saíram 18 arquivos antigos que sobravam em public/room. Capturas 10 e 11.

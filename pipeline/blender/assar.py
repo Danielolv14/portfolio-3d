@@ -7,6 +7,9 @@ import numpy as np
 from comum import SAIDA, log, selecionar
 
 GAMA = 2.2
+# Qualidade do WebP da luz. Com 90, os blocos da compressão viravam quadriculados nos degradês
+# escuros (parede, porta); 98 fica igual ao sem perda (100) com metade do peso. Teste: QUALIDADE_LUZ
+QUALIDADE = int(os.environ.get("QUALIDADE_LUZ", "98"))
 
 
 def _imagem(nome, tamanho, flutuante):
@@ -105,11 +108,11 @@ def _salvar_png(dados, nome):
     caminho = os.path.join(SAIDA, nome + ".webp")
     img.filepath_raw = caminho
     img.file_format = "WEBP"
-    img.save(quality=90)
+    img.save(quality=QUALIDADE)
     # Versão do celular, com metade do tamanho (4x menos memória na placa de vídeo)
     img.scale(max(1, w // 2), max(1, h // 2))
     img.filepath_raw = os.path.join(SAIDA, nome + "-mobile.webp")
-    img.save(quality=90)
+    img.save(quality=QUALIDADE)
     bpy.data.images.remove(img)
     return caminho
 
