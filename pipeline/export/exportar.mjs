@@ -26,11 +26,17 @@ page.on('console', (m) => m.type() === 'error' && errors.push(m.text().slice(0, 
 await page.goto(url, { waitUntil: 'load' });
 await page.waitForFunction(() => window.__exportReady === true, null, { timeout: 120000 });
 const base64 = await page.evaluate(() => window.__exportGLB());
+const texturas = await page.evaluate(() => window.__exportTexturas?.() ?? {});
 await browser.close();
 
 const glb = Buffer.from(base64, 'base64');
 mkdirSync('pipeline/.cache', { recursive: true });
 writeFileSync(out, glb);
+// Texturas de canvas para os modelos do Blender: pipeline/.cache/texturas/<nome>.png
+mkdirSync('pipeline/.cache/texturas', { recursive: true });
+for (const [nome, url] of Object.entries(texturas)) {
+    writeFileSync(`pipeline/.cache/texturas/${nome}.png`, Buffer.from(url.split(',')[1], 'base64'));
+}
 
 // Resumo lido do próprio GLB (o JSON fica no primeiro pedaço do arquivo)
 const json = JSON.parse(glb.subarray(20, 20 + glb.readUInt32LE(12)).toString());

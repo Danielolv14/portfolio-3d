@@ -165,6 +165,8 @@ def materiais_por_grupo(objs):
                 slot.material = slot.material.copy()
                 bsdf = slot.material.node_tree.nodes.get("Principled BSDF") if slot.material.use_nodes else None
                 if bsdf:
+                    # O brilho é guardado para o export (o site mostra LED e lâmpada acesos)
+                    slot.material["emissao"] = bsdf.inputs["Emission Strength"].default_value
                     bsdf.inputs["Emission Strength"].default_value = 0.0
                 # Cor por vértice (celular e cadeira): o nó precisa apontar o atributo pelo nome.
                 # Sem isso o Cycles às vezes derrubava o Blender ao preparar a malha (ccl::create_mesh)

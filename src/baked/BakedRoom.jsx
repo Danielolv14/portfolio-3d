@@ -59,6 +59,10 @@ function BakedScene({ manifest, night, compact }) {
             if (!cache.has(key)) cache.set(key, createBakedMaterial(o.material, group, shared));
             o.material = cache.get(key);
         });
+        // Materiais que brilham com uma fonte ajustável: emit-R (cabeceira), emit-G (TV), emit-B (RGB)
+        glowing.current = [...cache.values()]
+            .map((mat) => ({ mat, channel: 'RGB'.indexOf(mat.name.match(/^emit-([RGB])/)?.[1]) }))
+            .filter((g) => g.channel >= 0);
     }, [scene, lightByGroup, shared]);
 
     // Partes que se mexem: o objeto clicável (cresce no hover) e a cadeira (sai do caminho da câmera)
@@ -66,6 +70,7 @@ function BakedScene({ manifest, night, compact }) {
     // matriz = (posição atual do objeto do código) × (posição dele no momento do bake)⁻¹
     const world = useThree((state) => state.scene);
     const followers = useRef([]);
+    const glowing = useRef([]);
     useEffect(() => {
         const list = [];
         scene.traverse((obj) => {
@@ -135,6 +140,11 @@ function BakedScene({ manifest, night, compact }) {
         shared.uNight.value = m;
         shared.uExposure.value = gain;
         shared.ledPower.value.set(...power);
+        // O LED do RGB nunca apaga de todo (de dia fica fraco); a luminária da TV e a da cabeceira acendem à noite
+        for (const { mat, channel } of glowing.current) {
+            const p = channel === 2 ? lerp(0.35, 1, power[2]) : power[channel];
+            mat.emissiveIntensity = mat.userData.baseEmissive * p;
+        }
         for (const f of followers.current) {
             f.mesh.matrix.multiplyMatrices(f.target.matrixWorld, f.rest);
             f.mesh.matrixWorldNeedsUpdate = true;

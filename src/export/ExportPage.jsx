@@ -8,6 +8,7 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 
 import { content } from '../content/content';
 import Room from '../room/Room';
+import { camoTexture } from '../room/textures';
 
 function Exporter() {
     const scene = useThree((state) => state.scene);
@@ -30,6 +31,8 @@ function Exporter() {
             for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
             return btoa(bin);
         };
+        // Texturas desenhadas em canvas que os modelos do Blender reaproveitam (pipeline/blender/modelos)
+        window.__exportTexturas = () => ({ camo: camoTexture().image.toDataURL('image/png') });
         window.__exportReady = true;
     }, [scene]);
     return null;

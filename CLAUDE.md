@@ -152,6 +152,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 10. **Respostas de 21/10:** Blender 4.5 LTS fixado; objetos orgânicos podem ser modelados à mão em `art/*.blend`; repositório em inglês com tradução PT; arte (GLB e texturas) em CC BY 4.0, código MIT; domínio próprio no lançamento; o "dia" é fim de tarde dourado; a vista da janela é BH estilizada (Serra do Curral); dados reais do GitHub buscados no build (token na Vercel).
 11. **Modelagem detalhada no Blender (21/10):** por script Python no pipeline, e à mão só onde o script não alcança. O código continua dono do layout.
 12. **Luz da noite (21/10):** focada na luminária de cobre ao lado da cama e na luminária (light bar) em cima da TV. A luminária "&" da prateleira não ilumina mais o quarto, fica só como brilho decorativo. Ver `docs/plano/03-iluminacao.md`.
+13. **Modelagem no Blender (21/10, depois do estudo `docs/plano/estudo-bake.md`):** as áreas do quarto passam a ser modeladas no Blender por scripts (`pipeline/blender/modelos/`), estilo maquete (chanfro em tudo, cores lisas, textura só onde conta), e substituem as peças do código no bake (`"modelos"` em `pipeline/config/bake.json`). O quarto em código continua como camada de interação e posições de referência. Já feito: a parede da mesa (`modelos/mesa.py`). A câmera da visão geral ficou presa, como na referência (sem entrar no quarto nem descer à altura dos olhos).
 
 ## Como verificar
 

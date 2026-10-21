@@ -56,8 +56,13 @@ export function createBakedMaterial(original, group, shared) {
         metalness: original.metalness ?? 0,
         roughnessMap: original.roughnessMap,
         metalnessMap: original.metalnessMap,
+        // Brilho (LED, lâmpada): vem do Blender. Os "emit-R/G/B" acompanham as fontes ajustáveis (BakedRoom)
+        emissive: original.emissive,
+        emissiveMap: original.emissiveMap,
+        emissiveIntensity: original.emissiveIntensity ?? 1,
         lightMap: group.lightDay
     });
+    material.userData.baseEmissive = material.emissiveIntensity;
     material.onBeforeCompile = (shader) => {
         Object.assign(shader.uniforms, shared, {
             lightNight: { value: group.lightNight },

@@ -38,13 +38,18 @@ function setInput(c, free) {
     c.touches.three = ACTION.NONE;
 }
 
+// Visão geral presa, como no Room_Portfolio (docs/plano/estudo-bake.md, seção 2.4): a câmera não entra
+// no quarto pelos lados abertos nem desce à altura dos olhos. De perto, só nas seções (telas e estante),
+// onde o conteúdo é HTML nítido. (Antes: polar até 0,46π e distância mínima 9, o que deixava ver
+// tudo de perto, além do que o bake sustenta)
 const LIMITS_OVERVIEW = {
-    minAzimuthAngle: 0.06 * Math.PI,
-    maxAzimuthAngle: 0.44 * Math.PI,
-    minPolarAngle: 0.12 * Math.PI,
-    maxPolarAngle: 0.46 * Math.PI,
-    minDistance: 9,
-    maxDistance: 80
+    minAzimuthAngle: 0.1 * Math.PI,
+    maxAzimuthAngle: 0.4 * Math.PI,
+    minPolarAngle: 0.18 * Math.PI,
+    maxPolarAngle: 0.38 * Math.PI,
+    minDistance: 17,
+    // no celular em pé a visão geral fica a ~52 (ver CameraRig); o limite não pode cortar isso
+    maxDistance: 60
 };
 
 const LIMITS_FREE = {

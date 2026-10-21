@@ -19,6 +19,7 @@ import assar  # noqa: E402
 import cena  # noqa: E402
 import exportar  # noqa: E402
 import luzes  # noqa: E402
+import modelos  # noqa: E402
 import uv  # noqa: E402
 from comum import CACHE, SAIDA, argumentos, configurar_gpu, ler_config, log  # noqa: E402
 
@@ -48,6 +49,8 @@ def main():
     configurar_gpu(config["dispositivo"])
     cena.importar(os.path.join(CACHE, "source.glb"))
     malhas = cena.preparar(config.get("areas"))
+    # Áreas já modeladas no Blender entram no lugar das peças do código
+    malhas = modelos.substituir(malhas, config.get("modelos", []))
     objs = cena.juntar_por_grupo(malhas)
     cena.remover_faces_externas(objs)
     cena.materiais_por_grupo(objs)

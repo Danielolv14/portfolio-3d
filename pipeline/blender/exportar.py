@@ -16,6 +16,9 @@ def _chave_material(m):
     bsdf = m.node_tree.nodes.get("Principled BSDF")
     if not bsdf:
         return ("outro", m.name)
+    # Material que brilha (LED, lâmpada): fica sozinho, com o nome (emit-R/G/B controla no site)
+    if bsdf.inputs["Emission Strength"].default_value > 0:
+        return ("emit", m.name)
     base = bsdf.inputs["Base Color"]
     # Rugosidade e metal decidem o reflexo no site: arredondados em degraus, para juntar o que é parecido
     acabamento = (round(bsdf.inputs["Roughness"].default_value * 10) / 10, round(bsdf.inputs["Metallic"].default_value * 2) / 2)
@@ -114,6 +117,12 @@ def exportar_glb(objs, caminho):
         c.name = nome
         # Mantém os materiais e as texturas originais (nítidas) e os dois UVs:
         # TEXCOORD_0 = UV das texturas (UVMap), TEXCOORD_1 = UV do atlas de luz (bake)
+        # Devolve o brilho que o bake tinha zerado
+        for slot in c.material_slots:
+            if slot.material and "emissao" in slot.material and slot.material.use_nodes:
+                bsdf = slot.material.node_tree.nodes.get("Principled BSDF")
+                if bsdf:
+                    bsdf.inputs["Emission Strength"].default_value = slot.material["emissao"]
         antes = len(c.material_slots)
         depois = simplificar_materiais(c)
         log(f"materiais de {c.name}: {antes} -> {depois}")
