@@ -135,7 +135,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 2. **Conteúdo dentro das telas:** é uma **camada HTML sobre a tela 3D** quando a câmera para. Não usar `<Html transform>`. Monitor = Projetos, TV = Experiências, celular = Contato.
 3. **Sobre mim** fica no painel lateral.
 4. **No celular** as seções abrem na folha de baixo, e o modo tela vale só no computador (pelo menos 900×560) e fora do modo sem 3D.
-5. **Iluminação (decidido em 21/10): bake no Blender por script.** Um pipeline automático exporta o quarto feito em código, assa a luz (dia, noite e máscara dos LEDs) no Cycles e volta como GLB com texturas. O código continua sendo a fonte da verdade, e refazer o bake é um comando. Ver [`docs/planejamento/plano-profissional.md`](docs/planejamento/plano-profissional.md).
+5. **Iluminação (decidido em 21/10): bake no Blender por script.** Um pipeline automático exporta o quarto feito em código, assa a luz (dia, noite e máscara dos LEDs) no Cycles e volta como GLB com texturas. O código continua sendo a fonte da verdade, e refazer o bake é um comando. Ver [`docs/plano/02-pipeline-blender.md`](docs/plano/02-pipeline-blender.md).
 6. **MinhaReceita** aparece sem link, porque o repositório da disciplina é privado. Os contatos não incluem o WhatsApp.
 7. **Celular (Contato), decidido em 07/10:**
    - o celular é um iPhone 17 preto com a interface inspirada no iOS 26, sem nenhum recurso da Apple;
@@ -200,6 +200,6 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 
 ## Plano
 
-- **Plano atual:** [`docs/planejamento/plano-profissional.md`](docs/planejamento/plano-profissional.md), com as fases da versão profissional.
+- **Plano atual:** [`docs/plano/`](docs/plano/README.md), com as fases, o pipeline do Blender, a iluminação, a arte, a experiência e o lançamento.
 - **Estudo visual da referência:** [`docs/planejamento/estudo-visual-room-portfolio.md`](docs/planejamento/estudo-visual-room-portfolio.md).
 - **Histórico (fase da faculdade):** [`docs/planejamento/plano-room-portfolio.md`](docs/planejamento/plano-room-portfolio.md), com o estudo de interação e as etapas E1 a E13. As datas de lá não valem mais.
