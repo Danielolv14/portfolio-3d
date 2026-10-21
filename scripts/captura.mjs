@@ -11,7 +11,15 @@
 //   node scripts/captura.mjs capturas/sobre.jpg day --secao="Sobre mim"
 // Com câmera e alvo, usa o gancho window.__view (Scene.jsx) e esconde etiquetas e menus.
 const args = process.argv.slice(2);
-const flags = Object.fromEntries(args.filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
+// --nome=valor (só o primeiro '=' separa; o valor pode ter '=' dentro, como num seletor CSS)
+const flags = Object.fromEntries(
+    args
+        .filter((a) => a.startsWith('--'))
+        .map((a) => {
+            const i = a.indexOf('=');
+            return i < 0 ? [a.slice(2), true] : [a.slice(2, i), a.slice(i + 1)];
+        })
+);
 const [out, mode = 'day', posArg, targetArg] = args.filter((a) => !a.startsWith('--'));
 if (!out) {
     console.error('uso: node scripts/captura.mjs saida.jpg [day|night] ["x,y,z" "x,y,z"] [--secao=Nome] [--celular]');
@@ -51,6 +59,8 @@ page.on('console', (m) => {
 await page.goto(url, { waitUntil: 'load' });
 await page.waitForSelector('.hint', { timeout: 60000 }).catch(() => errors.push('a cena não terminou de carregar'));
 await page.waitForTimeout(2500);
+// --css="...": estilo extra (ex.: testar outra cor de fundo)
+if (flags.css) await page.addStyleTag({ content: flags.css });
 
 if (flags.secao) {
     const menu = 'celular' in flags ? '.tabbar' : '.nav';

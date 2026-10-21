@@ -1,4 +1,5 @@
 """Etapas 00–10: importar o GLB exportado do site, ler as marcações do <Bake> e preparar as malhas."""
+import bmesh
 import bpy
 
 from comum import do_site, log, selecionar
@@ -104,6 +105,31 @@ def juntar_por_grupo(objs):
     return juntos
 
 
+def remover_faces_externas(objs):
+    """Apaga as faces da estrutura que a câmera nunca vê: o lado de fora das paredes A (x = -5) e
+    B (z = -5) e o fundo da laje. Elas pegam sol e céu direto, inflavam a escala da luz do grupo
+    (menos precisão para o resto) e ocupavam área no atlas. Coordenadas do Blender: o z do site
+    vira -y, e o y do site vira z."""
+    for obj in objs:
+        if obj["bk_group"] != "shell":
+            continue
+        bm = bmesh.new()
+        bm.from_mesh(obj.data)
+        bm.normal_update()
+        fora = []
+        for f in bm.faces:
+            c, n = f.calc_center_median(), f.normal
+            parede_a = n.x < -0.9 and c.x < -5.02
+            parede_b = n.y > 0.9 and c.y > 5.02
+            fundo = n.z < -0.9 and c.z < -0.38
+            if parede_a or parede_b or fundo:
+                fora.append(f)
+        bmesh.ops.delete(bm, geom=fora, context="FACES")
+        bm.to_mesh(obj.data)
+        bm.free()
+        log(f"faces externas removidas de {obj.name}: {len(fora)}")
+
+
 def materiais_por_grupo(objs):
     """Cada grupo assa na sua imagem. Material repetido entre grupos vira cópia, senão o
     nó de imagem ativo de um grupo apontaria para a imagem do outro.
@@ -116,6 +142,15 @@ def materiais_por_grupo(objs):
                 bsdf = slot.material.node_tree.nodes.get("Principled BSDF") if slot.material.use_nodes else None
                 if bsdf:
                     bsdf.inputs["Emission Strength"].default_value = 0.0
+                # Cor por vértice (celular e cadeira): o nó precisa apontar o atributo pelo nome.
+                # Sem isso o Cycles às vezes derrubava o Blender ao preparar a malha (ccl::create_mesh)
+                if slot.material.use_nodes and o.data.color_attributes:
+                    nome_cor = o.data.color_attributes[0].name
+                    o.data.color_attributes.active_color = o.data.color_attributes[0]
+                    o.data.color_attributes.render_color_index = 0
+                    for no in slot.material.node_tree.nodes:
+                        if no.bl_idname == "ShaderNodeVertexColor":
+                            no.layer_name = nome_cor
 
 
 def paredes_fantasma(config):
@@ -127,9 +162,12 @@ def paredes_fantasma(config):
     mat.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (*cfg["cor"], 1)
     e = cfg["espessura"]
     # (centro, tamanho) no sistema do site; o piso vai de -5,3 a 5,3 e as paredes têm 5,6 de altura
+    # As da frente descem até abaixo da laje (y = -0,4): sem isso, a lateral da laje recebia o céu
+    # de fora, estourava no Bloom e subia a escala da luz do grupo shell (menos precisão nas paredes)
+    f = 5.3 + 0.02 + e / 2
     caixas = [
-        ((5.3 + e / 2, 2.9, 0), (e, 6.0, 11.0)),  # parede da frente, lado +x
-        ((0, 2.9, 5.3 + e / 2), (11.0, 6.0, e)),  # parede da frente, lado +z
+        ((f, 2.7, 0), (e, 6.6, 11.0)),  # parede da frente, lado +x
+        ((0, 2.7, f), (11.0, 6.6, e)),  # parede da frente, lado +z
         ((0, 5.6 + e / 2, 0), (11.0, e, 11.0)),  # teto
     ]
     fantasmas = []

@@ -49,6 +49,7 @@ def main():
     cena.importar(os.path.join(CACHE, "source.glb"))
     malhas = cena.preparar(config.get("areas"))
     objs = cena.juntar_por_grupo(malhas)
+    cena.remover_faces_externas(objs)
     cena.materiais_por_grupo(objs)
     grupos = {}
     for o in objs:
@@ -82,7 +83,9 @@ def main():
         for nome, lista in grupos.items():
             tam = int(config["grupos"][nome]["luz"] * escala)
             img = assar._imagem(f"luz_{rig}_{nome}", tam, True)
-            assar.assar(lista, img, "luz", amostras_luz, max(4, margem // 2))
+            # Grupos com superfícies grandes e lisas (paredes, piso) mostram mais ruído: mais amostras
+            amostras = amostras_luz if preview else config["amostras"].get("porGrupo", {}).get(nome, amostras_luz)
+            assar.assar(lista, img, "luz", amostras, max(4, margem // 2))
             cobertura = assar.cobertura(img)
             limpo = assar.tirar_ruido(img)
             arquivo, s = assar.salvar_luz(limpo, f"luz_{rig}_{nome}", cobertura)

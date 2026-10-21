@@ -5,13 +5,13 @@
 @property --bg {
     syntax: '<color>';
     inherits: true;
-    initial-value: #efe6db;
+    initial-value: #d3cbc2;
 }
 
 @property --bg-deep {
     syntax: '<color>';
     inherits: true;
-    initial-value: #d7c5b0;
+    initial-value: #9c8f82;
 }
 
 :root {
@@ -20,8 +20,8 @@
         --bg 1s cubic-bezier(0.25, 0.75, 0.75, 1),
         --bg-deep 1s cubic-bezier(0.25, 0.75, 0.75, 1);
 
-    --bg: #efe6db;
-    --bg-deep: #d7c5b0;
+    --bg: #d3cbc2;
+    --bg-deep: #9c8f82;
     --surface: #fbf8f4;
     --surface-2: #f4ece3;
     --fg: #2b211b;
@@ -79,8 +79,9 @@
 
 /* O botão dia/noite do site manda nas cores (vem depois para vencer os blocos acima) */
 :root[data-mode='day'] {
-    --bg: #efe6db;
-    --bg-deep: #d7c5b0;
+    /* Fundo médio neutro (escolhido em 21/10): separa o quarto claro do fundo, como uma maquete */
+    --bg: #d3cbc2;
+    --bg-deep: #9c8f82;
     --surface: #fbf8f4;
     --surface-2: #f4ece3;
     --fg: #2b211b;

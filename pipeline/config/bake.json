@@ -1,7 +1,7 @@
 {
     "comentario": "Configuração do bake. Coordenadas no sistema do site (three.js: y para cima). Ver docs/plano/02-pipeline-blender.md e 03-iluminacao.md.",
     "blenderVersao": "4.5",
-    "dispositivo": "OPTIX",
+    "dispositivo": "CUDA",
     "grupos": {
         "shell": {
             "albedo": 4096,
@@ -30,7 +30,11 @@
     },
     "amostras": {
         "albedo": 16,
-        "luz": 512
+        "luz": 512,
+        "porGrupo": {
+            "shell": 1024,
+            "furniture": 768
+        }
     },
     "preview": {
         "escala": 0.5,
@@ -57,17 +61,17 @@
         "dia": {
             "ceu": {
                 "elevacaoSol": 28,
-                "forca": 2.5
+                "forca": 2.8
             },
             "sol": {
                 "elevacao": 28,
                 "azimute": 22,
-                "forca": 5.0,
+                "forca": 5.5,
                 "angulo": 1.5,
                 "cor": [
                     1.0,
-                    0.86,
-                    0.68
+                    0.78,
+                    0.55
                 ]
             },
             "luzes": [],
@@ -85,11 +89,11 @@
             "sol": {
                 "elevacao": 35,
                 "azimute": -15,
-                "forca": 0.12,
+                "forca": 0.25,
                 "angulo": 0.6,
                 "cor": [
-                    0.6,
-                    0.7,
+                    0.55,
+                    0.68,
                     1.0
                 ]
             },
@@ -148,12 +152,12 @@
                 -1.77
             ],
             "raio": 0.05,
-            "forca": 150,
+            "forca": 200,
             "canal": "R",
             "corSite": [
                 1.0,
-                0.6,
-                0.3
+                0.55,
+                0.25
             ]
         },
         {
@@ -192,7 +196,7 @@
                 -1.6
             ],
             "raio": 0.2,
-            "forca": 12,
+            "forca": 20,
             "canal": "B",
             "corSite": [
                 1.0,

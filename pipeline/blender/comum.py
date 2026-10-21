@@ -68,6 +68,11 @@ def configurar_gpu(dispositivo):
     cena = bpy.context.scene
     cena.render.engine = "CYCLES"
     cena.cycles.device = "GPU"
+    # 1 thread no processador: o Cycles às vezes derrubava o Blender ao ler os atributos das malhas
+    # em paralelo (EXCEPTION_ACCESS_VIOLATION em OpenImageIO ustring, dentro de ccl::create_mesh).
+    # O render continua na GPU; só a preparação da cena fica mais lenta
+    cena.render.threads_mode = "FIXED"
+    cena.render.threads = 1
     log(f"GPU: {dispositivo} {[d.name for d in prefs.devices if d.use]}")
 
 
