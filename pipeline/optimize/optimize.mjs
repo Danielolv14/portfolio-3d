@@ -3,7 +3,7 @@
 //   node pipeline/optimize/optimize.mjs [destino]      (padrão: public/room)
 // A compressão das texturas em KTX2 entra aqui quando o KTX-Software estiver instalado
 // (docs/plano/02-pipeline-blender.md, seção 8).
-import { copyFileSync, mkdirSync, readFileSync, statSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, statSync, unlinkSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { join } from 'node:path';
 
@@ -15,6 +15,10 @@ const manifesto = JSON.parse(readFileSync(join(origem, 'manifest.json'), 'utf8')
 // Cada textura tem a versão do computador e a do celular (-mobile, metade do tamanho)
 const texturas = Object.values(manifesto.grupos).flatMap((g) => [g.luz_dia, g.luz_noite, g.leds]);
 const arquivos = ['manifest.json', manifesto.glb, ...texturas, ...texturas.map((f) => f.replace(/\.webp$/, '-mobile.webp'))];
+// Apaga o que sobrou de bakes antigos (grupos que mudaram de nome, formatos antigos)
+const manter = new Set(arquivos);
+for (const f of readdirSync(destino)) if (!manter.has(f)) unlinkSync(join(destino, f));
+
 let total = 0;
 let totalGzip = 0;
 for (const f of arquivos) {
