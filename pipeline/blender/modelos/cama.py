@@ -1,12 +1,19 @@
-"""Área da cama, modelada no Blender (estudo de 21/10, docs/plano/estudo-bake.md).
+"""Área da cama, modelada no Blender (decisão 14; alvo em docs/plano/alvo/).
 
-Substitui do código: estrutura da cama, cabeceira, criado-mudo, luminária de cobre, pôsteres e o
+Cama baixa de carvalho claro com encosto e braço estofados (cara de sofá-cama), fita de LED atrás do
+encosto e criado-mudo flutuante. Substitui do código: estrutura da cama, cabeceira, criado-mudo, luminária de cobre, pôsteres e o
 tapete (que era feito de camadas finas empilhadas e assava com a beirada preta). Continuam vindo do
 código: a roupa de cama (colchão, edredom matelassê, travesseiros, boné, cordão), o celular (objeto
 clicável, com a tela ao vivo), a bola e os objetos em cima do criado-mudo.
 Medidas e posições: src/room/Bed.jsx (coordenadas do site).
 """
-from modelos.base import caixa, cilindro, cor, curva, felpudo, juntar, perfil, placa, textura, transformar
+import math
+
+import bmesh
+import bpy
+from mathutils import Matrix
+
+from modelos.base import _objeto, bola_volei, caixa, cilindro, cor, felpudo, juntar, macio, pbr, placa, textura, transformar
 
 GRUPO = "furniture-bed"
 GRUPO_OBJETOS = "props-bed"
@@ -35,50 +42,106 @@ def luminaria(preto_metal, cobre, luz, marca):
     return transformar(lamp, (4.96, 1.3, -1.68), (0, -0.8, 0))
 
 
+def edredom(material, marca):
+    """Edredom matelassê: a mesma conta do código (src/room/Bed.jsx, quiltGeometry), feita no Blender.
+    Uma grade fina cobre o colchão, faz a curva na quina e cai pela lateral e pelo pé da cama; os gomos
+    em losango são relevo de verdade (zero na costura, estufado no meio)."""
+    x0, x1, z0, z1, topo, r, cai, gomo, estufa = -1.0, 4.3, -4.95, -2.1, 1.0, 0.1, 0.4, 0.6, 0.045
+    curva_q = r * math.pi / 2
+    extra = curva_q + cai
+    sx, sz = x1 - x0 + extra, z1 - z0 + extra
+    nx, nz = round(sx * 30), round(sz * 30)
+    bm = bmesh.new()
+    grade = []
+    for i in range(nx + 1):
+        linha = []
+        for j in range(nz + 1):
+            fx = x1 - sx + sx * i / nx
+            fz = z0 + sz * j / nz
+            dx, dz = max(0.0, x0 - fx), max(0.0, fz - z1)
+            comp = math.hypot(dx, dz)
+            d = min(comp, extra)
+            dir_x, dir_z = (-dx / comp, dz / comp) if comp else (0.0, 0.0)
+            th = min(d / r, math.pi / 2)
+            queda = max(0.0, d - curva_q)
+            t = queda / cai
+            ao_longo = fx * abs(dir_z) + fz * abs(dir_x)
+            fora = r * math.sin(th) + 0.032 * t * math.sin(ao_longo * 6.3 + 1.2)
+            plano = max(0.0, 1 - d / curva_q)
+            ruga = 0.014 * plano * (math.sin(fx * 1.35 + 0.4) * math.cos(fz * 1.8 - 0.3) + 0.5 * math.sin(fx * 3.1 + fz * 2.2))
+            a, b = (fx + fz) / gomo, (fx - fz) / gomo
+            p = estufa * abs(math.sin(math.pi * a) * math.sin(math.pi * b)) ** 0.5
+            nh, ny = math.sin(th), math.cos(th)
+            linha.append(bm.verts.new((max(fx, x0) + dir_x * (fora + nh * p), topo - (r - r * math.cos(th)) - queda + ny * p + ruga,
+                                       min(fz, z1) + dir_z * (fora + nh * p))))
+        grade.append(linha)
+    for i in range(nx):
+        for j in range(nz):
+            bm.faces.new([grade[i][j], grade[i][j + 1], grade[i + 1][j + 1], grade[i + 1][j]])
+    bm.normal_update()
+    # A frente do pano aponta para cima (+y do site)
+    if sum(f.normal.y for f in bm.faces) < 0:
+        for f in bm.faces:
+            f.normal_flip()
+    obj = _objeto("edredom", bm, material, (0, 0, 0), None, marca)
+    # Espessura de pano, para a borda que cai não ficar uma folha de papel
+    mod = obj.modifiers.new("espessura", "SOLIDIFY")
+    mod.thickness = 0.02
+    mod.offset = -1
+    bpy.context.view_layer.objects.active = obj
+    bpy.ops.object.modifier_apply(modifier=mod.name)
+    return obj
+
+
+def bone(material, marca, posicao, giro):
+    """Boné preto deitado na cama: copa (meia esfera achatada), aba curva e o botão no alto."""
+    bm = bmesh.new()
+    bmesh.ops.create_uvsphere(bm, u_segments=28, v_segments=14, radius=0.19)
+    bmesh.ops.rotate(bm, verts=bm.verts, cent=(0, 0, 0), matrix=Matrix.Rotation(-math.pi / 2, 3, "X"))
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.co.y < -0.001], context="VERTS")
+    bmesh.ops.scale(bm, vec=(1.0, 0.72, 1.08), verts=bm.verts)
+    copa = _objeto("copa", bm, material, (0, 0, 0), None, marca)
+    # Aba: um disco fino; a metade de trás fica escondida embaixo da copa e a da frente vira a aba redonda
+    aba = cilindro("aba", (0, 0.01, 0.17), 0.2, 0.016, material, marca, segmentos=32, chanfro=0.006)
+    botao = cilindro("botao", (0, 0.14, 0), 0.018, 0.012, material, marca, segmentos=12)
+    return transformar(macio(juntar([copa, aba, botao], "bone"), niveis=1), posicao, (0, giro, 0))
+
+
 def criar():
     m = {"group": GRUPO, "area": "bed"}
     p = {"group": GRUPO_OBJETOS, "area": "bed"}
 
-    mogno = cor("mogno", "#6b3a24", rugosidade=0.45)
-    mogno_escuro = cor("mogno_escuro", "#2a160e", rugosidade=0.7)
-    cromado = cor("cromado", "#dfe3e8", rugosidade=0.15, metal=1.0)
-    grafite = cor("grafite_criado", "#3b3d42", rugosidade=0.6)
-    teca = cor("teca", "#a86d3c", rugosidade=0.5)
+    carvalho = pbr("carvalho_cama", "oak_veneer_01", 4.0, tinta="#ddc29c", forca_tinta=0.75)
+    base_escura = cor("base_cama", "#26272b", rugosidade=0.7)
+    estofado = pbr("estofado", "poly_wool_herringbone", 1.4, tinta="#c8cacd", contraste=0.7, relevo=0.8)
+    metal = cor("metal_preto", "#1c1d20", rugosidade=0.4, metal=0.5)
     preto_metal = cor("preto_metal", "#1b1c1f", rugosidade=0.35, metal=0.4)
     cobre = cor("cobre", "#c27a46", rugosidade=0.28, metal=1.0)
     luz_cobre = cor("emit-R-luminaria", "#fff1d6", emissao="#ffb15e", forca=6.0)
-    tapete = cor("tapete", "#d3c6b2", rugosidade=1.0)
+    led_fita = cor("emit-B-fita", "#2a0a24", emissao="#ff3fd2", forca=6.0)
+    tapete = pbr("tapete", "curly_teddy_natural", 1.6, tinta="#b9b6b1", contraste=0.8)
     moldura = cor("moldura_poster", "#17181b", rugosidade=0.45)
 
     pecas = []
 
-    # ── Estrutura da cama: base escura recuada e estrado de mogno ──
-    pecas.append(caixa("cama_base", (1.96, 0.05, -3.5), (5.8, 0.1, 2.75), mogno_escuro, m, chanfro=0.01))
-    pecas.append(caixa("cama_estrado", (1.96, 0.3, -3.5), (6.02, 0.4, 2.95), mogno, m, chanfro=0.03))
+    # ── Cama baixa (decisão 14): rodapé escuro recuado e estrado de carvalho claro ──
+    pecas.append(caixa("cama_base", (1.96, 0.05, -3.5), (5.8, 0.1, 2.75), base_escura, m, chanfro=0.01))
+    pecas.append(caixa("cama_estrado", (1.96, 0.3, -3.5), (6.02, 0.4, 2.95), carvalho, m, chanfro=0.03))
 
-    # ── Cabeceira: painel com o topo curvo, duas colunas inclinadas e as barras cromadas ──
-    contorno = [(-4.6, 0.3), (-2.4, 0.3), (-2.4, 2.3)] + curva((-2.4, 2.3), (-3.5, 2.02), (-4.6, 2.3))[:-1] + [(-4.6, 2.3)]
-    pecas.append(perfil("cabeceira", contorno, 0.07, mogno, m, centro=5.08, chanfro=0.02))
-    for zc, lado in ((-4.85, -1), (-2.15, 1)):
-        coluna = [(zc - 0.08, 0.0), (zc + 0.08, 0.0), (zc + 0.125, 2.5 + 0.045 * lado), (zc - 0.125, 2.5 - 0.045 * lado)]
-        pecas.append(perfil("coluna", coluna, 0.12, mogno, m, centro=5.19, chanfro=0.018))
-    for z in (-4.665, -2.335):
-        for y in (1.92, 2.12):
-            pecas.append(cilindro("barra", (5.1, y, z), 0.021, 0.2, cromado, m, segmentos=16, rotacao=(RAD90, 0, 0)))
+    # ── Encosto estofado ao longo da parede grafite e braço estofado na ponta (cara de sofá-cama) ──
+    # O topo do encosto fica abaixo dos pôsteres de baixo (que começam em y ≈ 1,98)
+    pecas.append(macio(caixa("encosto", (1.9, 1.22, -4.8), (5.9, 1.36, 0.34), estofado, m, chanfro=0.12, segmentos=2)))
+    pecas.append(macio(caixa("braco_cama", (4.84, 1.05, -3.42), (0.34, 1.02, 2.62), estofado, m, chanfro=0.12, segmentos=2)))
+    # Fita de LED atrás do encosto, virada para cima: à noite a parede grafite ganha um halo rosa
+    pecas.append(caixa("fita_cama", (1.9, 1.91, -4.975), (5.6, 0.012, 0.02), led_fita, m, chanfro=0.0))
 
-    # ── Criado-mudo: base de teca, corpo e tampo grafite, 3 gavetas com filete de teca ──
-    for x in (4.2, 5.16):
-        for z in (-1.89, -0.91):
-            pecas.append(caixa("pe_criado", (x, 0.11, z), (0.1, 0.22, 0.1), teca, m, chanfro=0.012))
-    pecas.append(caixa("trilho_frente", (4.185, 0.26, -1.4), (0.07, 0.12, 1.08), teca, m, chanfro=0.01))
-    for z in (-0.885, -1.915):
-        pecas.append(caixa("trilho_lado", (4.69, 0.26, z), (1.06, 0.12, 0.07), teca, m, chanfro=0.01))
-    pecas.append(caixa("criado_corpo", (4.72, 0.81, -1.4), (1.06, 0.98, 1.1), grafite, m, chanfro=0.015))
-    pecas.append(caixa("criado_tampo", (4.685, 1.275, -1.4), (1.13, 0.05, 1.1), grafite, m, chanfro=0.012))
-    for k in range(3):
-        y = 0.335 + k * 0.305
-        pecas.append(caixa("gaveta_criado", (4.155, y + 0.108, -1.4), (0.05, 0.215, 1.04), grafite, m, chanfro=0.01))
-        pecas.append(caixa("filete", (4.165, y + 0.253, -1.4), (0.04, 0.072, 1.04), teca, m, chanfro=0.008))
+    # ── Criado-mudo flutuante de carvalho (o tampo continua em 1,3: os objetos do código ficam em cima) ──
+    pecas.append(caixa("criado_corpo", (4.68, 0.86, -1.4), (1.06, 0.88, 1.06), carvalho, m, chanfro=0.02))
+    pecas.append(caixa("criado_gaveta", (4.145, 0.98, -1.4), (0.012, 0.3, 0.96), carvalho, m, chanfro=0.004))
+    pecas.append(caixa("criado_puxador", (4.135, 0.98, -1.4), (0.012, 0.02, 0.4), metal, m, chanfro=0.003))
+    for x in (4.25, 5.11):
+        for z in (-1.83, -0.97):
+            pecas.append(caixa("pe_criado", (x, 0.21, z), (0.04, 0.42, 0.04), metal, m, chanfro=0.006))
     pecas.append(luminaria(preto_metal, cobre, luz_cobre, m))
 
     # ── Pôsteres dos filmes: moldura preta e a arte (própria, minimalista) em alta resolução ──
@@ -90,6 +153,23 @@ def criar():
     # ── Tapete felpudo: uma peça só, macia nas bordas (antes eram camadas finas empilhadas) ──
     # Mais quente que o piso, para se destacar dele, e com o pelo em relevo (ruído na geometria)
     pecas.append(felpudo(caixa("tapete", (1.6, 0.045, -0.025), (4.6, 0.09, 3.85), tapete, p, chanfro=0.045, segmentos=4), forca=0.022))
+
+    # ── Roupa de cama (no lugar da do código): colchão, edredom matelassê branco, travesseiro
+    # encostado no braço e o boné. O celular (clicável) continua do código ──
+    algodao = pbr("algodao", "cotton_jersey", 0.9, tinta="#f1efeb", contraste=0.5, relevo=0.5)
+    fronha = pbr("fronha", "cotton_jersey", 0.9, tinta="#d8d6d2", contraste=0.5, relevo=0.5)
+    preto_tecido = pbr("bone", "cotton_jersey", 0.6, tinta="#1d1d20", contraste=0.6)
+    pecas.append(macio(caixa("colchao", (1.92, 0.73, -3.5), (5.86, 0.48, 2.85), algodao, p, chanfro=0.08, segmentos=2), niveis=1))
+    pecas.append(edredom(algodao, p))
+    pecas.append(macio(caixa("travesseiro", (4.42, 1.38, -3.4), (0.3, 0.74, 1.75), fronha, p, chanfro=0.14, segmentos=2, rotacao=(0, 0, -0.45))))
+    pecas.append(bone(preto_tecido, p, (3.9, 1.03, -2.9), -2.95))
+
+    # ── Bola de futevôlei (Mikasa amarela, com gomos azuis e verdes), no tapete ──
+    amarelo = pbr("bola_amarela", "brown_leather", 0.5, tinta="#f2c21b", contraste=0.3, relevo=0.4)
+    azul = pbr("bola_azul", "brown_leather", 0.5, tinta="#1f5fbf", contraste=0.3, relevo=0.4)
+    verde = pbr("bola_verde", "brown_leather", 0.5, tinta="#2e9a52", contraste=0.3, relevo=0.4)
+    pecas.append(bola_volei("bola", (2.6, 0.45, -0.6), 0.4, lambda k, g: azul if (k, g) == (0, 1) else verde if (k, g) == (2, 1) else amarelo,
+                            p, rotacao=(0.4, 0.8, 0.2)))
 
     moveis = [o for o in pecas if o["bk_group"] == GRUPO]
     objetos = [o for o in pecas if o["bk_group"] == GRUPO_OBJETOS]

@@ -728,16 +728,21 @@ export default function Niche({ t, night, onSelect, showLabels, compact, focus }
             <Bake group="props">
                 {/* prateleira de cima */}
                 <Bottle position={[-4.68, high, 4.66]} />
-                <Item position={[-4.55, high, 4.4]} turn={0.6}>
-                    <RubberDuck />
-                </Item>
+                {/* peca: no bake, o patinho vem do modelo pronto (pipeline/blender/modelos/nicho.py) */}
+                <Bake peca="pato">
+                    <Item position={[-4.55, high, 4.4]} turn={0.6}>
+                        <RubberDuck />
+                    </Item>
+                </Bake>
                 <Item position={[-4.62, high, 3.0]} turn={0.25}>
                     <Motorbike scale={1.3} />
                 </Item>
 
                 {/* luminária "&", JBL e o robô */}
                 <AmpersandLamp t={t} night={night} onSelect={onSelect} showLabels={showLabels} compact={compact} />
-                <JBL position={[-4.68, mid + 0.13, 3.66]} rotation-y={0.08} />
+                <Bake peca="jbl">
+                    <JBL position={[-4.68, mid + 0.13, 3.66]} rotation-y={0.08} />
+                </Bake>
                 <Item position={[-4.64, mid, 2.82]} turn={0.35}>
                     <Robot scale={0.85} />
                 </Item>
@@ -755,23 +760,25 @@ export default function Niche({ t, night, onSelect, showLabels, compact, focus }
                     <Trooper />
                 </Item>
 
-                {/* pelúcias amontoadas na base */}
-                <Item position={[-4.66, base, 4.68]} turn={0.55}>
-                    <Unicorn />
-                </Item>
-                <Item position={[-4.84, base, 3.98]} turn={0.4}>
-                    <SkullPlush />
-                </Item>
-                <Item position={[-4.55, base + 0.33, 4.24]} turn={0.3}>
-                    <Star rotation-x={-0.15} rotation-z={0.12} />
-                </Item>
-                <Item position={[-4.72, base, 3.5]} turn={0.3}>
-                    <BlackDuck />
-                </Item>
-                <Item position={[-4.62, base, 2.82]} turn={-1.0}>
-                    <Rooster />
-                </Item>
-                <Dino position={[-4.4, base, 3.72]} rotation-y={Math.PI - 0.25} scale={0.95} />
+                {/* pelúcias amontoadas na base (no bake saem: a base da estante ganha os Funkos e o trailer) */}
+                <Bake peca="pelucias">
+                    <Item position={[-4.66, base, 4.68]} turn={0.55}>
+                        <Unicorn />
+                    </Item>
+                    <Item position={[-4.84, base, 3.98]} turn={0.4}>
+                        <SkullPlush />
+                    </Item>
+                    <Item position={[-4.55, base + 0.33, 4.24]} turn={0.3}>
+                        <Star rotation-x={-0.15} rotation-z={0.12} />
+                    </Item>
+                    <Item position={[-4.72, base, 3.5]} turn={0.3}>
+                        <BlackDuck />
+                    </Item>
+                    <Item position={[-4.62, base, 2.82]} turn={-1.0}>
+                        <Rooster />
+                    </Item>
+                    <Dino position={[-4.4, base, 3.72]} rotation-y={Math.PI - 0.25} scale={0.95} />
+                </Bake>
             </Bake>
         </group>
     );

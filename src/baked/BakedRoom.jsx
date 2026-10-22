@@ -62,6 +62,33 @@ function BakedScene({ manifest, night, compact }) {
             while (named && !named.name.includes('__')) named = named.parent;
             const group = lightByGroup[named?.name.split('__')[0]];
             if (!group) return;
+            // Faces cortadas da maquete (topo das paredes, lateral da laje): cor fixa, sem luz, como o
+            // corte de uma maquete de arquitetura. A cor escurece à noite junto com o quarto (useFrame)
+            if (o.material.name.startsWith('corte_maquete')) {
+                if (!cut.current) {
+                    const day = o.material.color.clone();
+                    cut.current = { mat: new THREE.MeshBasicMaterial({ color: day }), day, night: day.clone().multiplyScalar(0.3) };
+                }
+                o.material = cut.current.mat;
+                return;
+            }
+            // Vidro (lateral do gabinete): transparente, sem luz assada, só com o reflexo do mapa 360°
+            if (o.material.name.startsWith('vidro')) {
+                if (!glass.current) {
+                    glass.current = new THREE.MeshStandardMaterial({
+                        color: o.material.color,
+                        roughness: 0.05,
+                        metalness: 0,
+                        transparent: true,
+                        opacity: 0.18,
+                        depthWrite: false,
+                        envMapIntensity: 1.5
+                    });
+                }
+                o.material = glass.current;
+                o.renderOrder = 2;
+                return;
+            }
             const key = `${o.material.uuid}:${named.name.split('__')[0]}`;
             if (!cache.has(key)) cache.set(key, createBakedMaterial(o.material, group, shared));
             o.material = cache.get(key);
@@ -78,6 +105,8 @@ function BakedScene({ manifest, night, compact }) {
     const world = useThree((state) => state.scene);
     const followers = useRef([]);
     const glowing = useRef([]);
+    const cut = useRef(null);
+    const glass = useRef(null);
     useEffect(() => {
         const list = [];
         scene.traverse((obj) => {
@@ -158,6 +187,7 @@ function BakedScene({ manifest, night, compact }) {
             const p = channel === 2 ? lerp(0.35, 1, power[2]) : power[channel];
             mat.emissiveIntensity = mat.userData.baseEmissive * p;
         }
+        if (cut.current) cut.current.mat.color.lerpColors(cut.current.day, cut.current.night, m);
         for (const f of followers.current) {
             f.mesh.matrix.multiplyMatrices(f.target.matrixWorld, f.rest);
             f.mesh.matrixWorldNeedsUpdate = true;

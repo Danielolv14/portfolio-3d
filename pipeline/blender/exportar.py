@@ -19,6 +19,12 @@ def _chave_material(m):
     # Material que brilha (LED, lâmpada): fica sozinho, com o nome (emit-R/G/B controla no site)
     if bsdf.inputs["Emission Strength"].default_value > 0:
         return ("emit", m.name)
+    # Faces cortadas da maquete: material próprio, porque o site as desenha sem luz (cor fixa)
+    if m.name.startswith("corte_maquete"):
+        return ("corte", m.name)
+    # Vidro: o site desenha transparente, sem a luz assada
+    if m.name.startswith("vidro"):
+        return ("vidro", m.name)
     base = bsdf.inputs["Base Color"]
     # Rugosidade e metal decidem o reflexo no site: arredondados em degraus, para juntar o que é parecido
     acabamento = (round(bsdf.inputs["Roughness"].default_value * 10) / 10, round(bsdf.inputs["Metallic"].default_value * 2) / 2)
@@ -104,7 +110,42 @@ def simplificar_materiais(obj):
     return len(novos)
 
 
+def _imagens_rgb(objs):
+    """O gravador WebP do Blender não aceita imagem de 1 canal (ex.: rugosidade em tons de cinza de um
+    modelo do Poly Haven): a textura saía sem imagem no GLB e o GLTFLoader do site quebrava ("reading
+    'uri'"). Essas imagens viram uma cópia RGB embutida."""
+    trocas = {}
+    for o in objs:
+        for slot in o.material_slots:
+            m = slot.material
+            if not (m and m.use_nodes):
+                continue
+            for no in m.node_tree.nodes:
+                img = getattr(no, "image", None)
+                # depth = bits por pixel: 8 (ou 16) é uma imagem de 1 canal, em tons de cinza
+                if no.bl_idname != "ShaderNodeTexImage" or img is None or img.depth not in (8, 16):
+                    continue
+                if img.name not in trocas:
+                    w, h = img.size
+                    nova = bpy.data.images.new(f"{img.name}_rgb", w, h, alpha=False)
+                    nova.pixels.foreach_set(_pixels_rgba(img))
+                    nova.colorspace_settings.name = img.colorspace_settings.name
+                    nova.pack()
+                    trocas[img.name] = nova
+                    log(f"imagem em tons de cinza convertida para RGB: {img.name}")
+                no.image = trocas[img.name]
+
+
+def _pixels_rgba(img):
+    import numpy as np
+
+    px = np.empty(len(img.pixels), dtype=np.float32)
+    img.pixels.foreach_get(px)
+    return px
+
+
 def exportar_glb(objs, caminho):
+    _imagens_rgb(objs)
     copias = []
     for o in objs:
         c = o.copy()
@@ -154,9 +195,30 @@ def exportar_glb(objs, caminho):
     log(f"GLB: {caminho} ({os.path.getsize(caminho) // 1024} KB)")
 
 
-def render_referencia(config, nome_rig, camera, amostras, largura=1280, altura=800):
-    """Imagem do Cycles pela mesma câmera do site (fov vertical 35°), com AgX, para comparar cores."""
+def _fundo_composto(cena, hexa):
+    """Põe a imagem (fundo transparente) sobre uma cor lisa, como o fundo do site."""
+    cor = [int(hexa[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    # O compositor trabalha em linear; a cor do site é sRGB
+    cor = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in cor]
+    cena.use_nodes = True
+    cena.render.use_compositing = True
+    nos = cena.node_tree.nodes
+    nos.clear()
+    camada = nos.new("CompositorNodeRLayers")
+    sobre = nos.new("CompositorNodeAlphaOver")
+    saida = nos.new("CompositorNodeComposite")
+    sobre.inputs[1].default_value = (*cor, 1.0)
+    cena.node_tree.links.new(camada.outputs["Image"], sobre.inputs[2])
+    cena.node_tree.links.new(sobre.outputs[0], saida.inputs[0])
+
+
+def render_referencia(config, nome_rig, camera, amostras, largura=1280, altura=800, pasta=None, nome=None, fundo=None, manter_camera=False):
+    """Imagem do Cycles pela mesma câmera do site (fov vertical 35°), com AgX, para comparar cores.
+    A prévia rápida (previa.py) usa a mesma função, com o fundo do site e outra pasta."""
     cena = bpy.context.scene
+    velha = bpy.data.objects.get("cam_ref")
+    if velha:
+        bpy.data.objects.remove(velha, do_unlink=True)
     cfg = config["cameras"][camera]
     dados = bpy.data.cameras.new("cam_ref")
     dados.sensor_fit = "VERTICAL"
@@ -170,17 +232,21 @@ def render_referencia(config, nome_rig, camera, amostras, largura=1280, altura=8
     cena.render.resolution_x, cena.render.resolution_y, cena.render.resolution_percentage = largura, altura, 100
     cena.cycles.samples = amostras
     cena.cycles.use_denoising = True
-    cena.use_nodes = False
-    cena.render.use_compositing = False
+    if fundo:
+        _fundo_composto(cena, fundo)
+    else:
+        cena.use_nodes = False
+        cena.render.use_compositing = False
     cena.view_settings.view_transform = "AgX"
     cena.view_settings.look = "None"
     cena.view_settings.exposure = config["rigs"][nome_rig].get("exposicao", 0)
     cena.render.film_transparent = True
     cena.render.image_settings.file_format = "PNG"
     cena.render.image_settings.color_depth = "8"
-    caminho = os.path.join(SAIDA, f"ref_{camera}_{nome_rig}.png")
+    caminho = os.path.join(pasta or SAIDA, f"{nome or f'ref_{camera}_{nome_rig}'}.png")
     cena.render.filepath = caminho
     bpy.ops.render.render(write_still=True)
-    bpy.data.objects.remove(cam, do_unlink=True)
-    cena.camera = None
+    if not manter_camera:
+        bpy.data.objects.remove(cam, do_unlink=True)
+        cena.camera = None
     log(f"referência: {caminho}")

@@ -53,6 +53,22 @@ Uma lista curta, com uma frase por item:
 
 Com a lista, o plano escolhe 10–14 objetos (o espaço da estante comporta isso sem ficar poluído) e mostra um esboço antes de modelar.
 
+**Respostas de 21/10 (P8, parcial).** A estante agora é aberta, de metal preto com prateleiras de carvalho (decisão 14, `pipeline/blender/modelos/nicho.py`). Objetos escolhidos, todos modelados por nós e sem logos nem arte oficial (cada um ganha uma frase do Daniel):
+
+| Tema | Objeto | Como fica sem marca |
+|---|---|---|
+| Dev | Patinho de borracha | Patinho amarelo ("explico o bug pro pato") |
+| Dev | Livros de arquitetura | Pilha com lombadas só com os títulos (Clean Code, Clean Architecture, DDD) |
+| Dev | Caneca de café | Caneca com `while (alive) code();` |
+| Dev | Crachá do estágio | Crachá só com texto, sem o logo da empresa |
+| DJ | Credenciais de show | Crachás/pulseiras "BACKSTAGE" dos shows do DRUDS e do Braichi |
+| DJ | Pen drives | Ao lado da XDJ, no cantinho DJ (`modelos/frente.py`) |
+| Séries | Harry Potter | Varinha num suporte e óculos redondos |
+| Séries | Game of Thrones | Ovo de dragão decorativo |
+| Séries | Breaking Bad | Chapéu preto (pork pie) e um frasco de laboratório azul |
+
+No chão: o **tênis Dunk "White Lobster"** dele (silhueta e cores, sem o símbolo da marca) e a **bola de futevôlei Mikasa amarela** (sem logo). Fora da estante, já modelados: **XDJ-RX3** e **PS5** (formas, sem marca). Os objetos orgânicos e pessoais (roupa de cama, pelúcias, mochila, tênis, bola, objetos da estante) esperam as fotos que o Daniel manda.
+
 ## 5. Ordem de construção
 
 | Passo | Entrega | Esforço |

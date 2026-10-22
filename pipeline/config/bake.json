@@ -34,6 +34,10 @@
         "furniture-bed": {
             "albedo": 4096,
             "luz": 2048
+        },
+        "furniture-front": {
+            "albedo": 4096,
+            "luz": 2048
         }
     },
     "amostras": {
@@ -43,12 +47,20 @@
             "shell": 3072,
             "furniture-desk": 1536,
             "furniture-niche": 1536,
-            "furniture-bed": 1536
+            "furniture-bed": 1536,
+            "furniture-front": 1536
         }
     },
     "preview": {
         "escala": 0.5,
         "amostrasLuz": 64
+    },
+    "previa": {
+        "comentario": "npm run previa: render rápido pelas câmeras do site, sem assar. Fundo frio (decisão de 21/10).",
+        "fundo": {
+            "dia": "#b4c0cc",
+            "noite": "#141a2b"
+        }
     },
     "margemPx": 16,
     "margemIlhas": 0.004,
@@ -63,7 +75,7 @@
     "janela": {
         "x0": -2.5,
         "x1": 0.3,
-        "y0": 2.0,
+        "y0": 2,
         "y1": 4.3,
         "z": -5.2
     },
@@ -71,21 +83,47 @@
         "dia": {
             "ceu": {
                 "elevacaoSol": 28,
-                "forca": 2.8
+                "forca": 2.2
             },
             "sol": {
                 "elevacao": 28,
                 "azimute": 22,
-                "forca": 5.5,
-                "angulo": 1.5,
+                "forca": 6,
+                "angulo": 5,
                 "cor": [
-                    1.0,
+                    1,
                     0.78,
                     0.55
                 ]
             },
-            "luzes": [],
-            "exposicao": 1.0
+            "luzes": [
+                {
+                    "nome": "preenchimento",
+                    "comentario": "luz suave de maquete: entra pelo lado aberto, por cima, e clareia as sombras",
+                    "tipo": "AREA",
+                    "posicao": [
+                        3,
+                        5.2,
+                        3
+                    ],
+                    "tamanho": [
+                        6,
+                        6
+                    ],
+                    "direcao": [
+                        -0.6,
+                        -1,
+                        -0.6
+                    ],
+                    "forca": 450,
+                    "cor": [
+                        1,
+                        0.9,
+                        0.78
+                    ]
+                }
+            ],
+            "exposicao": 1
         },
         "noite": {
             "mundo": {
@@ -94,29 +132,55 @@
                     0.016,
                     0.03
                 ],
-                "forca": 1.0
+                "forca": 1
             },
             "sol": {
                 "elevacao": 35,
                 "azimute": -15,
                 "forca": 0.25,
-                "angulo": 0.6,
+                "angulo": 3,
                 "cor": [
                     0.55,
                     0.68,
-                    1.0
+                    1
                 ]
             },
-            "luzes": [],
+            "luzes": [
+                {
+                    "nome": "preenchimento",
+                    "comentario": "luar fraco de maquete, para tudo continuar legível",
+                    "tipo": "AREA",
+                    "posicao": [
+                        3,
+                        5.2,
+                        3
+                    ],
+                    "tamanho": [
+                        6,
+                        6
+                    ],
+                    "direcao": [
+                        -0.6,
+                        -1,
+                        -0.6
+                    ],
+                    "forca": 60,
+                    "cor": [
+                        0.6,
+                        0.7,
+                        1
+                    ]
+                }
+            ],
             "exposicao": -0.5
         }
     },
     "cameras": {
         "geral": {
             "posicao": [
-                20.5,
-                18.3,
-                20.5
+                14.68,
+                13.64,
+                14.68
             ],
             "alvo": [
                 0,
@@ -187,7 +251,7 @@
         "nicho": {
             "posicao": [
                 0.8,
-                3.0,
+                3,
                 5.6
             ],
             "alvo": [
@@ -207,6 +271,18 @@
                 2,
                 0.9
             ]
+        },
+        "teclado": {
+            "posicao": [
+                -2.75,
+                2.55,
+                -2.2
+            ],
+            "alvo": [
+                -3.95,
+                1.6,
+                -3.3
+            ]
         }
     },
     "areas": null,
@@ -222,10 +298,10 @@
                 -1.77
             ],
             "raio": 0.05,
-            "forca": 200,
+            "forca": 320,
             "canal": "R",
             "corSite": [
-                1.0,
+                1,
                 0.55,
                 0.25
             ]
@@ -248,12 +324,12 @@
                 -1,
                 0
             ],
-            "forca": 140,
+            "forca": 220,
             "canal": "G",
             "corSite": [
                 0.93,
                 0.95,
-                1.0
+                1
             ]
         },
         {
@@ -269,7 +345,77 @@
             "forca": 20,
             "canal": "B",
             "corSite": [
-                1.0,
+                1,
+                0.25,
+                0.82
+            ]
+        },
+        {
+            "nome": "fita-mesa",
+            "comentario": "fita de LED embaixo do tampo da mesa, pinta o chão e a parede de rosa",
+            "tipo": "AREA",
+            "posicao": [
+                -4.72,
+                1.43,
+                -2.65
+            ],
+            "tamanho": [
+                0.06,
+                4
+            ],
+            "direcao": [
+                -0.25,
+                -1,
+                0
+            ],
+            "forca": 150,
+            "canal": "B",
+            "corSite": [
+                1,
+                0.25,
+                0.82
+            ]
+        },
+        {
+            "nome": "fita-cabeceira",
+            "comentario": "fita de LED atrás do encosto da cama, banha a parede grafite",
+            "tipo": "AREA",
+            "posicao": [
+                1.9,
+                1.95,
+                -4.95
+            ],
+            "tamanho": [
+                0.06,
+                5.6
+            ],
+            "direcao": [
+                0,
+                1,
+                0.25
+            ],
+            "forca": 150,
+            "canal": "B",
+            "corSite": [
+                1,
+                0.25,
+                0.82
+            ]
+        },
+        {
+            "nome": "rgb-interno",
+            "comentario": "fans e memórias rosa dentro do gabinete (aparecem pelo vidro)",
+            "tipo": "POINT",
+            "posicao": [
+                -4,
+                2.5,
+                -0.9
+            ],
+            "raio": 0.15,
+            "forca": 12,
+            "canal": "B",
+            "corSite": [
+                1,
                 0.25,
                 0.82
             ]
@@ -280,6 +426,141 @@
         "cama",
         "estrutura",
         "nicho",
-        "chao"
-    ]
+        "chao",
+        "frente"
+    ],
+    "polyhaven": {
+        "comentario": "Texturas e modelos CC0 do Poly Haven (decisão 15: realismo). node pipeline/polyhaven.mjs baixa o que faltar.",
+        "resolucao": "2k",
+        "texturas": [
+            "oak_veneer_01",
+            "beige_wall_001",
+            "marble_01",
+            "poly_wool_herringbone",
+            "curly_teddy_natural",
+            "brown_leather",
+            "cotton_jersey",
+            "knitted_fleece"
+        ],
+        "modelos": [
+            "mid_century_lounge_chair",
+            "rubber_duck_toy",
+            "round_spectacles",
+            "book_encyclopedia_set_01"
+        ]
+    },
+    "terceiros": {
+        "comentario": "Modelos do Sketchfab (CC BY) baixados pelo Daniel em art/terceiros/<pasta>/ (fora do git). npm run terceiros converte para modelo.glb. Créditos em docs/creditos.md.",
+        "xdj": {
+            "fonte": "source/pioneer_DJ_console.glb",
+            "medida": [
+                "max",
+                0.727
+            ],
+            "faces": 40000,
+            "nome": "Pioneer DJ console",
+            "autor": "twopixels.studio",
+            "link": "https://sketchfab.com/3d-models/0ba527fa6b164c34aa050dcecbaa2ffb"
+        },
+        "monitor_krk": {
+            "fonte": "source/Speaker_model_export.002.obj",
+            "medida": [
+                "altura",
+                0.285
+            ],
+            "faces": 30000,
+            "nome": "KRK Classic 5 Studio Monitor Speaker",
+            "autor": "TheGiwi",
+            "link": "https://sketchfab.com/3d-models/5c03f6b1082a4decb33ae7511209271a"
+        },
+        "ps5": {
+            "fonte": "source/Ps5.fbx",
+            "medida": [
+                "max",
+                0.16
+            ],
+            "faces": 30000,
+            "nome": "Ps5 (controle DualSense)",
+            "autor": "kiarash8585",
+            "link": "https://sketchfab.com/3d-models/f0b4a0131f784059b0b339d2911478f3"
+        },
+        "jbl": {
+            "fonte": "source/Sketchfab_2018_04_11_02_02_40.blend",
+            "medida": [
+                "max",
+                0.213
+            ],
+            "faces": 25000,
+            "nome": "JBL Charge 3 speaker",
+            "autor": "Oleksii.Rozumnyi",
+            "link": "https://sketchfab.com/3d-models/661f85fe3e4048f59785b2a75ffa52f8",
+            "variante": "Camo1",
+            "assar_cor": {
+                "resolucao": 2048,
+                "normal": "textures/Normals1.png",
+                "rugosidade": 0.7,
+                "recolorir": [
+                    [
+                        "#23731e",
+                        "#4f5a2c",
+                        90
+                    ],
+                    [
+                        "#eb870a",
+                        "#6b4a2b",
+                        80
+                    ],
+                    [
+                        "#ebebeb",
+                        "#a99c78",
+                        60
+                    ]
+                ]
+            }
+        },
+        "deadpool": {
+            "fonte": "source/Deadpool FBX.fbx",
+            "medida": [
+                "altura",
+                0.18
+            ],
+            "faces": 25000,
+            "nome": "Deadpool Funko Pop",
+            "autor": "JJTale",
+            "link": "https://sketchfab.com/3d-models/fc56955c30b144a2ad5eff757115633b"
+        },
+        "funko_hp": {
+            "fonte": "source/mesh.obj",
+            "medida": [
+                "altura",
+                0.18
+            ],
+            "faces": 25000,
+            "nome": "funko harry potter (I.A)",
+            "autor": "deathcow",
+            "link": "https://sketchfab.com/3d-models/2be3c180543545cb8ed844f47698f335"
+        },
+        "trailer_bb": {
+            "fonte": "source/RV.fbx",
+            "medida": [
+                "max",
+                0.22
+            ],
+            "faces": 30000,
+            "nome": "Fleetwood Bounder - Breaking Bad",
+            "autor": "Zack_Hawley",
+            "link": "https://sketchfab.com/3d-models/85ea7208651a47f6a3b2924dadaeb955"
+        },
+        "dunk": {
+            "fonte": "source/chunky dunky.glb",
+            "medida": [
+                "max",
+                0.3
+            ],
+            "faces": 15000,
+            "nome": "Nike SB Dunk Low Ben & Jerry's Chunky Dunky",
+            "autor": "ShoesPlug",
+            "link": "https://sketchfab.com/3d-models/da6bb7c532a04cfaad1164d98213d60b"
+        }
+    }
 }

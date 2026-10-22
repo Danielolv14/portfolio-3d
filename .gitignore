@@ -19,3 +19,6 @@ capturas/
 pipeline/.cache/
 public/room-poc/
 __pycache__/
+
+# Modelos de terceiros baixados do Sketchfab (fontes e créditos em docs/plano/10-modelos-prontos.md)
+art/terceiros/

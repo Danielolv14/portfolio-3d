@@ -94,15 +94,19 @@ def main():
             exportar.render_referencia(config, rig, camera, 64 if preview else 256)
         tempos[f"ref_{rig}"] = time.time() - t
 
-    # Máscara dos LEDs: cada fonte ajustável assada sozinha, um canal por fonte
+    # Máscara dos LEDs: um canal por grupo de fontes ajustáveis (R, G, B), cada canal assado sozinho.
+    # Fontes com o mesmo canal (ex.: RGB do gabinete e fitas de LED) acendem juntas e com a mesma cor
     t = time.time()
     por_grupo = {nome: [] for nome in grupos}
     coberturas = {}
+    canais = {}
     for led in config["leds"]:
-        luzes.montar_led(led)
+        canais.setdefault(led["canal"], []).append(led)
+    for canal in ("R", "G", "B"):
+        luzes.montar_led(canais[canal])
         for nome, lista in grupos.items():
             tam = int(config["grupos"][nome]["luz"] * escala)
-            img = assar._imagem(f"led_{led['canal']}_{nome}", tam, True)
+            img = assar._imagem(f"led_{canal}_{nome}", tam, True)
             assar.assar(lista, img, "luz", amostras_luz, max(4, margem // 2))
             coberturas.setdefault(nome, assar.cobertura(img))
             por_grupo[nome].append(assar.tirar_ruido(img))
@@ -110,7 +114,10 @@ def main():
         arquivo, escalas = assar.salvar_mascara(imgs, f"leds_{nome}", coberturas[nome])
         manifesto["grupos"][nome]["leds"] = os.path.basename(arquivo)
         manifesto["grupos"][nome]["escala_leds"] = escalas
-    manifesto["leds"] = [{"nome": l["nome"], "canal": l["canal"], "cor": l["corSite"]} for l in config["leds"]]
+    # O site lê uma cor por canal, na ordem R, G, B (a cor da primeira fonte do canal)
+    manifesto["leds"] = [
+        {"nome": " + ".join(l["nome"] for l in canais[c]), "canal": c, "cor": canais[c][0]["corSite"]} for c in ("R", "G", "B")
+    ]
     tempos["leds"] = time.time() - t
 
     exportar.exportar_glb(objs, os.path.join(SAIDA, "room.glb"))

@@ -18,6 +18,7 @@ Começou em 21/10/2026. Não tem datas: cada fase termina quando cumpre os crit�
 | [07-ideias.md](07-ideias.md) | Ideias do Daniel e ideias extras, com o lugar de cada uma no plano |
 | [08-telas.md](08-telas.md) | Monitor no estilo GitHub, TV no estilo LinkedIn e celular no estilo iPhone, com navegação dentro de cada um |
 | [09-estante-sobre-mim.md](09-estante-sobre-mim.md) | A estante como o "Sobre mim": objetos que contam quem o Daniel é |
+| [10-modelos-prontos.md](10-modelos-prontos.md) | Modelos 3D prontos (CC0/CC BY) e texturas de foto para o realismo, com links e licenças |
 
 O porquê de tudo isso está no [estudo visual do Room_Portfolio](estudo-visual-referencia.md).
 
@@ -71,6 +72,8 @@ Os números de hoje são medidos de novo na Fase 0, porque viram a linha de base
 | D13 | **Modelagem no Blender por scripts, estilo maquete, câmera presa** (estudo `estudo-bake.md`). O código deixa de ser a fonte da geometria; vira a camada de interação. Começa pela parede da mesa | 21/10 |
 | D12 | **Luz da noite focada na luminária ao lado da cama e na luminária da TV.** A luminária "&" deixa de iluminar o quarto (vira brilho decorativo na nova estante) | 21/10 |
 | D10 | **Modelagem detalhada no Blender** (por script, e à mão só onde o script não alcança) para acabar com o visual genérico. O código continua dono do layout | 21/10 |
+| D14 | **Nova direção de arte: moderno, minimalista e futurista.** Não precisa ser fiel ao quarto real (a referência deixa de ser o alvo). Piso de porcelanato mais quente (placas menores, tom areia); parede da cama em **grafite escuro fosco** (~`#3b3e44`) e parede da mesa clara; fundo **frio azul** (dia `#b4c0cc`, noite `#141a2b`); noite **quente + fita de LED rosa/roxa** (atrás da cabeceira e embaixo da mesa); **todos os móveis e objetos podem ser redesenhados**; entram **cantinho DJ, poltrona/pufe moderno e videogame**. Orgânicos modelados a partir de fotos do Daniel. Antes de remodelar, uma **imagem-alvo** gerada no Gemini (prompt nosso) guia as rodadas, que usam a **prévia rápida** (`npm run previa`) em vez do bake completo | 21/10 |
+| D15 | **Realismo** (substitui o estilo maquete de cores lisas): texturas de foto **CC0** (Poly Haven), **modelos 3D prontos** com licença livre (CC0/CC BY, créditos em `docs/creditos.md`) para os objetos complicados, **peso do site sem limite**. Lista em [10-modelos-prontos.md](10-modelos-prontos.md) | 22/10 |
 | D6 | Continuam valendo: conteúdo das telas como camada HTML, monitor = Projetos, TV = Experiências, celular = Contato, porta-retrato = Sobre mim, luminária "&" = dia/noite, modo sem 3D, sem WhatsApp, MinhaReceita sem link, `referencias/` privada | antes |
 
 **Decisões técnicas propostas neste plano** (explicadas nos documentos de cada fase):
@@ -148,7 +151,7 @@ As Fases 2 e 3 podem andar em paralelo depois da 1b, porque mexem em partes dife
 | P5 ✅ | Domínio próprio (ex.: `danieloliveira.dev`, cerca de US$ 12/ano)? | Sim, no lançamento |
 | P6 ✅ | Clima do "dia": meio-dia claro ou fim de tarde dourado? | **Fim de tarde**: luz baixa e quente pela janela, o que dá mais contraste e beleza |
 | P7 | ~~Quais são as ideias novas?~~ | Respondida em 21/10: telas imersivas, estante, janela, modelagem ([07](07-ideias.md)) |
-| P8 ⏳ | Lista de gostos para a estante (séries, filmes, jogos, esportes e time, música e DJ, hobbies, valores, conquistas), com uma frase por item | Mandar antes do ciclo 3 da Fase 2 ([09](09-estante-sobre-mim.md#4-o-que-o-daniel-precisa-mandar-pergunta-p8)) |
+| P8 🔶 | (parcial em 21/10: ver 09, seção 4) Lista de gostos para a estante (séries, filmes, jogos, esportes e time, música e DJ, hobbies, valores, conquistas), com uma frase por item | Mandar antes do ciclo 3 da Fase 2 ([09](09-estante-sobre-mim.md#4-o-que-o-daniel-precisa-mandar-pergunta-p8)) |
 | P9 ✅ | O celular passa a ter dock, como um iPhone de verdade? (em 07/10 ficou "sem dock") | **Sim**, com 4 apps: Telefone→Contatos, E-mail, Fotos, Música |
 | P10 ⏳ | Fotos para o app Fotos do celular | 6–12 fotos que o Daniel aprove publicar |
 | P11 ⏳ | Certificados, cursos e formação para a TV (LinkedIn) | Mandar o que tiver; senão, só Formação e Experiência |

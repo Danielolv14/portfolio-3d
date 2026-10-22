@@ -44,6 +44,8 @@ def _luz(col, cfg):
         dados.size, dados.size_y = cfg["tamanho"]
     obj = bpy.data.objects.new(cfg["nome"], dados)
     obj.location = do_site(cfg["posicao"])
+    # A fonte ilumina, mas não aparece nas imagens (o retângulo de luz ficaria visível na prévia)
+    obj.visible_camera = False
     col.objects.link(obj)
     if "direcao" in cfg:
         apontar(obj, do_site(cfg["direcao"]))
@@ -76,13 +78,14 @@ def _portal(col, janela):
     return obj
 
 
-def montar_led(led):
-    """Só uma fonte acesa, branca, com o céu preto: o bake mostra até onde a luz dela chega.
-    No site, essa luz é multiplicada pela cor e pela potência escolhidas (máscara de LEDs)."""
+def montar_led(leds):
+    """Só as fontes de um canal acesas, brancas, com o céu preto: o bake mostra até onde a luz delas
+    chega. No site, essa luz é multiplicada pela cor e pela potência escolhidas (máscara de LEDs)."""
     col = _limpar_rig()
     _mundo()[1].inputs[1].default_value = 0.0
-    _luz(col, {**led, "cor": [1.0, 1.0, 1.0]})
-    log(f"led: {led['nome']} (canal {led['canal']})")
+    for led in leds:
+        _luz(col, {**led, "cor": [1.0, 1.0, 1.0]})
+    log(f"led: {', '.join(l['nome'] for l in leds)} (canal {leds[0]['canal']})")
 
 
 def montar(config, nome):

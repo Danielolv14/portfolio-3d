@@ -22,7 +22,17 @@ if (rodar('node', ['pipeline/export/exportar.mjs']) !== 0) process.exit(1);
 
 for (let tentativa = 1; tentativa <= 3; tentativa++) {
     console.log(`\n== bake, tentativa ${tentativa} de 3 ==`);
-    const status = rodar(BLENDER, ['-b', '--factory-startup', '--python', 'pipeline/blender/main.py', '--', ...extra]);
+    // --python-exit-code 1: um erro no script Python também conta como falha (sem isso o Blender sai com 0)
+    const status = rodar(BLENDER, [
+        '-b',
+        '--factory-startup',
+        '--python-exit-code',
+        '1',
+        '--python',
+        'pipeline/blender/main.py',
+        '--',
+        ...extra
+    ]);
     if (status === 0) {
         process.exit(rodar('node', ['pipeline/optimize/optimize.mjs']));
     }

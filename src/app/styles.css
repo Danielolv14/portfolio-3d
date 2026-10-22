@@ -5,13 +5,13 @@
 @property --bg {
     syntax: '<color>';
     inherits: true;
-    initial-value: #d3cbc2;
+    initial-value: #b4c0cc;
 }
 
 @property --bg-deep {
     syntax: '<color>';
     inherits: true;
-    initial-value: #9c8f82;
+    initial-value: #8e9aab;
 }
 
 :root {
@@ -20,8 +20,8 @@
         --bg 1s cubic-bezier(0.25, 0.75, 0.75, 1),
         --bg-deep 1s cubic-bezier(0.25, 0.75, 0.75, 1);
 
-    --bg: #d3cbc2;
-    --bg-deep: #9c8f82;
+    --bg: #b4c0cc;
+    --bg-deep: #8e9aab;
     --surface: #fbf8f4;
     --surface-2: #f4ece3;
     --fg: #2b211b;
@@ -45,8 +45,8 @@
 
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) {
-        --bg: #1c1619;
-        --bg-deep: #09070a;
+        --bg: #141a2b;
+        --bg-deep: #0d1120;
         --surface: #1d171b;
         --surface-2: #271f24;
         --fg: #f2eae6;
@@ -62,8 +62,8 @@
 }
 
 :root[data-theme='dark'] {
-    --bg: #1c1619;
-    --bg-deep: #09070a;
+    --bg: #141a2b;
+    --bg-deep: #0d1120;
     --surface: #1d171b;
     --surface-2: #271f24;
     --fg: #f2eae6;
@@ -79,9 +79,9 @@
 
 /* O botão dia/noite do site manda nas cores (vem depois para vencer os blocos acima) */
 :root[data-mode='day'] {
-    /* Fundo médio neutro (escolhido em 21/10): separa o quarto claro do fundo, como uma maquete */
-    --bg: #d3cbc2;
-    --bg-deep: #9c8f82;
+    /* Fundo azul frio (decisão 14, 21/10): o quarto quente se destaca como uma maquete iluminada */
+    --bg: #b4c0cc;
+    --bg-deep: #8e9aab;
     --surface: #fbf8f4;
     --surface-2: #f4ece3;
     --fg: #2b211b;
@@ -96,8 +96,8 @@
 }
 
 :root[data-mode='night'] {
-    --bg: #1c1619;
-    --bg-deep: #09070a;
+    --bg: #141a2b;
+    --bg-deep: #0d1120;
     --surface: #1d171b;
     --surface-2: #271f24;
     --fg: #f2eae6;

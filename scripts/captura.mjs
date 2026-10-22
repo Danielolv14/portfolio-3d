@@ -63,11 +63,31 @@ await page.waitForTimeout(2500);
 if (flags.css) await page.addStyleTag({ content: flags.css });
 
 if (flags.secao) {
+    // Espera o quarto assado aparecer (milhões de triângulos no quadro) antes de clicar: o quarto pesado
+    // termina de carregar depois do aviso, e um clique antes disso não fazia a câmera voar
+    await page
+        .waitForFunction(() => (window.__stats?.().triangles ?? 0) > 500000, null, { timeout: 120000, polling: 500 })
+        .catch(() => errors.push('o quarto assado não apareceu'));
+    await page.waitForTimeout(1000);
     const menu = 'celular' in flags ? '.tabbar' : '.nav';
     await page.click(`${menu} >> text=${flags.secao}`);
 } else if (posArg && targetArg) {
     await page.addStyleTag({ content: '.tag, .topbar, .hint, .tabbar { display: none !important; }' });
-    await page.evaluate(([p, t]) => window.__view && window.__view(p, t), [parse(posArg), parse(targetArg)]);
+    // Com o quarto assado pesado, os controles da câmera podem montar depois do aviso: tenta até dar certo
+    await page
+        .waitForFunction(
+            ([p, t]) => {
+                try {
+                    window.__view(p, t);
+                    return true;
+                } catch {
+                    return false;
+                }
+            },
+            [parse(posArg), parse(targetArg)],
+            { timeout: 120000, polling: 500 }
+        )
+        .catch(() => errors.push('a câmera não ficou pronta'));
 }
 await page.waitForTimeout(2500);
 await page.screenshot({ path: out, type: 'jpeg', quality: 88 });

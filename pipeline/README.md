@@ -30,6 +30,18 @@ O quarto é montado em React (`src/room/`). Este pipeline exporta a cena, assa a
    ```
 4. Abrir http://localhost:5173/?render=poc
 
+## Prévia rápida (para ajustar modelagem, cor e luz)
+
+O bake completo leva 45–55 min. Para cada rodada de ajuste, use a prévia: a mesma cena e as mesmas luzes no Cycles, mas só **uma foto** pela câmera do site, sem assar a luz em textura (1–3 min):
+
+```bash
+npm run previa                                   # exporta o código e renderiza a visão geral, dia e noite
+npm run previa -- --sem-exportar                 # mexeu só nos modelos do Blender (pipeline/blender/modelos)
+npm run previa -- --vistas=geral,mesa,cama --rigs=noite --amostras=96
+```
+
+Leva ~1 min 15 s com a exportação (~35 s sem). Saída em `pipeline/.cache/previa/`: `<vista>-<rig>.png` e `previa-<rig>.blend`. Para girar à vontade no Blender: abra o `.blend`, aperte **Numpad 0** (câmera do site) e **Z → Rendered**. As vistas são as `cameras` do `config/bake.json`.
+
 Só refazer o GLB, sem assar de novo:
 
 ```bash

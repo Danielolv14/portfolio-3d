@@ -11,7 +11,9 @@
         "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"pipeline/**/*.mjs\" \"*.js\"",
         "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"pipeline/**/*.mjs\" \"*.js\"",
         "check": "npm run lint && npm run format:check && npm run build",
-        "bake": "node pipeline/bake.mjs"
+        "bake": "node pipeline/bake.mjs",
+        "previa": "node pipeline/previa.mjs",
+        "terceiros": "node pipeline/terceiros.mjs"
     },
     "dependencies": {
         "@emailjs/browser": "4.4.1",

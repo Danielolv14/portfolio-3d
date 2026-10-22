@@ -131,8 +131,8 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 
 ## Decisões já tomadas (não mude sem perguntar)
 
-1. **O quarto parte das fotos do quarto real, com direção de arte** (decidido em 21/10): o layout e os objetos seguem o quarto, mas tons, contraste e detalhes podem ser ajustados para a imagem ficar mais bonita.
-   - A paleta cinza foi descartada.
+1. **O quarto parte das fotos do quarto real, com direção de arte** (decidido em 21/10): o layout e os objetos seguem o quarto, mas tons, contraste e detalhes podem ser ajustados para a imagem ficar mais bonita. **Atualizada pela decisão 14:** não precisa mais ser fiel ao quarto real.
+   - A paleta cinza antiga (tudo cinza) foi descartada; o grafite da decisão 14 é só a parede de destaque.
    - Os pôsteres são versões minimalistas próprias, porque as artes originais têm direitos autorais.
    - O globo saiu, porque não existe no quarto real.
 2. **Conteúdo dentro das telas:** é uma **camada HTML sobre a tela 3D** quando a câmera para. Não usar `<Html transform>`. Monitor = Projetos, TV = Experiências, celular = Contato.
@@ -152,7 +152,23 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 10. **Respostas de 21/10:** Blender 4.5 LTS fixado; objetos orgânicos podem ser modelados à mão em `art/*.blend`; repositório em inglês com tradução PT; arte (GLB e texturas) em CC BY 4.0, código MIT; domínio próprio no lançamento; o "dia" é fim de tarde dourado; a vista da janela é BH estilizada (Serra do Curral); dados reais do GitHub buscados no build (token na Vercel).
 11. **Modelagem detalhada no Blender (21/10):** por script Python no pipeline, e à mão só onde o script não alcança. O código continua dono do layout.
 12. **Luz da noite (21/10):** focada na luminária de cobre ao lado da cama e na luminária (light bar) em cima da TV. A luminária "&" da prateleira não ilumina mais o quarto, fica só como brilho decorativo. Ver `docs/plano/03-iluminacao.md`.
-13. **Modelagem no Blender (21/10, depois do estudo `docs/plano/estudo-bake.md`):** as áreas do quarto passam a ser modeladas no Blender por scripts (`pipeline/blender/modelos/`), estilo maquete (chanfro em tudo, cores lisas, textura só onde conta), e substituem as peças do código no bake (`"modelos"` em `pipeline/config/bake.json`). O quarto em código continua como camada de interação e posições de referência. Já feito: a parede da mesa (`modelos/mesa.py`). A câmera da visão geral ficou presa, como na referência (sem entrar no quarto nem descer à altura dos olhos).
+13. **Modelagem no Blender (21/10, depois do estudo `docs/plano/estudo-bake.md`):** as áreas do quarto passam a ser modeladas no Blender por scripts (`pipeline/blender/modelos/`), estilo maquete (chanfro em tudo, cores lisas, textura só onde conta), e substituem as peças do código no bake (`"modelos"` em `pipeline/config/bake.json`). O quarto em código continua como camada de interação e posições de referência. Módulos: `estrutura` (paredes com vãos, piso, porta, janela), `mesa`, `cama`, `nicho` (estante), `chao` e `frente` (cantinho DJ e poltrona, peças sem equivalente no código, grupo `furniture-front`). As faces "cortadas" da maquete usam o material `corte_maquete`, que o site desenha sem luz (cor fixa, `BakedRoom`). Fontes de LED com o mesmo canal acendem juntas (canal B = RGB do gabinete + fitas). A câmera da visão geral ficou presa, como na referência (sem entrar no quarto nem descer à altura dos olhos).
+14. **Direção de arte nova (21/10, à noite): moderno, minimalista e futurista.** A referência deixa de ser o alvo; o alvo é o quarto ficar completo e bonito, mesmo diferente do real.
+    - Piso: porcelanato mais quente (placas menores, tom areia). Parede da cama (B): **grafite escuro fosco** (~`#3b3e44`); parede da mesa (A): clara.
+    - Fundo em volta do quarto: **frio azul** (dia `#b4c0cc`, noite `#141a2b`).
+    - Noite: luzes quentes (cobre e light bar) **mais fita de LED rosa/roxa** atrás da cabeceira e embaixo da mesa, clara o bastante para ver tudo.
+    - **Todos os móveis e objetos podem ser redesenhados**, inclusive os pessoais.
+    - Objetos novos: **cantinho DJ** (ele é produtor de DJs), **poltrona ou pufe moderno** e **videogame**.
+    - Orgânicos (roupa de cama, pelúcias, mochila etc.): modelados por script a partir de **fotos que o Daniel manda**.
+    - Fluxo: uma **imagem-alvo** gerada no Gemini (prompt nosso, a partir de uma captura) guia as rodadas; cada rodada usa a **prévia rápida** (`npm run previa`, 1–3 min) e o bake completo fica só para publicar.
+15. **Realismo (22/10).** O estilo maquete de cores lisas foi descartado ("cara de desenho, massinha"): o alvo é o realismo da imagem do Gemini (`docs/plano/alvo/`), com a mesma luz e os mesmos detalhes.
+    - **Texturas de foto CC0** (Poly Haven / ambientCG), baixadas por `node pipeline/polyhaven.mjs` a partir da lista `"polyhaven"` do `bake.json`. Nos modelos, `pbr()` (`modelos/base.py`) monta cor, rugosidade e relevo, tinge a foto para a cor da paleta (`_tingir`) e faz UV de caixa automático.
+    - **Objetos com forma complicada vêm de modelos 3D prontos** com licença livre (CC0 ou CC BY, com crédito em `docs/creditos.md`); sem um bom modelo, o objeto é feito por script ou trocado. `importar_modelo()` traz o glTF para a escala do quarto. Lista e links: [`docs/plano/10-modelos-prontos.md`](docs/plano/10-modelos-prontos.md). Os do Sketchfab o Daniel baixa (exige login) em `art/terceiros/<pasta>/`, que fica fora do git.
+    - **Peso do site sem limite** (as versões `-mobile` continuam).
+    - Isso substitui as regras "cores lisas, textura só onde conta" (decisão 13) e "objetos modelados por nós" (decisões 8 e 9).
+    - **Respostas de 22/10:** os **logos das marcas ficam** (P14); as **pelúcias saem**; a luminária "&" fica como está; a bola de futevôlei (Mikasa amarela), a mochila Nike e a roupa de cama são feitas por script.
+    - **Gabinete = Pichau Gadit L** (484 × 402 × 210 mm, `mesa.gabinete()`), como na imagem-alvo: frente e topo com a camuflagem **militar** (`camuflagem_militar()`, feita da camo urbana do código; para voltar à cinza, usar `camo.png`), lateral de **vidro** virada para a câmera mostrando o interior (placa-mãe, placa de vídeo, memórias e fans com anel rosa). Vidro: `base.vidro()` usa alfa no Cycles (vidro com refração escurece o interior) e o site desenha os materiais `vidro*` transparentes, sem luz assada (`BakedRoom`). Teclado e mouse continuam os do código (já são réplicas do AK820 e do VXE R1); o RGB do teclado acende com o canal B (`BRILHO` em `modelos/__init__.py`).
+    - Modelos do Sketchfab: `npm run terceiros` (`pipeline/blender/converter.py`) converte cada `art/terceiros/<pasta>/` para `modelo.glb` (lista `"terceiros"` no `bake.json`, com `medida` em metros, limite de `faces`, `variante`, `assar_cor` e `recolorir`). No modelo, `importar_terceiro()`. Para tirar um objeto do código no bake sem tirar o grupo inteiro: `<Bake peca="...">` no código + terceiro item do `SUBSTITUI` (`modelos/__init__.py`).
 
 ## Como verificar
 
