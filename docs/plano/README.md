@@ -19,6 +19,7 @@ Começou em 21/10/2026. Não tem datas: cada fase termina quando cumpre os crit�
 | [08-telas.md](08-telas.md) | Monitor no estilo GitHub, TV no estilo LinkedIn e celular no estilo iPhone, com navegação dentro de cada um |
 | [09-estante-sobre-mim.md](09-estante-sobre-mim.md) | A estante como o "Sobre mim": objetos que contam quem o Daniel é |
 | [10-modelos-prontos.md](10-modelos-prontos.md) | Modelos 3D prontos (CC0/CC BY) e texturas de foto para o realismo, com links e licenças |
+| [11-ajustes-22-10.md](11-ajustes-22-10.md) | **Próximo trabalho:** ajustes pedidos em 22/10 (DJ, escalas, cores, paredes) e as telas GitHub/LinkedIn |
 
 O porquê de tudo isso está no [estudo visual do Room_Portfolio](estudo-visual-referencia.md).
 
