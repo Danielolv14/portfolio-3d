@@ -3,11 +3,15 @@
 Alvo: docs/plano/alvo/. Cantinho DJ (aparador baixo com a XDJ-RX3, dois monitores de áudio, fone e
 pen drives) e a poltrona com a mesinha. Tudo novo: não substitui nada do código. Sem logos: a forma
 lembra os aparelhos, mas a marca não aparece.
-Escala do quarto: ~3,2 unidades por metro na horizontal e ~2,15 na vertical (CLAUDE.md).
+Escala do quarto: ~3,2 unidades por metro na horizontal e ~2,15 na vertical (CLAUDE.md); os modelos
+prontos usam a escala uniforme ESCALA_MODELOS (modelos/base.py).
 """
 import math
 
-from modelos.base import caixa, cilindro, cor, importar_modelo, importar_terceiro, juntar, macio, pbr, perfil, transformar
+from mathutils import Vector
+
+from comum import log
+from modelos.base import ESCALA_MODELOS, caixa, cilindro, cor, importar_modelo, importar_terceiro, juntar, macio, pbr, perfil, transformar
 
 GRUPO = "furniture-front"
 RAD90 = math.pi / 2
@@ -128,6 +132,16 @@ def mesinha(m, c):
     return juntar(p, "mesinha")
 
 
+def _cruzam(a, b):
+    """As caixas (no mundo, só no plano do chão) de dois objetos se sobrepõem?"""
+    def caixa_xy(o):
+        cantos = [o.matrix_world @ Vector(v) for v in o.bound_box]
+        return min(p.x for p in cantos), max(p.x for p in cantos), min(p.y for p in cantos), max(p.y for p in cantos)
+    ax0, ax1, ay0, ay1 = caixa_xy(a)
+    bx0, bx1, by0, by1 = caixa_xy(b)
+    return ax0 < bx1 and bx0 < ax1 and ay0 < by1 and by0 < ay1
+
+
 def criar():
     m = {"group": GRUPO, "area": "front"}
     c = {
@@ -165,25 +179,31 @@ def criar():
         except RuntimeError:
             return transformar(feito_por_script(m, c), posicao, rotacao)
 
-    pecas.append(pronto("xdj", (cx - 0.15, topo, cz - 0.02), (0, 0, 0), xdj))
+    # O DJ fica do lado de dentro do quarto (-z): a XDJ e os monitores giram 180° para a frente
+    # (pratos e alto-falantes) apontar para ele. O aparador continua com as portas para a câmera
+    pecas.append(pronto("xdj", (cx - 0.15, topo, cz - 0.02), (0, math.pi, 0), xdj))
     for lado in (-1, 1):
         # Monitores nas pontas, virados um pouco para o meio
-        pecas.append(pronto("monitor_krk", (cx + lado * 1.72, topo, cz - 0.2), (0, -lado * 0.25, 0), monitor_audio))
-    pecas.append(transformar(fone(m, c), (cx + 1.18, topo, cz + 0.45), (0, 0.5, 0)))
+        pecas.append(pronto("monitor_krk", (cx + lado * 1.72, topo, cz + 0.2), (0, math.pi - lado * 0.25, 0), monitor_audio))
+    pecas.append(transformar(fone(m, c), (cx + 1.18, topo, cz - 0.45), (0, 0.5, 0)))
     for i, (dx, mat) in enumerate(((0.95, "pendrive"), (1.05, "pendrive2"), (1.15, "pendrive"))):
         pecas.append(caixa("pendrive", (cx + dx, topo + 0.012, cz - 0.55), (0.05, 0.024, 0.16), c[mat], m, chanfro=0.006, rotacao=(0, 0.2 * i, 0)))
 
-    # ── Poltrona virada para a frente-esquerda (para o cantinho DJ) e a mesinha ao lado ──
+    # ── Poltrona virada para a frente-esquerda (para o cantinho DJ) e a mesinha ao lado, sem encostar ──
     # Poltrona: modelo pronto (Poly Haven, CC0) quando baixado; senão, a feita por script
     try:
-        pecas.append(importar_modelo("mid_century_lounge_chair", m, (3.75, 0, 2.75), (0, -0.785, 0), escala=(2.5, 2.0)))
+        # Um pouco menor que o tamanho real (fator 0,85): na escala uniforme ela dominava a visão geral
+        cadeira = importar_modelo("mid_century_lounge_chair", m, (3.8, 0, 2.75), (0, -0.785, 0), escala=(ESCALA_MODELOS * 0.85,) * 2)
     except RuntimeError:
-        pecas.append(transformar(poltrona(m, c), (3.8, 0, 2.6), (0, -0.785, 0), escala=0.85))
-    pecas.append(transformar(mesinha(m, c), (2.55, 0, 3.55)))
+        cadeira = transformar(poltrona(m, c), (3.8, 0, 2.75), (0, -0.785, 0), escala=0.85)
+    mx, mz = 2.3, 3.85
+    mesa = transformar(mesinha(m, c), (mx, 0, mz))
+    pecas += [cadeira, mesa]
+    log(f"frente: poltrona e mesinha {'SE CRUZAM' if _cruzam(cadeira, mesa) else 'separadas'}")
     # Controle do PS5 (modelo pronto) em cima da mesinha; sem ele, fica a caixinha da mesinha
     try:
-        pecas.append(importar_terceiro("ps5", m, (2.6, 1.085, 3.5), (0, 0.4, 0)))
+        pecas.append(importar_terceiro("ps5", m, (mx + 0.05, 1.085, mz - 0.05), (0, 0.4, 0)))
     except RuntimeError:
-        pecas.append(caixa("controle_ps", (2.63, 1.1, 3.49), (0.3, 0.035, 0.18), c["branco"], m, chanfro=0.03, rotacao=(0, 0.4, 0)))
+        pecas.append(caixa("controle_ps", (mx + 0.08, 1.1, mz - 0.06), (0.3, 0.035, 0.18), c["branco"], m, chanfro=0.03, rotacao=(0, 0.4, 0)))
 
     return [juntar(pecas, f"{GRUPO}_fixo")]

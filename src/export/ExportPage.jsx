@@ -8,7 +8,7 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 
 import { content } from '../content/content';
 import Room from '../room/Room';
-import { creatineTexture, quiltTexture } from '../room/bedTextures';
+import { quiltTexture } from '../room/bedTextures';
 import {
     ballTexture,
     calculatorTexture,
@@ -50,7 +50,6 @@ function Exporter() {
                 asas: png(caseBadgeTexture('wings')),
                 relogio: png(clockTexture()),
                 calculadora: png(calculatorTexture()),
-                creatina: png(creatineTexture()),
                 matelasse: png(quiltTexture()),
                 bola: png(ballTexture())
             };

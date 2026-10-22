@@ -73,12 +73,10 @@ def criar():
     rnd = random.Random(14)
 
     # Paredes de massa pintada (textura de foto, CC0), levadas para as cores do alvo
-    clara = pbr("parede_clara", "beige_wall_001", 6.0, tinta="#e9e5df", contraste=0.6, rugosidade=0.9, relevo=0.6)
     grafite = pbr("parede_grafite", "beige_wall_001", 6.0, tinta="#3b3e44", contraste=0.6, rugosidade=0.85, relevo=0.6)
     # As faces "cortadas" da maquete (topo das paredes, pontas soltas, lateral da laje): creme claro
     corte = cor("corte_maquete", "#efe9e1", rugosidade=0.8)
     rejunte = cor("rejunte", "#b8a690", rugosidade=0.9)
-    rodape_claro = cor("rodape_claro", "#dcd7cf", rugosidade=0.6)
     rodape_grafite = cor("rodape_grafite", "#2c2f34", rugosidade=0.6)
     folha = cor("porta_clara", "#e6e3de", rugosidade=0.5)
     preto = cor("preto_fosco", "#1c1d20", rugosidade=0.45, metal=0.3)
@@ -101,21 +99,22 @@ def criar():
             z = -5.3 + lado * (k + 0.5)
             pecas.append(caixa("piso", (x + rnd.uniform(-0.002, 0.002), -0.006, z), (lado - junta, 0.012, lado - junta), porcelanato, m, chanfro=0.003))
 
-    # ── Paredes: B (cama e janela) em grafite, A (mesa, porta, estante) clara; topo e ponta solta em creme ──
+    # ── Paredes A (mesa, porta, estante) e B (cama e janela) em grafite; a porta clara e o painel ripado
+    #    de carvalho viram os contrastes da parede A. Topo e ponta solta em creme ──
     # No Blender, o y do site é z e o z do site é -y
     pecas.append(
         parede("parede_b", (-5.3, 5.3), (0, H), [(WIN["x0"], WIN["x1"], WIN["y0"], WIN["y1"])], T, grafite, m,
                plano="xy", centro=-5.15, corte=(corte, lambda c, nn: (nn.z > 0.9 and c.z > H - 0.05) or (nn.x > 0.9 and c.x > 5.29)))
     )
     pecas.append(
-        parede("parede_a", (-5.0, 5.3), (0, H), [(DOOR["z0"], DOOR["z1"], -0.1, DOOR["top"])], T, clara, m,
+        parede("parede_a", (-5.0, 5.3), (0, H), [(DOOR["z0"], DOOR["z1"], -0.1, DOOR["top"])], T, grafite, m,
                plano="zy", centro=-5.15, corte=(corte, lambda c, nn: (nn.z > 0.9 and c.z > H - 0.05) or (nn.y < -0.9 and c.y < -5.29)))
     )
 
     # ── Rodapé baixo e fino, da cor de cada parede (some no minimalismo, mas marca o encontro com o piso) ──
     pecas.append(caixa("rodape_b", (0.15, 0.08, -4.985), (10.3, 0.16, 0.03), rodape_grafite, m, chanfro=0.006))
     for z0, z1 in ((-5.0, DOOR["z0"] - CASING), (DOOR["z1"] + CASING, 5.3)):
-        pecas.append(caixa("rodape_a", (-4.985, 0.08, (z0 + z1) / 2), (0.03, 0.16, z1 - z0), rodape_claro, m, chanfro=0.006))
+        pecas.append(caixa("rodape_a", (-4.985, 0.08, (z0 + z1) / 2), (0.03, 0.16, z1 - z0), rodape_grafite, m, chanfro=0.006))
 
     pecas += porta(m, folha, preto)
     pecas += janela(m, preto, peitoril)

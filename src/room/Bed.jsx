@@ -6,16 +6,7 @@ import * as THREE from 'three';
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 import { ballTexture } from './textures';
-import {
-    creatineTexture,
-    cushionTexture,
-    lanyardTexture,
-    mahoganyTexture,
-    pillowTexture,
-    quiltTexture,
-    rugTextures,
-    teakTexture
-} from './bedTextures';
+import { cushionTexture, lanyardTexture, mahoganyTexture, pillowTexture, quiltTexture, rugTextures, teakTexture } from './bedTextures';
 import { Bake, Box, C, Cyl, dayNight, lerp, Rounded } from './shared';
 import { Phone } from './Phone';
 import { Poster } from './Shell';
@@ -370,7 +361,6 @@ function Diffuser(props) {
 // base de teca (rodapé + pés). A frente fica virada para a cama (-x).
 function Nightstand() {
     const teak = useMemo(() => teakTexture(), []);
-    const creatine = useMemo(() => creatineTexture(), []);
     const top = 1.3;
     return (
         <group>
@@ -405,23 +395,13 @@ function Nightstand() {
                 );
             })}
 
-            {/* em cima: luminária, difusor, latinha, creatina, controle e estojo */}
+            {/* em cima: luminária, difusor, latinha, controle e estojo */}
             <CopperLamp position={[4.96, top, -1.68]} rotation-y={-0.8} />
             <Bake peca="objetos_criado">
                 <Diffuser position={[4.92, top, -1.42]} rotation-y={0.3} />
                 <Box size={[0.32, 0.016, 0.24]} position={[4.56, top + 0.008, -1.22]} rotation-y={0.2} color="#6e4c30" roughness={0.6} />
                 <Cyl args={[0.1, 0.1, 0.05, 32]} position={[4.56, top + 0.041, -1.22]} color="#f2f1ec" roughness={0.35} />
                 <Cyl args={[0.102, 0.102, 0.01, 32]} position={[4.56, top + 0.05, -1.22]} color="#d4dde3" roughness={0.3} />
-                <group position={[5.0, top - 0.02, -1.08]} rotation-y={-0.6}>
-                    <Soft size={[0.3, 0.6, 0.14]} round={0.2} pinch={0.85} map={creatine} position={[0, 0.3, 0]} roughness={0.5} />
-                    <Box
-                        size={[0.28, 0.07, 0.016]}
-                        position={[0.005, 0.6, 0.012]}
-                        rotation={[0.35, 0, 0.05]}
-                        color="#1d1f22"
-                        roughness={0.6}
-                    />
-                </group>
                 <group position={[4.4, top + 0.016, -1.55]} rotation-y={0.45}>
                     <Rounded size={[0.42, 0.032, 0.1]} radius={0.014} color="#141518" roughness={0.45} />
                     {[-0.12, -0.06, 0, 0.06].map((x) => (

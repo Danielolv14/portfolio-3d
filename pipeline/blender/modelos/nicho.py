@@ -6,7 +6,7 @@ código a estrutura do nicho (`furniture-niche`). As prateleiras ficam nas mesma
 "Sobre mim" (docs/plano/09-estante-sobre-mim.md).
 Medidas e posições: src/room/Niche.jsx (coordenadas do site).
 """
-from modelos.base import caixa, cor, importar_modelo, importar_terceiro, juntar, pbr
+from modelos.base import ESCALA_MODELOS, caixa, cor, importar_modelo, importar_terceiro, juntar, pbr
 
 GRUPO = "furniture-niche"
 X0, X1, Z0, Z1 = -4.98, -4.24, 2.3, 4.95
@@ -45,7 +45,7 @@ def criar():
 
     # Objetos do "Sobre mim" que já são modelos prontos (Poly Haven, CC0), em tamanho real
     o = {"group": "props-niche", "area": "niche"}
-    real = (3.2, 2.15)
+    real = (ESCALA_MODELOS, ESCALA_MODELOS)
     objetos = [
         # Enciclopédias na prateleira de cima, ao longo da estante
         importar_modelo("book_encyclopedia_set_01", o, (-4.64, TOPO, 3.35), (0, 1.5708, 0), escala=real),
@@ -63,10 +63,11 @@ def criar():
         ("deadpool", (-4.6, LEVELS[0], 4.3), (0, 1.25, 0)),
         ("trailer_bb", (-4.62, LEVELS[0], 2.85), (0, 0.25, 0)),
     ]
+    # Fator por objeto, só quando o tamanho real fica estranho na cena (padrão 1)
+    fatores = {}
     for pasta, posicao, rotacao in terceiros:
         try:
-            # Funkos e miniaturas maiores que o real para aparecerem na visão geral
-            fator = 1.0 if pasta == "jbl" else 1.6
+            fator = fatores.get(pasta, 1.0)
             objetos.append(importar_terceiro(pasta, o, posicao, rotacao, escala=(real[0] * fator, real[1] * fator)))
         except RuntimeError:
             pass

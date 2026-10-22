@@ -368,18 +368,44 @@ def parede(nome, faixa_a, faixa_b, furos, espessura, material, marca, plano="xy"
     return obj
 
 
-def importar_modelo(id_ph, marca, posicao=(0, 0, 0), rotacao=(0, 0, 0), escala=(3.2, 2.15)):
+# Unidades do quarto por metro para os modelos prontos. Uniforme (a mesma nos três eixos): com a escala
+# do quarto (3,2 na horizontal e 2,15 na vertical) eles ficavam largos e achatados. 2,6 é a média
+ESCALA_MODELOS = 2.6
+
+
+def importar_modelo(id_ph, marca, posicao=(0, 0, 0), rotacao=(0, 0, 0), escala=(ESCALA_MODELOS, ESCALA_MODELOS)):
     """Modelo pronto do Poly Haven (CC0, baixado por pipeline/polyhaven.mjs), com os materiais e as
-    texturas dele. Vem em metros e com z para cima; `escala` = (horizontal, vertical) leva para a
-    escala estilizada do quarto (~3,2 unidades por metro na horizontal e ~2,15 na vertical).
+    texturas dele. Vem em metros e com z para cima; `escala` = (horizontal, vertical) leva para as
+    unidades do quarto (ESCALA_MODELOS, igual nos dois sentidos para não deformar).
     `posicao` e `rotacao` no site (o chão do modelo fica em y = posicao[1])."""
     return _importar_glb(os.path.join(PH, id_ph, f"{id_ph}.gltf"), id_ph, marca, posicao, rotacao, escala)
 
 
-def importar_terceiro(pasta, marca, posicao=(0, 0, 0), rotacao=(0, 0, 0), escala=(3.2, 2.15)):
+def importar_terceiro(pasta, marca, posicao=(0, 0, 0), rotacao=(0, 0, 0), escala=(ESCALA_MODELOS, ESCALA_MODELOS)):
     """Modelo do Sketchfab (CC BY) já convertido por pipeline/blender/converter.py para
     art/terceiros/<pasta>/modelo.glb, em metros e com a frente para -y do Blender (+z do site)."""
     return _importar_glb(os.path.join(RAIZ, "art", "terceiros", pasta, "modelo.glb"), pasta, marca, posicao, rotacao, escala)
+
+
+def _soldar_se_solto(obj):
+    """Modelos de scan ou feitos por IA (o Dunk, o Funko do Harry Potter) vêm como "sopa de triângulos":
+    cada face com os próprios 3 vértices. No atlas do bake cada triângulo vira uma ilha minúscula, sem
+    pixels, e o objeto sai preto e pontilhado no site. Soldar os vértices junta as ilhas (o UV é por
+    canto de face, então a textura não muda); as normais passam a ser suaves, com quina acima de 40°."""
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    if len(bm.verts) < 2.5 * max(len(bm.faces), 1):
+        bm.free()
+        return
+    antes = len(bm.verts)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+    bm.to_mesh(obj.data)
+    bm.free()
+    with bpy.context.temp_override(object=obj, active_object=obj, selected_objects=[obj]):
+        bpy.ops.mesh.customdata_custom_splitnormals_clear()
+    obj.data.shade_smooth()
+    obj.data.set_sharp_from_angle(angle=math.radians(40))
+    print(f"[modelos] {obj.name}: vértices soldados {antes} -> {len(obj.data.vertices)}")
 
 
 def _importar_glb(caminho, nome, marca, posicao, rotacao, escala):
@@ -399,6 +425,7 @@ def _importar_glb(caminho, nome, marca, posicao, rotacao, escala):
         if o.type != "MESH":
             bpy.data.objects.remove(o, do_unlink=True)
     obj = juntar(malhas, nome)
+    _soldar_se_solto(obj)
     # Chão do modelo em z = 0 e centro em x, y = 0; depois a escala do quarto e o lugar no site
     zs = [v.co.z for v in obj.data.vertices]
     xs = [v.co.x for v in obj.data.vertices]

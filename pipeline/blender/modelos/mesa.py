@@ -1,7 +1,7 @@
 """Parede da mesa, modelada no Blender (decisões 14 e 15; alvo em docs/plano/alvo/).
 
 Substitui as peças de `furniture-desk` e `props-desk` do código: painel ripado, mesa flutuante,
-gabinete Pichau Gadit L (frente camuflada, lateral de vidro com os fans rosa), monitor (objeto
+gabinete Pichau Gadit L (frente camuflada, lateral de vidro com os fans de luz quente), monitor (objeto
 clicável "projects"), TV com a luminária (objeto clicável "experience"), PS5, relógio, mousepad,
 caderninho e calculadora. Continuam vindo do código: teclado, mouse, fones, cabos e a cadeira (que se
 mexe). Medidas e posições: src/room/Desk.jsx (coordenadas do site).
@@ -51,7 +51,7 @@ def camuflagem_militar():
 
 
 def ventoinha(nome, centro, tamanho, c, marca, eixo="x"):
-    """Fan de 120 mm com anel de LED rosa (acende junto com o RGB à noite): moldura quadrada vazada, anel,
+    """Fan de 120 mm com anel de LED quente (acende junto com o RGB à noite): moldura quadrada vazada, anel,
     as pás (um disco escuro, como pás girando) e o miolo."""
     rot = (0, 0, RAD90) if eixo == "x" else (RAD90, 0, 0)
     prof = tamanho * 0.22
@@ -69,7 +69,7 @@ def ventoinha(nome, centro, tamanho, c, marca, eixo="x"):
 def gabinete(m, c):
     """Gabinete Pichau Gadit L (484 x 402 x 210 mm), na escala do quarto e como na imagem-alvo: frente em
     tela com a camuflagem militar e moldura de cantos chanfrados, lateral de vidro temperado (virada para a
-    câmera) mostrando a placa-mãe, a placa de vídeo, as memórias, o cooler e os fans com anel rosa, a
+    câmera) mostrando a placa-mãe, a placa de vídeo, as memórias, o cooler e os fans com anel de luz quente, a
     cobertura da fonte embaixo, o topo com o filtro de tela e os botões, e quatro pezinhos redondos.
     Montado na origem: frente para +x, vidro para +z, apoiado em y = 0."""
     D, W, H, PE = 1.29, 0.67, 1.55, 0.03
@@ -114,7 +114,7 @@ def gabinete(m, c):
         p.append(caixa("memoria_rgb", (dx, 1.12, -0.172), (0.024, 0.42, 0.014), c["led"], m, chanfro=0.0))
     p.append(caixa("dissipador", (-0.27, 1.15, -0.16), (0.16, 0.5, 0.26), c["aluminio"], m, chanfro=0.008))
     p += ventoinha("fan_cooler", (-0.15, 1.15, -0.16), 0.36, c, m)
-    # Três fans na frente (atrás da tela) e um atrás, todos com o anel rosa
+    # Três fans na frente (atrás da tela) e um atrás, todos com o anel de luz quente
     for y in (0.56, 0.94, 1.32):
         p += ventoinha("fan_frente", (x1 - 0.13, y, 0.0), 0.36, c, m)
     p += ventoinha("fan_traseiro", (x0 + 0.07, 1.25, -0.05), 0.36, c, m)
@@ -156,7 +156,6 @@ def criar():
     feltro = cor("feltro", "#2b2d32", rugosidade=0.95)
     feltro_borda = cor("feltro_borda", "#35383e", rugosidade=0.9)
     led_console = cor("led_console", "#a9d2ff", emissao="#7fb8ff", forca=3.0)
-    led_fita = cor("emit-B-fita", "#2a0a24", emissao="#ff3fd2", forca=6.0)
     preto_brilho = cor("preto_brilho", "#121316", rugosidade=0.22)
     preto_tela = cor("preto_moldura", "#131418", rugosidade=0.3)
     grafite = cor("grafite", "#2c2e33", rugosidade=0.45)
@@ -164,8 +163,8 @@ def criar():
     vidro_lente = cor("vidro_lente", "#05060a", rugosidade=0.05)
     relogio = textura("relogio", compor("relogio.png", "#1f2a24", "visor_relogio"), rugosidade=0.2)
     calculadora = textura("calculadora", "calculadora.png", rugosidade=0.5)
-    led_rgb = cor("emit-B-rgb", "#2a0a24", emissao="#ff3fd2", forca=6.0)
-    led_botao = cor("emit-B-botao", "#2a0a24", emissao="#ff3fd2", forca=4.0)
+    led_rgb = cor("emit-B-rgb", "#2a1a0a", emissao="#ffb36b", forca=6.0)
+    led_botao = cor("emit-B-botao", "#2a1a0a", emissao="#ffb36b", forca=4.0)
     led_tv = cor("emit-G-barra", "#ffffff", emissao="#f4f7ff", forca=8.0)
 
     pecas = []
@@ -186,8 +185,6 @@ def criar():
             pecas.append(caixa("pe_mesa", (x, 0.73, zc), (0.06, 1.46, 0.06), metal_preto, m, chanfro=0.008))
         pecas.append(caixa("pe_base", (-4.105, 0.03, zc), (1.33, 0.06, 0.06), metal_preto, m, chanfro=0.008))
         pecas.append(caixa("pe_topo", (-4.105, 1.43, zc), (1.33, 0.06, 0.06), metal_preto, m, chanfro=0.008))
-    # Fita de LED embaixo do tampo, perto da parede: à noite pinta o chão e a parede de rosa (canal B)
-    pecas.append(caixa("fita_mesa", (-4.72, 1.452, -2.65), (0.03, 0.012, 4.1), led_fita, m, chanfro=0.0))
 
     # ── Gabinete Pichau Gadit L em cima da mesa, no ponto do antigo (frente em x = -3,345) ──
     cg = {

@@ -1,5 +1,5 @@
 // Texturas da área da cama, desenhadas em <canvas> como as de src/textures.js:
-// madeiras da cabeceira e do criado-mudo, matelassê, travesseiros, almofada, tapete, creatina e o cordão.
+// madeiras da cabeceira e do criado-mudo, matelassê, travesseiros, almofada, tapete e o cordão.
 import * as THREE from 'three';
 
 // `data`: textura que não é cor (máscara do pelo), então fica sem conversão sRGB
@@ -200,46 +200,6 @@ export function cushionTexture() {
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.stroke();
-    });
-}
-
-// Pacote de creatina em pé: saco escuro com a faixa turquesa e o nome na vertical
-export function creatineTexture() {
-    return canvasTexture(256, 384, (ctx, w, h) => {
-        const rand = seeded(13);
-        ctx.fillStyle = '#26292c';
-        ctx.fillRect(0, 0, w, h);
-        // vincos do plástico
-        for (let i = 0; i < 40; i++) {
-            ctx.strokeStyle = `rgba(255,255,255,${0.03 + rand() * 0.06})`;
-            ctx.lineWidth = 1 + rand() * 3;
-            const x = rand() * w;
-            ctx.beginPath();
-            ctx.moveTo(x, rand() * h);
-            ctx.lineTo(x + (rand() - 0.5) * 60, rand() * h);
-            ctx.stroke();
-        }
-        // faixa turquesa com o nome lido de baixo para cima
-        ctx.fillStyle = '#18a5a6';
-        ctx.fillRect(132, 44, 76, h - 44);
-        ctx.save();
-        ctx.translate(176, h - 22);
-        ctx.rotate(-Math.PI / 2);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '800 50px system-ui, sans-serif';
-        ctx.fillText('CREATINA', 0, 0);
-        ctx.restore();
-        // letras miúdas e o selo, só como manchas brancas
-        ctx.fillStyle = 'rgba(255,255,255,0.85)';
-        for (let i = 0; i < 6; i++) ctx.fillRect(220, 70 + i * 16, 22 - (i % 3) * 5, 6);
-        ctx.fillRect(220, h - 46, 24, 14);
-        ctx.fillStyle = 'rgba(255,255,255,0.55)';
-        for (let i = 0; i < 5; i++) ctx.fillRect(26, 150 + i * 14, 70 - i * 6, 5);
-        // solda do topo
-        ctx.fillStyle = '#1b1d20';
-        ctx.fillRect(0, 0, w, 30);
-        ctx.fillStyle = 'rgba(255,255,255,0.08)';
-        for (let x = 4; x < w; x += 8) ctx.fillRect(x, 4, 3, 22);
     });
 }
 

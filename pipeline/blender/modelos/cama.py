@@ -118,7 +118,7 @@ def criar():
     preto_metal = cor("preto_metal", "#1b1c1f", rugosidade=0.35, metal=0.4)
     cobre = cor("cobre", "#c27a46", rugosidade=0.28, metal=1.0)
     luz_cobre = cor("emit-R-luminaria", "#fff1d6", emissao="#ffb15e", forca=6.0)
-    led_fita = cor("emit-B-fita", "#2a0a24", emissao="#ff3fd2", forca=6.0)
+    led_fita = cor("emit-B-fita", "#2a1a0a", emissao="#ffb36b", forca=6.0)
     tapete = pbr("tapete", "curly_teddy_natural", 1.6, tinta="#b9b6b1", contraste=0.8)
     moldura = cor("moldura_poster", "#17181b", rugosidade=0.45)
 
@@ -132,7 +132,7 @@ def criar():
     # O topo do encosto fica abaixo dos pôsteres de baixo (que começam em y ≈ 1,98)
     pecas.append(macio(caixa("encosto", (1.9, 1.22, -4.8), (5.9, 1.36, 0.34), estofado, m, chanfro=0.12, segmentos=2)))
     pecas.append(macio(caixa("braco_cama", (4.84, 1.05, -3.42), (0.34, 1.02, 2.62), estofado, m, chanfro=0.12, segmentos=2)))
-    # Fita de LED atrás do encosto, virada para cima: à noite a parede grafite ganha um halo rosa
+    # Fita de LED atrás do encosto, virada para cima: à noite a parede grafite ganha um halo quente
     pecas.append(caixa("fita_cama", (1.9, 1.91, -4.975), (5.6, 0.012, 0.02), led_fita, m, chanfro=0.0))
 
     # ── Criado-mudo flutuante de carvalho (o tampo continua em 1,3: os objetos do código ficam em cima) ──

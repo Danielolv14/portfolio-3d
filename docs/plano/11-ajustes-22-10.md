@@ -2,6 +2,22 @@
 
 Plano para executar numa próxima sessão. O quarto realista está no ar desde 22/10 (commit `36e9904`). Leia antes: `CLAUDE.md` (decisões 14 e 15), `pipeline/README.md` (prévia rápida) e `docs/plano/10-modelos-prontos.md`.
 
+## Situação (22/10, execução automática)
+
+| Item | Feito | Observação |
+|---|---|---|
+| A1 DJ e KRK | ✅ | XDJ e monitores girados 180° (de frente para o DJ, -z); monitores em `cz + 0,2`; fone espelhado para o lado do DJ. Câmera `dj` no `bake.json`. |
+| A2 Escala | ✅ | `ESCALA_MODELOS = 2.6` uniforme em `importar_modelo`/`importar_terceiro`; sem o ×1,6 dos Funkos e do trailer. A poltrona ficou com fator 0,85 (na escala real ela dominava a visão geral). A JBL ficou boa deitada com a rotação atual, sem fator. |
+| A3 Dunk e Funko HP | ✅ | **A causa não era cor por vértice** (os dois não têm `COLOR_0`): eram "sopa de triângulos" (3 vértices por face), e o atlas do bake virava milhares de ilhas sem pixels. `base._soldar_se_solto()` solda os vértices na importação (Dunk 41 123 → 6 858; Funko 74 980 → 12 502). O conversor não mudou. |
+| A4 Poltrona | ✅ | Poltrona em `(3,8; 0; 2,75)`, mesinha em `(2,3; 0; 3,85)`; o log do `frente.py` confere as caixas ("separadas"). |
+| A5 Creatina | ✅ | Removida do `Bed.jsx` (e a textura `creatineTexture` e o uso na página de exportação). |
+| A6 Fita da mesa | ✅ | Peça `fita_mesa` e o LED `fita-mesa` removidos. |
+| A7 Luz quente | ✅ | Canal B em âmbar (`#ffb36b` nos materiais, `corSite [1, 0.72, 0.47]`). Teclado RGB não mudou. |
+| A8 Parede grafite | ✅ | Parede A e rodapé em grafite; o dia continuou legível sem mexer no preenchimento. |
+| A9 Bake | ver o histórico do git | Bake completo + conferência no site. |
+| B1 Monitor GitHub | ✅ | `MonitorScreen` + `monitor.css` + `github.js`; dados no build por `scripts/github.mjs` (`prebuild`). Sem token, o gráfico usa a atividade pública (eventos dos últimos 90 dias + criação dos repositórios). |
+| B2 TV LinkedIn | ✅ | `TvScreen` + `tv.css`, ligada em `SCREEN_COMPONENTS`; enquadramento `experience` no `SCREEN_VIEW` do Scene. Textura em repouso redesenhada e calibrada (de dia o branco da textura sai `#e6e6e6`, então o CSS claro usa esse tom). |
+
 **Como trabalhar (economiza créditos):** fazer todos os ajustes do **Ciclo A** com a prévia rápida (`npm run previa -- --sem-exportar --vistas=...`, ~40 s por rodada), mostrar ao Daniel e só no fim rodar **um** bake completo (~75 min, em segundo plano). O **Ciclo B** (telas) não depende do Blender.
 
 ---
