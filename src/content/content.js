@@ -183,7 +183,7 @@ export const content = {
             present: 'atual',
             // Seções que abrem dentro de uma tela do quarto (src/screens)
             screen: {
-                path: { projects: '~/projetos' },
+                path: { projects: 'github.com/Danielolv14', experience: 'linkedin.com/in/daniel-oliveira14' },
                 closeWindow: 'Fechar janela',
                 read2d: 'Ler em 2D',
                 escHint: 'Esc volta ao quarto',
@@ -243,10 +243,52 @@ export const content = {
             },
             privateRepo: 'Repositório privado da disciplina',
             team: 'Em equipe',
+            // Tela do monitor, no estilo de um perfil do GitHub (src/screens/MonitorScreen.jsx)
+            gh: {
+                overview: 'Visão geral',
+                repositories: 'Repositórios',
+                pinned: 'Projetos fixados',
+                public: 'Público',
+                private: 'Privado',
+                followers: (n) => (n === 1 ? 'seguidor' : 'seguidores'),
+                following: 'seguindo',
+                updated: 'Atualizado em',
+                started: 'Começou em',
+                back: 'Repositórios',
+                readme: 'README',
+                whatIDid: 'O que eu fiz',
+                built: 'Feito com',
+                profile: 'Ver perfil no GitHub',
+                // "57 contribuições no último ano"
+                contributions: (n) => `${n} ${n === 1 ? 'contribuição' : 'contribuições'} no último ano`,
+                activity: (n) => `${n} ${n === 1 ? 'atividade pública' : 'atividades públicas'} no último ano`,
+                less: 'Menos',
+                more: 'Mais',
+                day: (n, date) => `${n} em ${date}`
+            },
             items: localize(PROJECTS, 'pt')
         },
         experience: {
             intro: 'Do mais recente ao mais antigo.',
+            // Tela da TV, no estilo de um perfil do LinkedIn (src/screens/TvScreen.jsx)
+            li: {
+                headline: 'Estudante de Engenharia de Software · Estagiário Full Stack na Teknisa',
+                connect: 'Conectar',
+                tabs: { experience: 'Experiência', education: 'Formação', skills: 'Competências' },
+                about: 'Sobre',
+                showMore: 'Ver destaques',
+                showLess: 'Ocultar destaques',
+                skillsUsed: (n) => (n ? `Usada em ${n} ${n === 1 ? 'projeto' : 'projetos'}` : 'No estágio e nos estudos'),
+                // "4 meses", "1 ano e 2 meses"
+                duration: (months) => {
+                    const y = Math.floor(months / 12);
+                    const m = months % 12;
+                    const ys = y ? `${y} ${y === 1 ? 'ano' : 'anos'}` : '';
+                    const ms = m ? `${m} ${m === 1 ? 'mês' : 'meses'}` : '';
+                    return [ys, ms].filter(Boolean).join(' e ') || '1 mês';
+                },
+                fullTime: 'Estágio'
+            },
             items: localize(EXPERIENCES, 'pt')
         },
         contact: {
@@ -305,7 +347,7 @@ export const content = {
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             present: 'present',
             screen: {
-                path: { projects: '~/projects' },
+                path: { projects: 'github.com/Danielolv14', experience: 'linkedin.com/in/daniel-oliveira14' },
                 closeWindow: 'Close window',
                 read2d: 'Read in 2D',
                 escHint: 'Esc goes back to the room',
@@ -365,10 +407,48 @@ export const content = {
             },
             privateRepo: 'Private course repository',
             team: 'Team project',
+            gh: {
+                overview: 'Overview',
+                repositories: 'Repositories',
+                pinned: 'Pinned projects',
+                public: 'Public',
+                private: 'Private',
+                followers: (n) => (n === 1 ? 'follower' : 'followers'),
+                following: 'following',
+                updated: 'Updated',
+                started: 'Started',
+                back: 'Repositories',
+                readme: 'README',
+                whatIDid: 'What I did',
+                built: 'Built with',
+                profile: 'View profile on GitHub',
+                contributions: (n) => `${n} ${n === 1 ? 'contribution' : 'contributions'} in the last year`,
+                activity: (n) => `${n} public ${n === 1 ? 'activity' : 'activities'} in the last year`,
+                less: 'Less',
+                more: 'More',
+                day: (n, date) => `${n} on ${date}`
+            },
             items: localize(PROJECTS, 'en')
         },
         experience: {
             intro: 'Newest first.',
+            li: {
+                headline: 'Software Engineering student · Full Stack Intern at Teknisa',
+                connect: 'Connect',
+                tabs: { experience: 'Experience', education: 'Education', skills: 'Skills' },
+                about: 'About',
+                showMore: 'Show highlights',
+                showLess: 'Hide highlights',
+                skillsUsed: (n) => (n ? `Used in ${n} ${n === 1 ? 'project' : 'projects'}` : 'At work and in my studies'),
+                duration: (months) => {
+                    const y = Math.floor(months / 12);
+                    const m = months % 12;
+                    const ys = y ? `${y} ${y === 1 ? 'yr' : 'yrs'}` : '';
+                    const ms = m ? `${m} ${m === 1 ? 'mo' : 'mos'}` : '';
+                    return [ys, ms].filter(Boolean).join(' ') || '1 mo';
+                },
+                fullTime: 'Internship'
+            },
             items: localize(EXPERIENCES, 'en')
         },
         contact: {

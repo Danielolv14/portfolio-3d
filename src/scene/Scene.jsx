@@ -67,6 +67,7 @@ const LIMITS_FREE = {
 // O celular fica deitado na cama, com a tela virada para cima: a câmera olha de cima (`faceUp`).
 const SCREEN_VIEW = {
     projects: { fill: 0.88 },
+    experience: { fill: 0.88 },
     contact: { fill: 0.8, faceUp: true }
 };
 

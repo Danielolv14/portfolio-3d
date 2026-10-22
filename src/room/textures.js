@@ -2,7 +2,8 @@
 // As cores seguem as fotos do quarto do Daniel.
 import * as THREE from 'three';
 
-import { monthLabel } from '../content/content';
+import { monthLabel, profile } from '../content/content';
+import { languageColor, projectList } from '../screens/github';
 
 function canvasTexture(width, height, draw, { repeat } = {}) {
     const canvas = document.createElement('canvas');
@@ -220,21 +221,22 @@ export function camoTexture(palette = ['#d0d0cc', '#838486', '#424347', '#1a1b1e
     });
 }
 
-// Cores da janela do monitor na textura. Elas passam pelo tone mapping (ACES) do pós-processamento
-// e saem mais escuras na tela; o CSS da camada HTML (.screen--monitor, em styles.css) usa as cores
-// que saem de verdade, de dia e de noite, para a troca textura -> HTML não dar salto de cor.
+// Cores da janela do monitor na textura (tema escuro do GitHub). Elas passam pelo tone mapping do
+// pós-processamento e saem mais escuras na tela; por isso as de entrada são mais claras que as do
+// CSS (.screen--monitor, em styles.css), calibradas medindo a tela no quarto, para a troca
+// textura -> HTML não dar salto de cor.
 const MONITOR_COLORS = {
-    bg: '#2a2730',
-    bar: '#38343f',
-    card: '#34303b',
-    line: '#4d4756',
-    fg: '#f4eeea',
-    muted: '#b4a9ad',
-    accent: '#ff7ad9',
-    accentSoft: '#5a3a55',
-    // texto do botão rosa ("Voltar ao quarto"): sai #1d0a19, o --accent-ink do CSS
-    accentInk: '#351e30',
-    dots: ['#ff6b8b', '#ffc27a', '#6fd3a0']
+    bg: '#232428',
+    bar: '#2a2c31',
+    line: '#4c4f56',
+    fg: '#f6fbff',
+    muted: '#b5bdc6',
+    link: '#6fb1ff',
+    tab: '#ff9b84',
+    accent: '#2fa84a',
+    accentInk: '#ffffff',
+    avatar: '#3a3f4a',
+    dots: ['#ff8a80', '#f7c96c', '#6fc874']
 };
 
 // Medidas da janela em % da largura da tela: iguais às do CSS (.win-bar, .win-scroll, em `cqw`)
@@ -257,6 +259,8 @@ export function monitorScreenTexture() {
     const u = W / 100; // 1 "cqw"
     const c = MONITOR_COLORS;
     const { bar, padX } = MONITOR_LAYOUT;
+    // a foto do perfil chega depois do primeiro desenho; quando chega, desenha de novo
+    const avatar = new Image();
 
     // Largura da tela na página. O CSS tem limites em px (letra de 14 a 32px, barra de 40px...): numa
     // tela pequena o mínimo vale mais que o cqw, e a textura faz igual para a troca não dar salto.
@@ -283,9 +287,8 @@ export function monitorScreenTexture() {
 
     const draw = (t) => {
         texture.userData.t = t;
-        // letra da área com rolagem (.win-scroll: clamp(14px, 1.4cqw, 32px)); o cabeçalho da seção
-        // é medido nela (em), como no CSS
-        const em = cq(1.4, 14, 32);
+        const g = t.projects.gh;
+        const items = projectList(t);
         ctx.textBaseline = 'middle';
         ctx.fillStyle = c.bg;
         ctx.fillRect(0, 0, W, H);
@@ -318,50 +321,119 @@ export function monitorScreenTexture() {
         ctx.lineTo(x0 - s, y0 + s);
         ctx.stroke();
 
-        // título da seção com o ícone e a frase de abertura (medidas do .section-head, em em)
-        const top = (bar + 2.4) * u;
-        const icon = 2.3 * em;
-        ctx.fillStyle = c.accentSoft;
-        roundRect(ctx, padX * u, top, icon * u, icon * u, 0.6 * em * u);
-        ctx.fill();
-        // o mesmo ícone de monitor do HTML (IconMonitor, desenhado numa grade de 24)
-        const g = (1.2 * em * u) / 24;
-        const gx = (padX + 0.55 * em) * u;
-        const gy = top + 0.55 * em * u;
-        ctx.strokeStyle = c.fg;
-        ctx.lineWidth = 1.8 * g;
-        roundRect(ctx, gx + 3 * g, gy + 4 * g, 18 * g, 12 * g, 2 * g);
-        ctx.moveTo(gx + 9 * g, gy + 20 * g);
-        ctx.lineTo(gx + 15 * g, gy + 20 * g);
-        ctx.moveTo(gx + 12 * g, gy + 16 * g);
-        ctx.lineTo(gx + 12 * g, gy + 20 * g);
-        ctx.stroke();
-        text(t.ui.nav.projects, (padX + 3.05 * em) * u, top + (icon / 2) * u, 1.5 * em, { weight: 600, font: 'Unbounded', spacing: -0.01 });
-        text(t.projects.intro, padX * u, top + 3.96 * em * u, em, { color: c.muted });
+        // Visão geral do perfil (MonitorScreen.jsx + monitor.css), com as medidas do CSS em em
+        const em = cq(1.15, 13, 28);
+        const lh = 1.55 * em; // altura de uma linha (line-height do body)
+        const px = (n) => (n / pageW) * 100; // n px da página, em cqw
 
-        // linha do tempo resumida: data, nome e tecnologias de cada projeto (do mais antigo ao mais recente)
-        const items = [...t.projects.items].sort((a, b) => a.date.localeCompare(b.date));
-        const listTop = top + 5.43 * em * u;
-        const row = 6.4 * u;
-        const lineX = (padX + 0.6) * u;
+        // abas: "Visão geral" (marcada) e "Repositórios" com a contagem
+        const tabsTop = bar + 0.7 * em;
+        const tabMid = (tabsTop + 0.55 * em + lh / 2) * u;
+        const tabsBottom = tabsTop + 0.55 * em + lh + 0.75 * em;
         ctx.fillStyle = c.line;
-        ctx.fillRect(lineX - 0.1 * u, listTop, 0.2 * u, row * items.length - 1.2 * u);
-        items.forEach((item, i) => {
-            const y = listTop + i * row;
-            ctx.fillStyle = c.card;
-            roundRect(ctx, (padX + 2.2) * u, y, W - (2 * padX + 2.2) * u, row - 1.2 * u, 1 * u);
-            ctx.fill();
-            ctx.fillStyle = c.bg;
-            ctx.strokeStyle = c.accent;
-            ctx.lineWidth = 0.3 * u;
-            ctx.beginPath();
-            ctx.arc(lineX, y + 2.6 * u, 0.55 * u, 0, Math.PI * 2);
-            ctx.fill();
+        ctx.fillRect(0, (tabsBottom + px(2)) * u, W, px(1) * u);
+        let tx = padX;
+        [g.overview, g.repositories].forEach((label, i) => {
+            const x0 = tx;
+            const weight = i === 0 ? 600 : 400;
+            // ícone (um quadradinho no lugar do desenho do HTML) e o nome da aba
+            ctx.strokeStyle = c.muted;
+            ctx.lineWidth = px(1.6) * u;
+            roundRect(ctx, (x0 + 0.8 * em) * u, tabMid - 0.45 * em * u, 0.9 * em * u, 0.9 * em * u, 0.15 * em * u);
             ctx.stroke();
-            const mid = y + (row - 1.2 * u) / 2;
-            text(monthLabel(item.date, t), (padX + 3.6) * u, mid, 1.1, { font: 'JetBrains Mono', color: c.muted });
-            text(item.name, (padX + 12) * u, mid, 1.75, { weight: 700 });
-            text(item.tech.join(' · '), W - (padX + 1.4) * u, mid, 1.05, { font: 'JetBrains Mono', color: c.muted, align: 'right' });
+            tx += 0.8 * em + 1.1 * em + 0.5 * em;
+            text(label, tx * u, tabMid, em, { weight });
+            tx += textWidth(label, em, { weight });
+            if (i === 1) {
+                const n = String(items.length);
+                const w = textWidth(n, 0.85 * em) + 1.1 * 0.85 * em;
+                ctx.fillStyle = c.line;
+                roundRect(ctx, (tx + 0.5 * em) * u, tabMid - 0.65 * em * u, w * u, 1.3 * em * u, 0.65 * em * u);
+                ctx.fill();
+                text(n, (tx + 0.5 * em + w / 2) * u, tabMid, 0.85 * em, { align: 'center' });
+                tx += 0.5 * em + w;
+            }
+            tx += 0.8 * em;
+            if (i === 0) {
+                ctx.fillStyle = c.tab;
+                ctx.fillRect(x0 * u, tabsBottom * u, (tx - x0) * u, px(2) * u);
+            }
+            tx += 0.4 * em;
+        });
+
+        // coluna do perfil: foto redonda, nome e usuário
+        const top = tabsBottom + px(3) + 1.1 * em;
+        const side = 15 * em;
+        const r = (side / 2) * u;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc((padX + side / 2) * u, top * u + r, r, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.fillStyle = c.avatar;
+        ctx.fillRect(padX * u, top * u, side * u, side * u);
+        if (avatar.complete && avatar.naturalWidth) {
+            const k = Math.max(side / avatar.naturalWidth, side / avatar.naturalHeight);
+            const iw = avatar.naturalWidth * k;
+            const ih = avatar.naturalHeight * k;
+            ctx.drawImage(avatar, (padX + (side - iw) / 2) * u, (top + (side - ih) / 2) * u, iw * u, ih * u);
+        }
+        ctx.restore();
+        let y = top + side + 0.9 * em;
+        text(profile.name, padX * u, (y + 0.96 * em) * u, 1.6 * em, { weight: 600 });
+        y += 1.92 * em + 0.5 * em;
+        text('Danielolv14', padX * u, (y + 0.9 * em) * u, 1.15 * em, { color: c.muted });
+
+        // projetos fixados em duas colunas, como os cartões do HTML
+        const mainX = padX + side + 2 * em;
+        const mainW = 100 - padX - mainX;
+        y = top + 0.6 * em;
+        text(g.pinned, mainX * u, (y + lh / 2) * u, em);
+        y += lh + 0.6 * em;
+        const small = 0.92 * em;
+        const cardW = (mainW - em) / 2;
+        const cardH = 2 * em + lh + 0.5 * em + 2 * 1.55 * small + 0.5 * em + 0.85 * lh;
+        // corta o texto com reticências para caber na largura
+        const clip = (value, size, width, opts) => {
+            let v = value;
+            while (v.length > 1 && textWidth(v, size, opts) > width) v = v.slice(0, -2);
+            return v === value ? v : `${v.trimEnd()}…`;
+        };
+        items.forEach((item, i) => {
+            const x = mainX + (i % 2) * (cardW + em);
+            const cy = y + Math.floor(i / 2) * (cardH + em);
+            ctx.strokeStyle = c.line;
+            ctx.lineWidth = px(1) * u;
+            roundRect(ctx, x * u, cy * u, cardW * u, cardH * u, 0.45 * em * u);
+            ctx.stroke();
+            const inner = cardW - 2 * em;
+            const head = (cy + em + lh / 2) * u;
+            ctx.strokeStyle = c.muted;
+            roundRect(ctx, (x + em) * u, head - 0.5 * em * u, 0.9 * em * u, 1.05 * em * u, 0.12 * em * u);
+            ctx.stroke();
+            text(clip(item.repoName, em, inner - 6 * em, { weight: 600 }), (x + em + 1.55 * em) * u, head, em, {
+                weight: 600,
+                color: c.link
+            });
+            // descrição em até duas linhas
+            const desc = cy + em + lh + 0.5 * em;
+            let line = '';
+            let row = 0;
+            for (const word of item.description.split(' ')) {
+                const next = line ? `${line} ${word}` : word;
+                if (row === 0 && line && textWidth(next, small) > inner) {
+                    text(line, (x + em) * u, (desc + 0.5 * 1.55 * small) * u, small, { color: c.muted });
+                    row = 1;
+                    line = word;
+                } else line = next;
+            }
+            text(clip(line, small, inner), (x + em) * u, (desc + (row + 0.5) * 1.55 * small) * u, small, { color: c.muted });
+            // linguagem com a bolinha de cor e o mês
+            const foot = (cy + cardH - em - 0.85 * (lh / 2)) * u;
+            ctx.fillStyle = languageColor(item.language);
+            ctx.beginPath();
+            ctx.arc((x + em + 0.425 * em) * u, foot, 0.425 * em * u, 0, Math.PI * 2);
+            ctx.fill();
+            text(`${item.language}    ${monthLabel(item.date, t)}`, (x + em + 1.15 * em) * u, foot, 0.85 * em, { color: c.muted });
         });
 
         // barra de tarefas (.win-task): a dica do teclado à esquerda e as saídas à direita
@@ -419,6 +491,8 @@ export function monitorScreenTexture() {
         texture.needsUpdate = true;
     };
 
+    avatar.onload = () => texture.userData.t && draw(texture.userData.t);
+    avatar.src = profile.photo;
     texture.userData.redraw = draw;
     // Chamado pelo Scene.jsx antes do voo até a tela, com a largura (px) que ela vai ter na página
     texture.userData.fit = (width) => {
@@ -429,38 +503,215 @@ export function monitorScreenTexture() {
     return texture;
 }
 
-// Tela da TV: cartão da experiência atual (seção Experiências)
+// Cores da TV na textura (perfil no estilo do LinkedIn, TvScreen.jsx + tv.css): claro de dia, escuro
+// à noite. Como as do monitor, as de entrada foram calibradas para saírem nas do CSS depois do tone
+// mapping do 3D.
+const TV_COLORS = {
+    day: {
+        bg: '#f2efea',
+        card: '#ffffff',
+        line: '#efeeec',
+        fg: '#000000',
+        muted: '#3c3c3c',
+        accent: '#0a4f9a',
+        accentInk: '#ffffff',
+        cover: ['#0a4f9a', '#4a87c6'],
+        logo: '#d3e0ec',
+        logoInk: '#1d4670',
+        bar: '#ffffff',
+        dots: ['#f08a82', '#eec777', '#7cc68a']
+    },
+    night: {
+        bg: '#000000',
+        card: '#24262a',
+        line: '#474b52',
+        fg: '#f2f2f2',
+        muted: '#b9b9b9',
+        accent: '#86c5ff',
+        accentInk: '#000000',
+        cover: ['#124d86', '#3b80bd'],
+        logo: '#34404d',
+        logoInk: '#cbdbea',
+        bar: '#24262a',
+        dots: ['#f08a82', '#eec777', '#7cc68a']
+    }
+};
+
+// Tela da TV em repouso: o cartão do topo do perfil (capa, foto, nome, título e o botão Conectar) e o
+// começo da aba Experiência, com as medidas do tv.css. `redraw(t, night)` redesenha no idioma e no
+// tema atuais (o TV, em Desk.jsx, chama quando um dos dois muda).
 export function tvScreenTexture() {
-    return canvasTexture(768, 432, (ctx, w, h) => {
-        const g = ctx.createLinearGradient(0, 0, w, h);
-        g.addColorStop(0, '#16121a');
-        g.addColorStop(1, '#2a1630');
+    const canvas = document.createElement('canvas');
+    // mesma proporção do plano da tela (2,5 x 1,4)
+    canvas.width = 1600;
+    canvas.height = 896;
+    const ctx = canvas.getContext('2d');
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 8;
+    const W = canvas.width;
+    const H = canvas.height;
+    const u = W / 100; // 1 "cqw"
+    // largura típica da TV na página com a câmera parada (como o monitor, ~1130 px numa tela de 1280)
+    const pageW = 1130;
+    const em = Math.min(Math.max(1.1, (13 / pageW) * 100), (28 / pageW) * 100);
+    const lh = 1.55 * em;
+    const avatar = new Image();
+
+    // tudo em cqw; o canvas recebe em px
+    const text = (value, x, y, size, { weight = 400, color, align = 'left' } = {}) => {
+        ctx.font = `${weight} ${size * u}px "Figtree", system-ui, sans-serif`;
+        ctx.fillStyle = color;
+        ctx.textAlign = align;
+        ctx.fillText(value, x * u, y * u);
+    };
+    const width = (value, size, weight = 400) => {
+        ctx.font = `${weight} ${size * u}px "Figtree", system-ui, sans-serif`;
+        return ctx.measureText(value).width / u;
+    };
+    const box = (x, y, w, h, r, fill, stroke) => {
+        roundRect(ctx, x * u, y * u, w * u, h * u, r * u);
+        if (fill) {
+            ctx.fillStyle = fill;
+            ctx.fill();
+        }
+        if (stroke) {
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = (1 / pageW) * 100 * u;
+            ctx.stroke();
+        }
+    };
+
+    const draw = (t, night) => {
+        texture.userData.t = t;
+        texture.userData.night = night;
+        const c = TV_COLORS[night ? 'night' : 'day'];
+        const l = t.experience.li;
+        const job = t.experience.items[0];
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = c.bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // barra de cima, como a do monitor (.win-bar): bolinhas, endereço e o X
+        const bar = 3.6;
+        ctx.fillStyle = c.bar;
+        ctx.fillRect(0, 0, W, bar * u);
+        c.dots.forEach((color, i) => {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc((1.9 + i * 1.4) * u, (bar / 2) * u, 0.45 * u, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        ctx.font = `500 ${1.25 * u}px "JetBrains Mono", monospace`;
+        ctx.fillStyle = c.muted;
+        ctx.textAlign = 'center';
+        ctx.fillText(t.ui.screen.path.experience, W / 2, (bar / 2) * u);
+
+        // cartão do topo
+        const padX = 2.6;
+        const x = padX;
+        const y = bar + 2.4;
+        const w = 100 - 2 * padX;
+        const cover = 9 * em;
+        const bodyH = 4.4 * em + 1.8 * em * 1.2 + (0.3 + 0.5) * em + 1.1 * lh + lh + em + 0.8 * em + lh + 1.6 * em;
+        ctx.save();
+        roundRect(ctx, x * u, y * u, w * u, (cover + bodyH) * u, 0.6 * em * u);
+        ctx.clip();
+        ctx.fillStyle = c.card;
+        ctx.fillRect(x * u, y * u, w * u, (cover + bodyH) * u);
+        const g = ctx.createLinearGradient(x * u, y * u, (x + w) * u, (y + cover) * u);
+        g.addColorStop(0, c.cover[0]);
+        g.addColorStop(1, c.cover[1]);
         ctx.fillStyle = g;
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = 'rgba(255,255,255,0.55)';
-        ctx.font = '600 22px system-ui, sans-serif';
-        ctx.fillText('EXPERIÊNCIA · EXPERIENCE', 56, 78);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '800 76px system-ui, sans-serif';
-        ctx.fillText('Teknisa', 52, 170);
-        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-        ctx.font = '500 30px system-ui, sans-serif';
-        ctx.fillText('Full Stack · Retail · PDV', 56, 222);
-        // linha do tempo
-        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-        ctx.lineWidth = 3;
+        ctx.fillRect(x * u, y * u, w * u, cover * u);
+        // a faixa clara diagonal da capa
+        ctx.fillStyle = 'rgba(255,255,255,0.14)';
         ctx.beginPath();
-        ctx.moveTo(56, 330);
-        ctx.lineTo(w - 56, 330);
-        ctx.stroke();
-        ctx.fillStyle = '#ff5ad9';
-        ctx.beginPath();
-        ctx.arc(w - 140, 330, 12, 0, Math.PI * 2);
+        ctx.moveTo((x + w * 0.62) * u, y * u);
+        ctx.lineTo((x + w * 0.66) * u, y * u);
+        ctx.lineTo((x + w * 0.59) * u, (y + cover) * u);
+        ctx.lineTo((x + w * 0.55) * u, (y + cover) * u);
         ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,0.7)';
-        ctx.font = '500 22px system-ui, sans-serif';
-        ctx.fillText('2026', w - 168, 372);
-    });
+        ctx.restore();
+        box(x, y, w, cover + bodyH, 0.6 * em, null, c.line);
+
+        // foto redonda por cima da capa, com a borda da cor do cartão
+        const side = 9.5 * em;
+        const ax = x + 1.8 * em;
+        const ay = y + 3.6 * em;
+        ctx.fillStyle = c.card;
+        ctx.beginPath();
+        ctx.arc((ax + side / 2) * u, (ay + side / 2) * u, (side / 2) * u, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc((ax + side / 2) * u, (ay + side / 2) * u, (side / 2 - 0.25 * em) * u, 0, Math.PI * 2);
+        ctx.clip();
+        if (avatar.complete && avatar.naturalWidth) {
+            const s = side - 0.5 * em;
+            const k = Math.max(s / avatar.naturalWidth, s / avatar.naturalHeight);
+            ctx.drawImage(
+                avatar,
+                (ax + 0.25 * em + (s - avatar.naturalWidth * k) / 2) * u,
+                (ay + 0.25 * em + (s - avatar.naturalHeight * k) / 2) * u,
+                avatar.naturalWidth * k * u,
+                avatar.naturalHeight * k * u
+            );
+        }
+        ctx.restore();
+
+        // nome, título, local e o botão Conectar
+        const bx = x + 1.8 * em;
+        let by = y + cover + 4.4 * em;
+        text(profile.name, bx, by + 0.9 * em, 1.8 * em, { weight: 600, color: c.fg });
+        by += 1.8 * em * 1.2 + 0.3 * em;
+        text(l.headline, bx, by + 0.55 * lh, 1.1 * em, { color: c.fg });
+        by += 1.1 * lh + 0.5 * em;
+        text(t.about.location, bx + 1.3 * em, by + lh / 2, em, { color: c.muted });
+        by += lh + em;
+        const bw = width(l.connect, em, 600) + 2.4 * em + 1.4 * em;
+        box(bx, by, bw, lh + 0.8 * em, (lh + 0.8 * em) / 2, c.accent);
+        text(l.connect, bx + 1.2 * em, by + (lh + 0.8 * em) / 2, em, { weight: 600, color: c.accentInk });
+
+        // empresa e faculdade à direita, com o monograma
+        const rows = [job?.org, t.about.education[0]?.school].filter(Boolean);
+        const right = x + w - 1.8 * em;
+        rows.forEach((name, i) => {
+            const ry = y + cover + 4.4 * em + i * (1.76 * em + 0.7 * em);
+            const nw = width(name, em, 600);
+            text(name, right - nw, ry + 0.88 * em, em, { weight: 600, color: c.fg });
+            box(right - nw - 0.6 * em - 1.76 * em, ry, 1.76 * em, 1.76 * em, 0.2 * em, c.logo);
+        });
+
+        // o começo do cartão das abas (Experiência marcada)
+        const ty = y + cover + bodyH + em;
+        box(x, ty, w, H / u, 0.6 * em, c.card, c.line);
+        let tx = x + 1.8 * em;
+        Object.values(l.tabs).forEach((label, i) => {
+            const tw = width(label, em, 600) + 1.6 * em;
+            text(label, tx + 0.8 * em, ty + 0.9 * em + lh / 2, em, { weight: 600, color: i === 0 ? c.accent : c.muted });
+            if (i === 0) {
+                ctx.fillStyle = c.accent;
+                ctx.fillRect(tx * u, (ty + 1.6 * em + lh) * u, tw * u, (2 / pageW) * 100 * u);
+            }
+            tx += tw + 0.4 * em;
+        });
+        ctx.fillStyle = c.line;
+        ctx.fillRect(x * u, (ty + 1.6 * em + lh + (2 / pageW) * 100) * u, w * u, (1 / pageW) * 100 * u);
+        if (job) {
+            const jy = ty + 1.6 * em + lh + 0.4 * em + em;
+            box(x + 1.8 * em, jy, 3.6 * em, 3.6 * em, 0.25 * em, c.logo);
+            text(job.org[0], x + 3.6 * em, jy + 1.8 * em, em, { weight: 700, color: c.logoInk, align: 'center' });
+            text(job.role, x + 6.4 * em, jy + 0.55 * em * 1.1 * 1.4, 1.1 * em, { weight: 600, color: c.fg });
+            text(`${job.org} · ${l.fullTime}`, x + 6.4 * em, jy + 1.1 * em * 1.4 + 0.25 * em + lh / 2, em, { color: c.fg });
+        }
+        texture.needsUpdate = true;
+    };
+
+    avatar.onload = () => texture.userData.t && draw(texture.userData.t, texture.userData.night);
+    avatar.src = profile.photo;
+    texture.userData.redraw = draw;
+    return texture;
 }
 
 // Segmentos acesos de cada dígito (a: topo, b/c: direita, d: base, e/f: esquerda, g: meio)

@@ -66,9 +66,10 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   - `screens.js`: `SCREEN_OF` (projects → monitor, experience → tv, contact → phone), `SCREEN_COMPONENTS`, `hasScreen`, `findScreen`, `placeScreen`.
   - `ScreenTracker`: fica dentro do Canvas e projeta os cantos da malha a cada quadro.
   - `ScreenOverlay`: a camada HTML.
-  - `MonitorScreen`: Projetos dentro do monitor.
+  - `MonitorScreen` (+ `monitor.css`): Projetos dentro do monitor, no estilo de um perfil do GitHub (abas Visão geral e Repositórios, página de cada projeto com o README e o gráfico de contribuições). Os dados reais vêm de `github.js`, que junta o `content.js` com `src/content/github.json`, gerado no build por `scripts/github.mjs` (`prebuild`; API pública sem token; com `GITHUB_TOKEN` na Vercel, o calendário de contribuições de verdade; se a API falhar, vale o JSON salvo).
+  - `TvScreen` (+ `tv.css`): Experiências dentro da TV, no estilo de um perfil do LinkedIn (capa, foto, Conectar, abas Experiência, Formação e Competências), tema claro de dia e escuro à noite.
   - `PhoneScreen` (tela inicial), `MailCompose` (app E-mail), `AppIcons` (ícones dos apps, também usados no painel), `phoneClock.js` (hora e data) e `phone.css`: Contato dentro do celular (decisão 7). As saídas "Voltar ao quarto" e "Ler em 2D" ficam fora da tela, ao lado do celular.
-  - O monitor e o celular já têm tela. A TV (Experiências) ainda abre no painel: é a etapa E7.
+  - Monitor, TV e celular já têm tela. As texturas em repouso (`monitorScreenTexture` e `tvScreenTexture`, em `room/textures.js`) desenham a mesma página, com as cores de entrada calibradas para saírem iguais às do CSS depois do tone mapping (AgX + saturação + contraste): cores de entrada azuladas saem muito saturadas, então use tons quase neutros e meça.
 - **`src/sections/Sections.jsx`:**
   - `About`;
   - `Projects`: linha do tempo ordenada por data, vários links, selos "em equipe" e "repositório privado";
@@ -154,9 +155,9 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 12. **Luz da noite (21/10):** focada na luminária de cobre ao lado da cama e na luminária (light bar) em cima da TV. A luminária "&" da prateleira não ilumina mais o quarto, fica só como brilho decorativo. Ver `docs/plano/03-iluminacao.md`.
 13. **Modelagem no Blender (21/10, depois do estudo `docs/plano/estudo-bake.md`):** as áreas do quarto passam a ser modeladas no Blender por scripts (`pipeline/blender/modelos/`), estilo maquete (chanfro em tudo, cores lisas, textura só onde conta), e substituem as peças do código no bake (`"modelos"` em `pipeline/config/bake.json`). O quarto em código continua como camada de interação e posições de referência. Módulos: `estrutura` (paredes com vãos, piso, porta, janela), `mesa`, `cama`, `nicho` (estante), `chao` e `frente` (cantinho DJ e poltrona, peças sem equivalente no código, grupo `furniture-front`). As faces "cortadas" da maquete usam o material `corte_maquete`, que o site desenha sem luz (cor fixa, `BakedRoom`). Fontes de LED com o mesmo canal acendem juntas (canal B = RGB do gabinete + fitas). A câmera da visão geral ficou presa, como na referência (sem entrar no quarto nem descer à altura dos olhos).
 14. **Direção de arte nova (21/10, à noite): moderno, minimalista e futurista.** A referência deixa de ser o alvo; o alvo é o quarto ficar completo e bonito, mesmo diferente do real.
-    - Piso: porcelanato mais quente (placas menores, tom areia). Parede da cama (B): **grafite escuro fosco** (~`#3b3e44`); parede da mesa (A): clara.
+    - Piso: porcelanato mais quente (placas menores, tom areia). Paredes A (mesa) e B (cama): **grafite escuro fosco** (~`#3b3e44`) desde 22/10; a porta clara e o painel ripado de carvalho são os contrastes.
     - Fundo em volta do quarto: **frio azul** (dia `#b4c0cc`, noite `#141a2b`).
-    - Noite: luzes quentes (cobre e light bar) **mais fita de LED rosa/roxa** atrás da cabeceira e embaixo da mesa, clara o bastante para ver tudo.
+    - Noite: luzes quentes (cobre e light bar) **mais a fita de LED atrás da cabeceira e os fans do gabinete em luz quente** (âmbar, `#ffb36b`, desde 22/10; antes rosa). A fita embaixo da mesa saiu (não existe).
     - **Todos os móveis e objetos podem ser redesenhados**, inclusive os pessoais.
     - Objetos novos: **cantinho DJ** (ele é produtor de DJs), **poltrona ou pufe moderno** e **videogame**.
     - Orgânicos (roupa de cama, pelúcias, mochila etc.): modelados por script a partir de **fotos que o Daniel manda**.
@@ -168,6 +169,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
     - Isso substitui as regras "cores lisas, textura só onde conta" (decisão 13) e "objetos modelados por nós" (decisões 8 e 9).
     - **Respostas de 22/10:** os **logos das marcas ficam** (P14); as **pelúcias saem**; a luminária "&" fica como está; a bola de futevôlei (Mikasa amarela), a mochila Nike e a roupa de cama são feitas por script.
     - **Gabinete = Pichau Gadit L** (484 × 402 × 210 mm, `mesa.gabinete()`), como na imagem-alvo: frente e topo com a camuflagem **militar** (`camuflagem_militar()`, feita da camo urbana do código; para voltar à cinza, usar `camo.png`), lateral de **vidro** virada para a câmera mostrando o interior (placa-mãe, placa de vídeo, memórias e fans com anel rosa). Vidro: `base.vidro()` usa alfa no Cycles (vidro com refração escurece o interior) e o site desenha os materiais `vidro*` transparentes, sem luz assada (`BakedRoom`). Teclado e mouse continuam os do código (já são réplicas do AK820 e do VXE R1); o RGB do teclado acende com o canal B (`BRILHO` em `modelos/__init__.py`).
+    - **Escala dos modelos prontos (22/10):** uniforme, `ESCALA_MODELOS = 2.6` unidades por metro (`modelos/base.py`), igual nos três eixos; um fator por objeto só quando precisar (a poltrona usa 0,85). Modelos que vêm como "sopa de triângulos" (scan ou IA, ex.: o Dunk e o Funko do HP) têm os vértices soldados na importação (`_soldar_se_solto`), senão o atlas do bake vira milhares de ilhas e o objeto sai preto e pontilhado no site.
     - Modelos do Sketchfab: `npm run terceiros` (`pipeline/blender/converter.py`) converte cada `art/terceiros/<pasta>/` para `modelo.glb` (lista `"terceiros"` no `bake.json`, com `medida` em metros, limite de `faces`, `variante`, `assar_cor` e `recolorir`). No modelo, `importar_terceiro()`. Para tirar um objeto do código no bake sem tirar o grupo inteiro: `<Bake peca="...">` no código + terceiro item do `SUBSTITUI` (`modelos/__init__.py`).
 
 ## Como verificar

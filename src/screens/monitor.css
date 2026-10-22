@@ -1,0 +1,432 @@
+/* Monitor = Projetos, no estilo de um perfil do GitHub (MonitorScreen.jsx). As medidas são em em: a
+   letra da .win-scroll cresce com a tela (cqw), então tudo acompanha o tamanho do monitor. As cores
+   vêm do .screen--monitor, em styles.css. */
+
+.win-scroll.gh {
+    gap: 1.1em;
+    padding-top: 0;
+    font-size: clamp(13px, 1.15cqw, 28px);
+}
+
+.gh button {
+    font: inherit;
+}
+
+/* Abas do perfil, grudadas no topo enquanto a página rola */
+.gh-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    gap: 0.4em;
+    margin: 0 -2.6cqw;
+    padding: 0.7em 2.6cqw 0;
+    border-bottom: 1px solid var(--scr-line);
+    background: var(--scr-bg);
+}
+
+.gh-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.55em 0.8em 0.75em;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--scr-fg);
+}
+
+.gh-tab svg {
+    width: 1.1em;
+    height: 1.1em;
+    color: var(--scr-muted);
+}
+
+.gh-tab:hover {
+    border-bottom-color: var(--scr-line);
+}
+
+.gh-tab[aria-current='page'] {
+    border-bottom-color: #f78166;
+    font-weight: 600;
+}
+
+.gh-count {
+    padding: 0 0.55em;
+    border-radius: 2em;
+    background: var(--scr-line);
+    font-size: 0.85em;
+    line-height: 1.5;
+}
+
+/* Visão geral: o perfil à esquerda e, à direita, os projetos fixados e o gráfico */
+.gh-overview {
+    display: grid;
+    grid-template-columns: minmax(0, 15em) minmax(0, 1fr);
+    gap: 2em;
+    align-items: start;
+}
+
+.gh-profile {
+    display: grid;
+    gap: 0.5em;
+}
+
+.gh-avatar {
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid var(--scr-line);
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.gh-name {
+    margin: 0.4em 0 0;
+    font-size: 1.6em;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.gh-login {
+    margin: 0;
+    font-size: 1.15em;
+    color: var(--scr-muted);
+}
+
+.gh-bio {
+    margin: 0.3em 0;
+}
+
+.gh-follow,
+.gh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    padding: 0.45em 1em;
+    border: 1px solid var(--scr-line);
+    border-radius: 0.45em;
+    background: var(--scr-bar);
+    color: var(--scr-fg);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.gh-follow:hover,
+.gh-btn:hover {
+    border-color: var(--scr-muted);
+}
+
+.gh-follow svg,
+.gh-btn svg,
+.gh-meta svg,
+.gh-foot svg,
+.gh-pin-head svg,
+.gh-readme-bar svg {
+    width: 1.05em;
+    height: 1.05em;
+    flex-shrink: 0;
+}
+
+.gh-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    margin: 0;
+    color: var(--scr-muted);
+}
+
+.gh-meta b {
+    color: var(--scr-fg);
+}
+
+.gh-sub {
+    margin: 0.6em 0 0.6em;
+    font-size: 1em;
+    font-weight: 400;
+}
+
+.gh-box {
+    border: 1px solid var(--scr-line);
+    border-radius: 0.45em;
+}
+
+.gh-pins {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.gh-pin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 1em;
+}
+
+.gh-pin-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0;
+    color: var(--scr-muted);
+}
+
+.gh-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--scr-link);
+    font-weight: 600;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.gh-link:hover {
+    text-decoration: underline;
+}
+
+.gh-link-big {
+    font-size: 1.25em;
+}
+
+.gh-label {
+    padding: 0 0.6em;
+    border: 1px solid var(--scr-line);
+    border-radius: 2em;
+    color: var(--scr-muted);
+    font-size: 0.8em;
+    font-weight: 500;
+    line-height: 1.6;
+    white-space: nowrap;
+}
+
+.gh-desc {
+    flex: 1;
+    margin: 0;
+    color: var(--scr-muted);
+    font-size: 0.92em;
+}
+
+.gh-pin .gh-desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.gh-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4em 1.2em;
+    margin: 0;
+    color: var(--scr-muted);
+    font-size: 0.85em;
+}
+
+.gh-foot span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.gh-lang i {
+    width: 0.85em;
+    height: 0.85em;
+    border: 1px solid rgb(255 255 255 / 0.15);
+    border-radius: 50%;
+}
+
+/* Gráfico de contribuições: 53 semanas, cada uma uma coluna de 7 dias */
+.gh-contrib {
+    margin-top: 1.2em;
+    padding: 1em;
+}
+
+.gh-contrib h4 {
+    margin: 0 0 0.8em;
+    font-size: 1em;
+    font-weight: 400;
+}
+
+.gh-grid {
+    display: grid;
+    grid-template-columns: repeat(53, minmax(0, 1fr));
+    gap: 0.22em;
+}
+
+.gh-week {
+    display: grid;
+    gap: 0.22em;
+    align-content: start;
+}
+
+.gh-grid i,
+.gh-legend i {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 0.15em;
+    background: var(--gh-l0);
+    outline: 1px solid rgb(255 255 255 / 0.04);
+    outline-offset: -1px;
+}
+
+.gh-grid i[data-l='1'],
+.gh-legend i[data-l='1'] {
+    background: var(--gh-l1);
+}
+
+.gh-grid i[data-l='2'],
+.gh-legend i[data-l='2'] {
+    background: var(--gh-l2);
+}
+
+.gh-grid i[data-l='3'],
+.gh-legend i[data-l='3'] {
+    background: var(--gh-l3);
+}
+
+.gh-grid i[data-l='4'],
+.gh-legend i[data-l='4'] {
+    background: var(--gh-l4);
+}
+
+.gh-legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.25em;
+    margin: 0.6em 0 0;
+    color: var(--scr-muted);
+    font-size: 0.8em;
+}
+
+.gh-legend i {
+    width: 0.9em;
+}
+
+/* Aba Repositórios: uma lista com uma linha entre os itens */
+.gh-repos {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.gh-repo {
+    display: grid;
+    gap: 0.6em;
+    padding: 1.3em 0;
+    border-bottom: 1px solid var(--scr-line);
+}
+
+.gh-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.gh-topics li {
+    padding: 0.1em 0.7em;
+    border-radius: 2em;
+    background: var(--scr-accent-soft);
+    color: var(--scr-link);
+    font-size: 0.82em;
+    font-weight: 500;
+}
+
+/* Página de um projeto: o caminho dono/repositório e o README */
+.gh-repo-page {
+    display: grid;
+    gap: 1em;
+    padding-top: 0.4em;
+}
+
+.gh-crumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4em;
+    margin: 0;
+    font-size: 1.3em;
+}
+
+.gh-crumb .gh-link {
+    font-weight: 400;
+}
+
+.gh-crumb .gh-label {
+    font-size: 0.65em;
+}
+
+.gh-readme-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0;
+    padding: 0.7em 1em;
+    border-bottom: 1px solid var(--scr-line);
+    font-weight: 600;
+}
+
+.gh-readme-body {
+    display: grid;
+    gap: 0.7em;
+    padding: 1.2em 1.6em 1.6em;
+}
+
+.gh-readme-body h3 {
+    margin: 0;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--scr-line);
+    font-size: 1.7em;
+    font-weight: 600;
+}
+
+.gh-readme-body h4 {
+    margin: 0.5em 0 0;
+    font-size: 1.15em;
+    font-weight: 600;
+}
+
+.gh-readme-body p {
+    margin: 0;
+}
+
+.gh-readme-body .project-media {
+    max-width: 40em;
+}
+
+.gh-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6em;
+    margin-top: 0.4em !important;
+}
+
+/* Monitor estreito (o menor modo tela, 900x560): o perfil vai para cima e os fixados ficam numa coluna */
+@container win (width < 640px) {
+    .gh-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .gh-profile {
+        grid-template-columns: 5em 1fr;
+        column-gap: 1em;
+    }
+
+    .gh-avatar {
+        grid-row: span 3;
+    }
+
+    .gh-pins {
+        grid-template-columns: 1fr;
+    }
+}

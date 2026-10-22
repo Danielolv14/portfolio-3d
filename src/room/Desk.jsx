@@ -156,11 +156,27 @@ function TV({ t, onSelect, showLabels, active }) {
     const tex = useMemo(() => tvScreenTexture(), []);
     const screen = useRef();
     const bar = useRef();
+    // tema da tela (claro de dia, escuro à noite, como a camada HTML): troca na metade da transição
+    const night = useRef(false);
     useFrame(() => {
         const m = dayNight.mix;
-        screen.current.color.setScalar(lerp(0.7, 1.1, m));
+        screen.current.color.setScalar(lerp(1.6, 1.1, m));
         bar.current.emissiveIntensity = lerp(0, 3.5, m);
+        if (m > 0.5 !== night.current) {
+            night.current = m > 0.5;
+            if (tex.userData.t) tex.userData.redraw(tex.userData.t, night.current);
+        }
     });
+    // Desenha no idioma atual e de novo quando as fontes do site chegam (como o monitor)
+    useEffect(() => {
+        let current = true;
+        const redraw = () => current && tex.userData.redraw(t, night.current);
+        redraw();
+        document.fonts?.ready.then(redraw);
+        return () => {
+            current = false;
+        };
+    }, [tex, t]);
     return (
         <Hotspot
             id="experience"

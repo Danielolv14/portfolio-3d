@@ -484,6 +484,16 @@ h3 {
 
 /* ---------- Telas do quarto (camada HTML sobre a tela 3D, src/screens) ---------- */
 
+/* Texto só para leitores de tela (ex.: o título da seção dentro das telas, onde as abas fazem o papel) */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 /* Posição e tamanho vêm do ScreenTracker a cada quadro (transform, width e height no style).
    Acima das etiquetas (z-index até 20), abaixo do painel (25) e do menu do topo (30). */
 .screen {
@@ -516,47 +526,45 @@ h3 {
     }
 }
 
-/* Cores do monitor: são as que a textura (monitorScreenTexture, em textures.js) mostra depois do
-   tone mapping do 3D, medidas na captura. Assim a troca textura -> HTML não muda a cor. */
+/* Cores do monitor, no tema escuro do GitHub. A textura da tela em repouso (monitorScreenTexture, em
+   textures.js) passa pelo tone mapping do 3D; as cores de entrada dela (MONITOR_COLORS) foram
+   calibradas para sair nestas, assim a troca textura -> HTML não muda a cor. */
 .screen--monitor {
-    --scr-bg: #141119;
-    --scr-bar: #221f2a;
-    --scr-card: #1e1a25;
-    --scr-line: #3c3547;
-    --scr-fg: #e6e2e0;
-    --scr-muted: #b5adb0;
-    --scr-accent: #e786cc;
-    --scr-accent-soft: #4a2645;
-    --scr-dot-1: #ea7491;
-    --scr-dot-2: #e0c18a;
-    --scr-dot-3: #89caa9;
+    --scr-bg: #0d1117;
+    --scr-bar: #161b22;
+    --scr-card: #0d1117;
+    --scr-line: #30363d;
+    --scr-fg: #e6edf3;
+    --scr-muted: #9198a1;
+    --scr-accent: #238636;
+    --scr-accent-soft: #1f6feb33;
+    --scr-link: #4493f8;
+    --scr-dot-1: #f47067;
+    --scr-dot-2: #e0b354;
+    --scr-dot-3: #57ab5a;
+    --accent-ink: #ffffff;
+    /* quadradinhos de contribuição, do vazio ao mais forte */
+    --gh-l0: #161b22;
+    --gh-l1: #0e4429;
+    --gh-l2: #006d32;
+    --gh-l3: #26a641;
+    --gh-l4: #39d353;
 
-    /* as peças das seções (cartões, chips, links) passam a usar as cores da tela */
     --surface: var(--scr-bg);
-    --surface-2: var(--scr-card);
+    --surface-2: var(--scr-bar);
     --fg: var(--scr-fg);
     --muted: var(--scr-muted);
     --line: var(--scr-line);
-    --accent: var(--scr-accent);
-    --accent-ink: #1d0a19;
-    --accent-soft: var(--scr-accent-soft);
+    --accent: var(--scr-link);
 }
 
-/* À noite a tela 3D brilha mais (Desk.jsx), então as cores medidas são mais claras */
+/* À noite a tela 3D brilha mais (Desk.jsx), então os fundos medidos saem um pouco mais claros */
 :root[data-mode='night'] .screen--monitor {
-    --scr-bg: #1e1b25;
-    --scr-bar: #312c3a;
-    --scr-card: #2b2634;
-    --scr-line: #51495e;
-    --scr-fg: #eeebea;
-    --scr-muted: #cbc5c7;
-    --scr-accent: #f4a4dd;
-    --scr-accent-soft: #62355c;
-    --scr-dot-1: #f894ac;
-    --scr-dot-2: #ecd5a7;
-    --scr-dot-3: #a9dcc1;
-    /* texto do botão rosa: à noite a textura sai um pouco mais clara */
-    --accent-ink: #291025;
+    --scr-bg: #191c24;
+    --scr-bar: #252a34;
+    --scr-card: #191c24;
+    --scr-line: #3b414c;
+    --gh-l0: #252a34;
 }
 
 /* Barra de título: mesmas medidas da textura (bolinhas, caminho no meio e o X) */
@@ -641,49 +649,6 @@ h3 {
     --step-0: 1em;
     --step-1: 1.2em;
     --step-2: 1.5em;
-}
-
-/* o espaço entre o ícone e o título cresce com a letra, como na textura */
-.win-scroll .section-head {
-    padding-right: 0;
-    gap: 0.75em;
-}
-
-.win-scroll .section-icon {
-    width: 2.3em;
-    height: 2.3em;
-    border-radius: 0.6em;
-}
-
-.win-scroll .section-icon svg {
-    width: 1.2em;
-    height: 1.2em;
-}
-
-.win-scroll .text-link svg,
-.win-scroll .badge svg {
-    width: 1em;
-    height: 1em;
-}
-
-/* Com largura, cada projeto vira 2 colunas: a mídia (os GIFs da Sprint 3) ao lado do texto.
-   (`.win-scroll .project` para valer mais que o `.project` lá embaixo, que define gap e padding)
-   As duas regras usam `width >= 720px` e `width < 720px`: a largura costuma ser quebrada
-   (ex.: 719,7 px com a barra de rolagem), e com min-width 720/max-width 719 ela caía no vão. */
-@container win (width >= 720px) {
-    .win-scroll .project {
-        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-        column-gap: 1.4em;
-        align-items: start;
-        padding: 1em;
-    }
-}
-
-/* Estreita (no menor modo tela, 900x560), a mídia em 16:9 tomaria a área toda: fica mais baixa */
-@container win (width < 720px) {
-    .win-scroll .project-media {
-        max-height: 30cqh;
-    }
 }
 
 /* Barra de tarefas: a dica do teclado à esquerda e as saídas à direita */
