@@ -39,7 +39,7 @@ def criar():
     m = {"group": GRUPO, "area": "bed"}
     p = {"group": GRUPO_OBJETOS, "area": "bed"}
 
-    mogno = cor("mogno", "#5b2e1c", rugosidade=0.45)
+    mogno = cor("mogno", "#6b3a24", rugosidade=0.45)
     mogno_escuro = cor("mogno_escuro", "#2a160e", rugosidade=0.7)
     cromado = cor("cromado", "#dfe3e8", rugosidade=0.15, metal=1.0)
     grafite = cor("grafite_criado", "#3b3d42", rugosidade=0.6)
@@ -47,7 +47,7 @@ def criar():
     preto_metal = cor("preto_metal", "#1b1c1f", rugosidade=0.35, metal=0.4)
     cobre = cor("cobre", "#c27a46", rugosidade=0.28, metal=1.0)
     luz_cobre = cor("emit-R-luminaria", "#fff1d6", emissao="#ffb15e", forca=6.0)
-    tapete = cor("tapete", "#c7b9a6", rugosidade=1.0)
+    tapete = cor("tapete", "#d3c6b2", rugosidade=1.0)
     moldura = cor("moldura_poster", "#17181b", rugosidade=0.45)
 
     pecas = []

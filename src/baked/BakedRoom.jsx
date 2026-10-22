@@ -107,7 +107,12 @@ function BakedScene({ manifest, night, compact }) {
         const camera = new THREE.CubeCamera(0.05, 60, target);
         camera.position.set(0, 2.4, 0);
         const pmrem = new THREE.PMREMGenerator(gl);
+        // Pelos lados abertos do quarto a câmera 360° veria o vazio, e o metal (que só reflete)
+        // ficava preto. O vazio vira um tom quente e claro, como se o quarto continuasse
+        const clear = gl.getClearColor(new THREE.Color());
+        const clearAlpha = gl.getClearAlpha();
         const capture = (n) => {
+            gl.setClearColor(n ? '#2a2420' : '#cbb9a3', 1);
             shared.uNight.value = n;
             shared.uExposure.value = Math.pow(2, n ? exposure.noite : exposure.dia);
             shared.ledPower.value.set(n, n, n ? 1 : 0.08);
@@ -115,6 +120,7 @@ function BakedScene({ manifest, night, compact }) {
             return pmrem.fromCubemap(target.texture).texture;
         };
         envs.current = { day: capture(0), night: capture(1) };
+        gl.setClearColor(clear, clearAlpha);
         target.dispose();
         pmrem.dispose();
         return () => {

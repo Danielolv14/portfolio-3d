@@ -98,7 +98,8 @@ def criar():
     pecas.append(caixa("mousepad_borda", (-4.075, 1.566, -3.275), (1.27, 0.008, 2.17), azul_borda, p, chanfro=0.004))
     pecas.append(caixa("caderno", (-3.95, 1.59, -1.85), (0.64, 0.06, 0.46), preto, p, chanfro=0.018, rotacao=(0, 0.05, 0)))
     pecas.append(caixa("calculadora_corpo", (-3.95, 1.632, -1.84), (0.42, 0.024, 0.24), grafite, p, chanfro=0.01, rotacao=(0, -0.08, 0)))
-    pecas.append(placa("calculadora", (-3.95, 1.646, -1.84), 0.24, 0.42, 0.004, calculadora, p, normal="+y", rotacao=(0, -0.08, 0)))
+    # Mesmo tamanho do corpo (0,42 em x × 0,24 em z); a textura é em pé, então gira 90° na face
+    pecas.append(placa("calculadora", (-3.95, 1.646, -1.84), 0.42, 0.24, 0.004, calculadora, p, normal="+y", rotacao=(0, -0.08, 0), girar=True))
 
     # ── Monitor no braço articulado (objeto clicável "projects") ──
     # A tela (screen-projects) é desenhada ao vivo pelo código em x = -4,343; a moldura fica logo atrás

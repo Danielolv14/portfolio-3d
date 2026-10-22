@@ -156,7 +156,7 @@ def compor(arquivo, fundo_hex, nome_saida):
     return nome_saida + ".png"
 
 
-def placa(nome, posicao, largura, altura, espessura, material, marca, normal="+x", chanfro=0.004, rotacao=None):
+def placa(nome, posicao, largura, altura, espessura, material, marca, normal="+x", chanfro=0.004, rotacao=None, girar=False):
     """Placa fina com a textura na face da frente (pôster, rótulo, visor). `normal`: para onde a
     frente aponta no site (+x, -x, +z, -z, +y). A textura ocupa a face inteira, sem distorcer."""
     # Espelha quando o eixo da textura (u) aponta para a esquerda de quem olha a face de frente:
@@ -165,6 +165,9 @@ def placa(nome, posicao, largura, altura, espessura, material, marca, normal="+x
              "+z": ((largura, altura, espessura), (0, 1), False), "-z": ((largura, altura, espessura), (0, 1), True),
              "+y": ((largura, espessura, altura), (0, 2), False)}
     tamanho, uv, espelha = eixos[normal]
+    if girar:
+        # textura girada 90° na face (ex.: a calculadora, deitada de lado na mesa)
+        uv = (uv[1], uv[0])
     obj = caixa(nome, posicao, tamanho, material, marca, chanfro=chanfro, rotacao=rotacao, uv=uv)
     if espelha:
         for l in obj.data.uv_layers["UVMap"].data:
