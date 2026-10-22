@@ -169,6 +169,47 @@ def exportar_glb(objs, caminho):
         log(f"materiais de {c.name}: {antes} -> {depois}")
         copias.append(c)
     selecionar(copias)
+    # Computador: texturas de no máximo 1024 px. Os modelos prontos traziam 4096 px até em objetos
+    # pequenos: 114 texturas davam ~2,5 GB de memória de GPU e o celular derrubava a página
+    _limitar_imagens(copias, 1024)
+    _gravar_glb(caminho)
+    # Celular: GLB próprio com a cor em 512 px, os outros mapas em 128 px e sem relevo (normal map);
+    # a luz assada já dá o volume
+    _limitar_imagens(copias, 512, celular=True)
+    _gravar_glb(caminho.replace(".glb", "-mobile.glb"))
+    for c in copias:
+        bpy.data.objects.remove(c, do_unlink=True)
+    for o in objs:
+        o.name = o.name.removesuffix("_orig")
+
+
+def _limitar_imagens(objs, limite, celular=False):
+    """Reduz as texturas usadas pelos objetos para no máximo `limite` px no lado maior. No celular,
+    tira o relevo (normal map) e deixa os mapas que não são de cor (rugosidade, metal) em 128 px."""
+    vistas = set()
+    for o in objs:
+        for slot in o.material_slots:
+            m = slot.material
+            if not (m and m.use_nodes):
+                continue
+            if celular:
+                for link in list(m.node_tree.links):
+                    if link.to_socket.name == "Normal" and link.to_node.bl_idname == "ShaderNodeBsdfPrincipled":
+                        m.node_tree.links.remove(link)
+            for no in m.node_tree.nodes:
+                img = getattr(no, "image", None)
+                if no.bl_idname != "ShaderNodeTexImage" or img is None or img.name in vistas:
+                    continue
+                vistas.add(img.name)
+                eh_cor = img.colorspace_settings.name == "sRGB"
+                lim = limite if (eh_cor or not celular) else 128
+                w, h = img.size
+                if max(w, h) > lim:
+                    s = lim / max(w, h)
+                    img.scale(max(1, round(w * s)), max(1, round(h * s)))
+
+
+def _gravar_glb(caminho):
     bpy.ops.export_scene.gltf(
         filepath=caminho,
         export_format="GLB",
@@ -188,10 +229,6 @@ def exportar_glb(objs, caminho):
         export_draco_position_quantization=14,
         export_draco_texcoord_quantization=12,
     )
-    for c in copias:
-        bpy.data.objects.remove(c, do_unlink=True)
-    for o in objs:
-        o.name = o.name.removesuffix("_orig")
     log(f"GLB: {caminho} ({os.path.getsize(caminho) // 1024} KB)")
 
 

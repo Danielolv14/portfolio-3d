@@ -18,7 +18,8 @@ const fileFor = (name, compact) => BASE + (compact ? name.replace(/\.webp$/, '-m
 function BakedScene({ manifest, night, compact }) {
     // Geometria comprimida com Draco; o decodificador fica em public/draco (nada vem de CDN).
     // O GLB traz os materiais e as texturas originais; as texturas de luz vêm à parte
-    const { scene } = useGLTF(BASE + manifest.glb, '/draco/');
+    // No celular, o GLB com texturas menores: com as de 1024 px o navegador do celular estourava a memória
+    const { scene } = useGLTF(BASE + ((compact && manifest.glb_mobile) || manifest.glb), '/draco/');
     const groups = Object.entries(manifest.grupos);
     // Todas as texturas de luz de uma vez (o useTexture espera a lista inteira carregar)
     const files = groups.flatMap(([, g]) => [g.luz_dia, g.luz_noite, g.leds].map((f) => fileFor(f, compact)));

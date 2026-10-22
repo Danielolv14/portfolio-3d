@@ -189,5 +189,6 @@
     "luz_noite": 309.3,
     "ref_noite": 76.2,
     "leds": 1135.6
-  }
+  },
+  "glb_mobile": "room-mobile.glb"
 }

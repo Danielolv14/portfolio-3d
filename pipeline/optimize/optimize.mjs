@@ -14,7 +14,14 @@ mkdirSync(destino, { recursive: true });
 const manifesto = JSON.parse(readFileSync(join(origem, 'manifest.json'), 'utf8'));
 // Cada textura tem a versão do computador e a do celular (-mobile, metade do tamanho)
 const texturas = Object.values(manifesto.grupos).flatMap((g) => [g.luz_dia, g.luz_noite, g.leds]);
-const arquivos = ['manifest.json', manifesto.glb, ...texturas, ...texturas.map((f) => f.replace(/\.webp$/, '-mobile.webp'))];
+// O GLB do celular (texturas menores) entra quando o manifesto aponta para ele
+const arquivos = [
+    'manifest.json',
+    manifesto.glb,
+    manifesto.glb_mobile,
+    ...texturas,
+    ...texturas.map((f) => f.replace(/\.webp$/, '-mobile.webp'))
+].filter(Boolean);
 // Apaga o que sobrou de bakes antigos (grupos que mudaram de nome, formatos antigos)
 const manter = new Set(arquivos);
 for (const f of readdirSync(destino)) if (!manter.has(f)) unlinkSync(join(destino, f));

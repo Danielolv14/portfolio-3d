@@ -30,6 +30,13 @@ def so_exportar():
     bpy.ops.wm.open_mainfile(filepath=os.path.join(CACHE, "cena.blend"))
     objs = [o for o in bpy.data.objects if o.type == "MESH" and o.get("bk_group")]
     exportar.exportar_glb(objs, os.path.join(SAIDA, "room.glb"))
+    # O manifesto do último bake passa a apontar também para o GLB do celular
+    caminho = os.path.join(SAIDA, "manifest.json")
+    with open(caminho, encoding="utf-8") as f:
+        manifesto = json.load(f)
+    manifesto["glb"], manifesto["glb_mobile"] = "room.glb", "room-mobile.glb"
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(manifesto, f, indent=2, ensure_ascii=False)
 
 
 def main():
@@ -122,6 +129,7 @@ def main():
 
     exportar.exportar_glb(objs, os.path.join(SAIDA, "room.glb"))
     manifesto["glb"] = "room.glb"
+    manifesto["glb_mobile"] = "room-mobile.glb"
     # Como a luz foi codificada (o site desfaz igual): curva logarítmica com este K
     manifesto["codificacao"] = {"tipo": "log", "k": assar.K_LOG}
     # Exposição de cada clima (em stops, como no Blender): o site usa a mesma
