@@ -47,14 +47,14 @@
     :root:not([data-theme='light']) {
         --bg: #141a2b;
         --bg-deep: #0d1120;
-        --surface: #1d171b;
-        --surface-2: #271f24;
-        --fg: #f2eae6;
-        --muted: #b5a69f;
-        --line: #3b3036;
-        --accent: #ff6ad9;
-        --accent-ink: #22091d;
-        --accent-soft: #3d2236;
+        --surface: #161616;
+        --surface-2: #1f1f1f;
+        --fg: #f2f2f2;
+        --muted: #a3a3a3;
+        --line: #333333;
+        --accent: #f2f2f2;
+        --accent-ink: #111111;
+        --accent-soft: #2e2e2e;
         --danger: #ff8a80;
         --shadow: 0 18px 48px -18px rgba(0, 0, 0, 0.75);
         color-scheme: dark;
@@ -64,20 +64,21 @@
 :root[data-theme='dark'] {
     --bg: #141a2b;
     --bg-deep: #0d1120;
-    --surface: #1d171b;
-    --surface-2: #271f24;
-    --fg: #f2eae6;
-    --muted: #b5a69f;
-    --line: #3b3036;
-    --accent: #ff6ad9;
-    --accent-ink: #22091d;
-    --accent-soft: #3d2236;
+    --surface: #161616;
+    --surface-2: #1f1f1f;
+    --fg: #f2f2f2;
+    --muted: #a3a3a3;
+    --line: #333333;
+    --accent: #f2f2f2;
+    --accent-ink: #111111;
+    --accent-soft: #2e2e2e;
     --danger: #ff8a80;
     --shadow: 0 18px 48px -18px rgba(0, 0, 0, 0.75);
     color-scheme: dark;
 }
 
-/* O botão dia/noite do site manda nas cores (vem depois para vencer os blocos acima) */
+/* O botão dia/noite do site manda nas cores (vem depois para vencer os blocos acima). À noite, desde
+   23/10, a interface é preto e branco (cinzas neutros e destaque branco), sem o rosa e o ameixa de antes. */
 :root[data-mode='day'] {
     /* Fundo azul frio (decisão 14, 21/10): o quarto quente se destaca como uma maquete iluminada */
     --bg: #b4c0cc;
@@ -98,14 +99,14 @@
 :root[data-mode='night'] {
     --bg: #141a2b;
     --bg-deep: #0d1120;
-    --surface: #1d171b;
-    --surface-2: #271f24;
-    --fg: #f2eae6;
-    --muted: #b5a69f;
-    --line: #3b3036;
-    --accent: #ff6ad9;
-    --accent-ink: #22091d;
-    --accent-soft: #3d2236;
+    --surface: #161616;
+    --surface-2: #1f1f1f;
+    --fg: #f2f2f2;
+    --muted: #a3a3a3;
+    --line: #333333;
+    --accent: #f2f2f2;
+    --accent-ink: #111111;
+    --accent-soft: #2e2e2e;
     --danger: #ff8a80;
     --shadow: 0 18px 48px -18px rgba(0, 0, 0, 0.75);
     color-scheme: dark;

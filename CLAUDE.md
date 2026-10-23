@@ -81,7 +81,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   - `PROJECTS` e `EXPERIENCES` guardam os dados uma vez só e passam por `localize`.
   - `profile` usa a foto `src/content/foto.jpg`.
   - `channels`: e-mail, LinkedIn, GitHub e Instagram.
-- **`src/app/styles.css`:** tokens de cor com as cores do quarto. De dia, madeira e bege; à noite, o rosa do RGB (`--accent: #ff6ad9`). `@property --bg` faz o fundo trocar junto com o 3D.
+- **`src/app/styles.css`:** tokens de cor com as cores do quarto. De dia, madeira e bege; à noite, **preto e branco** desde 23/10 (superfícies `#161616`/`#1f1f1f`, texto e destaque `#f2f2f2`; antes era o rosa do RGB com ameixa). `@property --bg` faz o fundo trocar junto com o 3D.
 - **`src/room/`, o quarto:**
   - **`shared.jsx`:** `Box`, `Rounded`, `Cyl`, `Hotspot` (objeto clicável com etiqueta `<button>` e prop `active`), cores `C`, `dayNight.mix` (0 = dia, 1 = noite, animado com `damp`), `lerp`, `WALL_H` e `MONITOR_POS`.
   - **`<Bake>`** (em `shared.jsx`): marca cada área para o pipeline do Blender (`group`: shell, furniture ou props; `kind`: dyn, hotspot, live, glass ou skip). Toda peça nova precisa ficar dentro de um grupo. Confira com `node scripts/inventario.mjs`, que falha se alguma malha ficar sem grupo.
