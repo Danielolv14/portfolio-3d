@@ -296,7 +296,20 @@ export const content = {
             mailApp: 'E-mail',
             mailAppHint: 'escrever uma mensagem',
             newTab: 'abre em nova aba',
-            cardRole: 'Engenharia de Software · PUC Minas',
+            // Tela inicial do celular (PhoneScreen e a textura dele): o widget de contato, os widgets de
+            // calendário e relógio, o de Notas e a pílula de busca
+            cardLines: ['Engenharia de Software', 'PUC Minas · Belo Horizonte'],
+            clockCity: 'Belo Horizonte',
+            today: 'Hoje',
+            notesApp: 'Notas',
+            noteTitle: 'Sobre mim',
+            // linhas já quebradas: a textura do celular escreve exatamente as mesmas
+            noteLines: [
+                'Estudante de Engenharia de Software na',
+                'PUC Minas e estagiário Full Stack na',
+                'Teknisa. Me sinto em casa no back-end.'
+            ],
+            search: 'Pesquisar',
             copyEmail: 'Copiar e-mail',
             emailCopied: 'E-mail copiado',
             openMailApp: 'Abrir no seu app de e-mail',
@@ -452,7 +465,17 @@ export const content = {
             mailApp: 'Email',
             mailAppHint: 'write a message',
             newTab: 'opens in a new tab',
-            cardRole: 'Software Engineering · PUC Minas',
+            cardLines: ['Software Engineering', 'PUC Minas · Belo Horizonte'],
+            clockCity: 'Belo Horizonte',
+            today: 'Today',
+            notesApp: 'Notes',
+            noteTitle: 'About me',
+            noteLines: [
+                'Software Engineering student at PUC',
+                'Minas and Full Stack intern at Teknisa.',
+                'Back end is where I feel at home.'
+            ],
+            search: 'Search',
             copyEmail: 'Copy email',
             emailCopied: 'Email copied',
             openMailApp: 'Open in your email app',

@@ -3,25 +3,23 @@
 // para a troca textura -> HTML não aparecer quando a câmera para em cima do celular.
 //
 // As cores: o desenho usa as cores do próprio HTML e, no fim, `undoToneMapping` faz a conta do
-// tone mapping (ACES) ao contrário, pixel a pixel. Assim o papel de parede, o vidro, a foto e os
+// tone mapping (ACES) ao contrário, pixel a pixel. Assim o papel de parede, os widgets, a foto e os
 // ícones saem na tela 3D iguais ao HTML, sem calibrar cor por cor.
 import * as THREE from 'three';
 
-import { channels, profile } from '../content/content';
+import { profile } from '../content/content';
 import { APP_ART, APP_IDS, PHONE_WHITE, SQUIRCLE } from '../screens/AppIcons';
-import { phoneDate, phoneTime } from '../screens/phoneClock';
+import { phoneMonth, phoneTime, phoneWeekday } from '../screens/phoneClock';
 
-// Brilho da tela de dia (Phone.jsx). A textura é calibrada para ele.
-export const PHONE_SCREEN_DAY = 0.85;
+// Brilho da tela (Phone.jsx). A textura é calibrada para ele. Em 1, o branco mais claro que a tela
+// mostra depois do ACES é cerca de #e2 (com 0,85, era #dd): o modo claro do iOS precisa do máximo
+// possível sem passar de 1, onde o Bloom (luminanceThreshold 1, Scene.jsx) começaria a brilhar.
+export const PHONE_SCREEN_DAY = 1;
 
 // Altura da tela em cqw: a malha tem 0,27 x 0,57
 const HEIGHT = (0.57 / 0.27) * 100;
 // Mesma fonte do .phone-display
 const FONT = "-apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
-// Texto suave (--ph-soft)
-const SOFT = '#c9c1c6';
-// Cartão de vidro (.phone-card): esquerda, topo, largura, altura e raio, em cqw
-const CARD = { x: 9, y: 76, w: 82, h: 52, r: 8 };
 
 // Contorno de cantos arredondados (arcos de círculo, como o border-radius). Não começa um caminho
 // novo: dá para juntar dois contornos e preencher só o anel entre eles ('evenodd').
@@ -82,7 +80,7 @@ function curveInverse(y) {
 }
 
 // Troca cada pixel pela cor que, depois do brilho k e do ACES, sai igual ao desenho.
-// Cores que a tela não alcança (mais claras que ~#ddd) ficam no máximo possível.
+// Cores que a tela não alcança (mais claras que ~#e2) ficam no máximo possível.
 function undoToneMapping(data, k) {
     const s = 0.6 / k;
     const [o0, o1, o2, o3, o4, o5, o6, o7, o8] = OUT_INV;
@@ -104,46 +102,32 @@ function undoToneMapping(data, k) {
     }
 }
 
-// saturate() do CSS (o backdrop-filter do cartão de vidro), nas cores sRGB
-function saturate(image, amount) {
-    const d = image.data;
-    const s = amount;
-    const m = [
-        0.213 + 0.787 * s,
-        0.715 - 0.715 * s,
-        0.072 - 0.072 * s,
-        0.213 - 0.213 * s,
-        0.715 + 0.285 * s,
-        0.072 - 0.072 * s,
-        0.213 - 0.213 * s,
-        0.715 - 0.715 * s,
-        0.072 + 0.928 * s
-    ];
-    for (let p = 0; p < d.length; p += 4) {
-        const r = d[p];
-        const g = d[p + 1];
-        const b = d[p + 2];
-        d[p] = m[0] * r + m[1] * g + m[2] * b;
-        d[p + 1] = m[3] * r + m[4] * g + m[5] * b;
-        d[p + 2] = m[6] * r + m[7] * g + m[8] * b;
-    }
-    return image;
-}
-
 // ---------- A tela inicial ----------
 
-// Faixa de cima (barra de status, data e hora), em cqw: é a única parte que muda a cada minuto
-const CLOCK_BAND = 50;
+// Cores do phone.css (modo claro do iOS), já dentro do que a tela 3D mostra
+const INK = '#141417';
+const SOFT = '#6c6c73';
+const NOTE_INK = '#3a3a3f';
+const RED = '#d8392f';
+const NOTES = '#b88400';
+const GLASS = 'rgba(232, 234, 240, 0.45)';
+const GLASS_EDGE = 'rgba(240, 242, 248, 0.5)';
+// Widgets (x, y, largura, altura, em cqw; raio 5,8), a pílula de busca e a dock, iguais ao phone.css
+const RADIUS = 5.8;
+const CONTACT = { x: 6.7, y: 16, w: 86.6, h: 40.5 };
+const CAL = { x: 6.7, y: 61, w: 41.3, h: 41.3 };
+const CLOCK = { x: 52, y: 61, w: 41.3, h: 41.3 };
+const NOTE = { x: 6.7, y: 106.3, w: 86.6, h: 40.5 };
+const SEARCH = { x: 34.5, y: 165.5, w: 31, h: 7.6, r: 3.8 };
+const DOCK = { x: 4.2, y: 176.3, w: 91.6, h: 24.6, r: 10.2 };
+// Ícones na dock: 16,5cqw, no meio de cada uma das 4 colunas, em y 180,35
+const ICON = { size: 16.5, top: 180.35 };
 
 export function phoneScreenTexture() {
     // O desenho é feito num canvas de trabalho, com as cores do HTML. A textura recebe os pixels já
     // convertidos (ImageData): o canvas nunca vai para a placa de vídeo e ler os pixels dele é rápido.
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    // pedaço do cartão para o "vidro" (fundo saturado); também na memória do processador, senão
-    // desenhá-lo no canvas de trabalho faria o navegador esperar a placa de vídeo
-    const glass = document.createElement('canvas');
-    const glassCtx = glass.getContext('2d', { willReadFrequently: true });
     const texture = new THREE.Texture(new ImageData(1, 1));
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.anisotropy = 4;
@@ -165,8 +149,7 @@ export function phoneScreenTexture() {
         canvas.height = Math.round((width * HEIGHT) / 100);
     };
     resize(512);
-    // Largura da tela na página, em px. Quase tudo é em cqw, mas os apps herdam do .apps
-    // (styles.css) o espaço de 8px entre eles e a sombra em px: a textura faz igual.
+    // Largura da tela na página, em px (as sombras do canvas são em px)
     let pageW = 300;
     // A camada HTML tem largura e altura arredondadas para px inteiros (ScreenTracker), então o cqw
     // dela é um tiquinho diferente do da malha (274 px de largura contra 274,4, por exemplo). A
@@ -184,22 +167,36 @@ export function phoneScreenTexture() {
     // Texto com line-height: 1, a partir do topo da caixa (como no CSS). A linha de base fica abaixo
     // do topo a metade da sobra (line-height menos a altura da fonte) mais a subida (ascent) da fonte;
     // como no Chrome, a subida e a descida são px inteiros e a metade da sobra é arredondada para
-    // baixo. Medidas em cqw; u = 1cqw em px.
-    const text = (u, value, x, top, size, weight, color) => {
+    // baixo. Medidas em cqw; u = 1cqw em px. `x`: o centro (align 'center') ou a esquerda ('left').
+    const text = (u, value, x, top, size, weight, color, align = 'center') => {
         ctx.font = `${weight} ${size * u}px ${FONT}`;
         const m = ctx.measureText(value);
         const ascent = Math.round(m.fontBoundingBoxAscent ?? m.actualBoundingBoxAscent);
         const descent = Math.round(m.fontBoundingBoxDescent ?? m.actualBoundingBoxDescent);
         ctx.fillStyle = color;
-        ctx.textAlign = 'center';
+        ctx.textAlign = align;
         ctx.textBaseline = 'alphabetic';
         ctx.fillText(value, x * u, top * u + Math.floor((size * u - (ascent + descent)) / 2) + ascent);
+        return m.width / u;
+    };
+    const textWidth = (u, value, size, weight) => {
+        ctx.font = `${weight} ${size * u}px ${FONT}`;
+        return ctx.measureText(value).width / u;
     };
     const box = (u, x, y, w, h, r, color) => {
         ctx.beginPath();
         roundRect(ctx, x * u, y * u, w * u, h * u, r * u);
         ctx.fillStyle = color;
         ctx.fill();
+    };
+    // Widget branco com a sombra leve (box-shadow: 0 0,8cqw 2,4cqw); a sombra do canvas é em px
+    const widget = (u, { x, y, w, h }) => {
+        ctx.save();
+        ctx.shadowColor = 'rgba(40, 52, 80, 0.12)';
+        ctx.shadowBlur = 2.4 * u * scale.y;
+        ctx.shadowOffsetY = 0.8 * u * scale.y;
+        box(u, x, y, w, h, RADIUS, PHONE_WHITE);
+        ctx.restore();
     };
 
     // Começo de cada desenho: os cantos arredondados da malha (13cqw; fora deles a textura fica
@@ -211,20 +208,20 @@ export function phoneScreenTexture() {
         ctx.scale(scale.x, scale.y);
     };
 
-    // Papel de parede, data, hora, barra de status e a ilha: tudo o que fica na faixa de cima
-    const drawTop = (u, now) => {
+    // A tela inicial inteira: papel de parede, widgets, busca, dock, barra de status e a ilha
+    const drawHome = (u, now) => {
+        const { t, lang } = state;
+        const c = t.contact;
         // o canvas inteiro, já na escala (com 1 px de folga)
         const W = canvas.width / scale.x + 1;
         const H = canvas.height / scale.y + 1;
-        // Papel de parede: degradê de ameixa para marrom, o tom da madeira embaixo à esquerda e o
-        // rosa do RGB em cima à direita (as 3 camadas do background do .phone-display)
+        // Papel de parede claro: o degradê e os dois brilhos (as 3 camadas do background do .phone-display)
         const base = ctx.createLinearGradient(0, 0, 0, scale.bottom * u);
         [
-            [0, '#2a1230'],
-            [0.4, '#4b1d4a'],
-            [0.72, '#6a3346'],
-            [1, '#6e4630']
-        ].forEach(([at, c]) => base.addColorStop(at, c));
+            [0, '#cdd5e6'],
+            [0.45, '#c4cde2'],
+            [1, '#bcc5dc']
+        ].forEach(([at, color]) => base.addColorStop(at, color));
         ctx.fillStyle = base;
         ctx.fillRect(0, 0, W, H);
         const glow = (cx, cy, r, rgb, alpha) => {
@@ -234,137 +231,108 @@ export function phoneScreenTexture() {
             ctx.fillStyle = g;
             ctx.fillRect(0, 0, W, H);
         };
-        glow(4, 196, 96, '201, 150, 100', 0.7);
-        glow(92, 62, 78, '231, 117, 204', 0.62);
+        glow(12, 190, 90, '224, 198, 176', 0.55);
+        glow(88, 40, 80, '214, 222, 240', 0.6);
 
-        // data e hora grande, como na tela bloqueada
-        text(u, phoneDate(now, state.lang), 50, 18, 4.6, 600, PHONE_WHITE);
-        text(u, phoneTime(now, state.lang), 50, 24, 24, 700, PHONE_WHITE);
-        // barra de status: hora no "ombro" esquerdo e os ícones à direita; e a Dynamic Island
-        text(u, phoneTime(now, state.lang), 17.5, 4.85, 4.3, 600, PHONE_WHITE);
-        drawStatusIcons(ctx, 74.2 * u, 5.3 * u, u / 10);
-        box(u, 35, 2.6, 30, 8.8, 4.4, '#000');
-    };
-
-    // Cartão de vidro com a foto, os apps e a barrinha de início
-    const drawRest = (u) => {
-        const { t } = state;
-        // 1) o fundo do cartão é o papel de parede mais saturado (backdrop-filter; o desfoque quase
-        // não muda um degradê suave, então fica de fora). É pego antes da sombra, em px do canvas.
-        const gx = Math.floor(CARD.x * u * scale.x);
-        const gy = Math.floor(CARD.y * u * scale.y);
-        glass.width = Math.ceil((CARD.x + CARD.w) * u * scale.x) - gx;
-        glass.height = Math.ceil((CARD.y + CARD.h) * u * scale.y) - gy;
-        glassCtx.putImageData(saturate(ctx.getImageData(gx, gy, glass.width, glass.height), 1.4), 0, 0);
-        // 2) a sombra (box-shadow: 0 2cqw 6cqw). O cartão é desenhado longe, fora do canvas, e só a
-        // sombra é deslocada para o lugar; a parte de dentro é coberta pelo vidro em seguida.
-        // (A sombra do canvas é medida em px do canvas: não segue a escala.)
-        ctx.save();
-        ctx.shadowColor = 'rgba(24, 6, 22, 0.3)';
-        ctx.shadowBlur = 6 * u * scale.y;
-        ctx.shadowOffsetX = 200 * u * scale.x;
-        ctx.shadowOffsetY = 2 * u * scale.y;
-        box(u, CARD.x - 200, CARD.y, CARD.w, CARD.h, CARD.r, '#000');
-        ctx.restore();
-        // 3) o vidro: fundo saturado, branco a 12% por cima e o brilho fino da borda
-        ctx.save();
-        ctx.beginPath();
-        roundRect(ctx, CARD.x * u, CARD.y * u, CARD.w * u, CARD.h * u, CARD.r * u);
-        ctx.clip();
-        // o pedaço volta para os mesmos px do canvas de onde saiu (sem a escala)
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.drawImage(glass, gx, gy);
-        ctx.restore();
-        box(u, CARD.x, CARD.y, CARD.w, CARD.h, CARD.r, 'rgba(255, 255, 255, 0.12)');
-        const edge = ctx.createLinearGradient(0, CARD.y * u, 0, (CARD.y + CARD.h) * u);
-        edge.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-        edge.addColorStop(0.45, 'rgba(255, 255, 255, 0.07)');
-        edge.addColorStop(1, 'rgba(255, 255, 255, 0.22)');
-        const e = 0.45; // espessura do brilho (padding do ::before)
-        ctx.beginPath();
-        roundRect(ctx, CARD.x * u, CARD.y * u, CARD.w * u, CARD.h * u, CARD.r * u);
-        roundRect(ctx, (CARD.x + e) * u, (CARD.y + e) * u, (CARD.w - 2 * e) * u, (CARD.h - 2 * e) * u, (CARD.r - e) * u);
-        ctx.fillStyle = edge;
-        ctx.fill('evenodd');
-
-        // Foto redonda (diâmetro 24cqw, centro em 50, 94) com um anel fino por fora
-        const ring = (r) => {
-            ctx.moveTo((50 + r) * u, 94 * u);
-            ctx.arc(50 * u, 94 * u, r * u, 0, Math.PI * 2);
-        };
-        ctx.beginPath();
-        ring(12.6);
-        ring(12);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
-        ctx.fill('evenodd');
+        // Contato: foto redonda à esquerda, nome e duas linhas à direita
+        widget(u, CONTACT);
         if (state.photo) {
             ctx.save();
             ctx.beginPath();
-            ring(12);
+            ctx.arc((CONTACT.x + 17) * u, (CONTACT.y + 20.25) * u, 12.5 * u, 0, Math.PI * 2);
             ctx.clip();
             ctx.imageSmoothingQuality = 'high';
-            ctx.drawImage(state.photo, 38 * u, 82 * u, 24 * u, 24 * u);
+            ctx.drawImage(state.photo, (CONTACT.x + 4.5) * u, (CONTACT.y + 7.75) * u, 25 * u, 25 * u);
             ctx.restore();
         }
-        text(u, profile.name, 50, 110, 5.6, 700, PHONE_WHITE);
-        text(u, t.contact.cardRole, 50, 118, 3.6, 500, SOFT);
+        const tx = CONTACT.x + 34.8;
+        text(u, profile.name, tx, CONTACT.y + 9, 5.2, 700, INK, 'left');
+        text(u, c.cardLines[0], tx, CONTACT.y + 17, 3.3, 500, SOFT, 'left');
+        text(u, c.cardLines[1], tx, CONTACT.y + 22.5, 3.3, 500, SOFT, 'left');
 
-        // Apps: 4 colunas iguais de 6,333cqw a 93,667cqw, com 8px entre elas, e o ícone (16,5cqw)
-        // no meio de cada uma. A sombra do ícone (drop-shadow: 0 6px 10px) também é em px.
-        const px = canvas.width / pageW; // 1px da página em px do canvas
-        const gap = 800 / Math.round(pageW); // 8px em cqw da camada HTML
-        const column = (87.333 - 3 * gap) / 4;
+        // Calendário e relógio
+        widget(u, CAL);
+        text(u, phoneWeekday(now, lang), CAL.x + 4.5, CAL.y + 5, 3.2, 700, RED, 'left');
+        text(u, String(now.getDate()), CAL.x + 4.5, CAL.y + 10, 15, 400, INK, 'left');
+        text(u, phoneMonth(now, lang), CAL.x + 4.5, CAL.y + 32, 3.4, 500, SOFT, 'left');
+        widget(u, CLOCK);
+        text(u, c.clockCity, CLOCK.x + 4.5, CLOCK.y + 5, 3.2, 700, SOFT, 'left');
+        text(u, phoneTime(now, lang), CLOCK.x + 4.5, CLOCK.y + 12, 12.5, 600, INK, 'left');
+        text(u, c.today, CLOCK.x + 4.5, CLOCK.y + 32, 3.4, 500, SOFT, 'left');
+
+        // Notas
+        widget(u, NOTE);
+        text(u, c.notesApp, NOTE.x + 4.5, NOTE.y + 4.5, 3.2, 700, NOTES, 'left');
+        text(u, c.noteTitle, NOTE.x + 4.5, NOTE.y + 10.2, 4.6, 700, INK, 'left');
+        c.noteLines.forEach((line, i) => text(u, line, NOTE.x + 4.5, NOTE.y + 18 + i * 5.5, 3.4, 400, NOTE_INK, 'left'));
+
+        // Pílula de busca: a lupa e "Pesquisar", centrados juntos (flex com 1,3cqw entre eles)
+        box(u, SEARCH.x, SEARCH.y, SEARCH.w, SEARCH.h, SEARCH.r, GLASS);
+        const label = textWidth(u, c.search, 3.3, 500);
+        const left = 50 - (3.2 + 1.3 + label) / 2;
+        const k = (3.2 * u) / 24; // a lupa é um desenho de 24 x 24
+        ctx.save();
+        ctx.translate(left * u, (SEARCH.y + (SEARCH.h - 3.2) / 2) * u);
+        ctx.scale(k, k);
+        ctx.strokeStyle = SOFT;
+        ctx.lineWidth = 2.6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(10.5, 10.5, 6.5, 0, Math.PI * 2);
+        ctx.moveTo(15.5, 15.5);
+        ctx.lineTo(20.5, 20.5);
+        ctx.stroke();
+        ctx.restore();
+        text(u, c.search, left + 3.2 + 1.3, SEARCH.y + (SEARCH.h - 3.3) / 2, 3.3, 500, SOFT, 'left');
+
+        // Dock de vidro com o brilho fino no contorno (box-shadow inset de 0,3cqw) e os 4 ícones
+        box(u, DOCK.x, DOCK.y, DOCK.w, DOCK.h, DOCK.r, GLASS);
+        const e = 0.3;
+        ctx.beginPath();
+        roundRect(ctx, DOCK.x * u, DOCK.y * u, DOCK.w * u, DOCK.h * u, DOCK.r * u);
+        roundRect(ctx, (DOCK.x + e) * u, (DOCK.y + e) * u, (DOCK.w - 2 * e) * u, (DOCK.h - 2 * e) * u, (DOCK.r - e) * u);
+        ctx.fillStyle = GLASS_EDGE;
+        ctx.fill('evenodd');
+        const column = DOCK.w / 4;
         APP_IDS.forEach((id, i) => {
-            const center = 6.333 + i * (column + gap) + column / 2;
-            drawIcon(ctx, id, (center - 8.25) * u, 158 * u, 16.5 * u, { blur: 10 * px, y: 6 * px });
-            const name = id === 'email' ? t.contact.mailApp : channels.find((c) => c.id === id).label;
-            text(u, name, center, 176.5, 3.2, 500, PHONE_WHITE);
+            const center = DOCK.x + column * (i + 0.5);
+            drawIcon(ctx, id, (center - ICON.size / 2) * u, ICON.top * u, ICON.size * u);
         });
+
+        // Barra de status (hora no "ombro" esquerdo, ícones à direita), a ilha e a barrinha de início
+        text(u, phoneTime(now, lang), 17.5, 4.85, 4.3, 600, INK);
+        drawStatusIcons(ctx, 74.2 * u, 5.3 * u, u / 10, INK);
+        box(u, 35, 2.6, 30, 8.8, 4.4, '#000');
         // a barrinha fica a 2,2cqw do pé da camada HTML
-        box(u, 33, scale.bottom - 2.2 - 1.3, 34, 1.3, 0.65, PHONE_WHITE);
+        box(u, 33, scale.bottom - 2.2 - 1.3, 34, 1.3, 0.65, INK);
     };
 
-    // Lê os pixels de uma faixa do canvas (do topo até `rows`), converte e entrega para a textura
-    const publish = (rows) => {
-        const band = ctx.getImageData(0, 0, canvas.width, rows);
-        undoToneMapping(band.data, PHONE_SCREEN_DAY);
-        const image = texture.image;
-        if (image.width === canvas.width && image.height === canvas.height) {
-            image.data.set(band.data);
+    // Converte o canvas inteiro e entrega para a textura
+    const publish = () => {
+        const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        undoToneMapping(image.data, PHONE_SCREEN_DAY);
+        const current = texture.image;
+        if (current.width === canvas.width && current.height === canvas.height) {
+            current.data.set(image.data);
         } else {
             // tamanho novo (primeiro desenho ou fit): a textura antiga sai da placa de vídeo e é criada de novo
-            texture.image = band;
+            texture.image = image;
             texture.dispose();
         }
         texture.needsUpdate = true;
     };
 
-    // Desenho completo: ao abrir, quando muda o idioma ou o tamanho e quando a foto chega
+    // Desenho completo: ao abrir, quando muda o idioma ou o tamanho, quando a foto chega e a cada
+    // minuto (a hora aparece na barra de status e nos widgets, então a tela toda é refeita)
     const draw = () => {
         const u = canvas.width / 100;
         measure();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         begin(u);
-        drawTop(u, new Date());
-        drawRest(u);
+        drawHome(u, new Date());
         ctx.restore();
-        publish(canvas.height);
-    };
-
-    // A cada minuto: só a faixa de cima é desenhada e convertida de novo
-    const tick = () => {
-        const u = canvas.width / 100;
-        const rows = Math.min(Math.ceil(CLOCK_BAND * u), canvas.height);
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(0, 0, canvas.width, rows);
-        ctx.clip();
-        ctx.clearRect(0, 0, canvas.width, rows);
-        begin(u);
-        drawTop(u, new Date());
-        ctx.restore();
-        publish(rows);
+        publish();
     };
 
     // Pedido de desenho completo. Ao abrir o site, o Phone.jsx (idioma) e o Scene.jsx (tamanho)
@@ -380,19 +348,13 @@ export function phoneScreenTexture() {
         });
     };
 
-    // Phone.jsx chama ao montar e quando o idioma muda (desenho completo) e a cada minuto (tick)
+    // Phone.jsx chama ao montar e quando o idioma muda, e a cada minuto (tick)
     texture.userData.redraw = (t, lang) => {
         state.t = t;
         state.lang = lang;
         requestDraw();
     };
-    texture.userData.tick = () => {
-        if (!state.t) return;
-        // a textura ainda não tem o desenho completo neste tamanho: desenha tudo, não só a faixa
-        const { image } = texture;
-        if (image.width !== canvas.width || image.height !== canvas.height) draw();
-        else tick();
-    };
+    texture.userData.tick = requestDraw;
     // Chamado pelo Scene.jsx com a largura (px) que a tela vai ter na página com a câmera parada
     texture.userData.fit = (width) => {
         if (!(width > 0)) return;
@@ -407,17 +369,12 @@ export function phoneScreenTexture() {
 }
 
 // Ícone de um app (AppIcons.jsx): o contorno contínuo com o fundo em degradê e o logo por cima.
-// Os desenhos são os mesmos do SVG (caixa de 100 x 100), com Path2D. `shadow`: a sombra embaixo
-// do contorno (blur e deslocamento em px da textura; a sombra do canvas não segue o scale).
-function drawIcon(ctx, id, x, y, size, shadow) {
+// Os desenhos são os mesmos do SVG (caixa de 100 x 100), com Path2D.
+function drawIcon(ctx, id, x, y, size) {
     const { background: bg, logo } = APP_ART[id];
     ctx.save();
     ctx.translate(x, y);
     ctx.scale(size / 100, size / 100);
-    ctx.save();
-    ctx.shadowColor = 'rgba(40, 20, 30, 0.18)';
-    ctx.shadowBlur = shadow.blur;
-    ctx.shadowOffsetY = shadow.y;
     const fill =
         bg.type === 'linear'
             ? ctx.createLinearGradient(0, 0, 0, 100)
@@ -425,7 +382,6 @@ function drawIcon(ctx, id, x, y, size, shadow) {
     bg.stops.forEach(([at, c]) => fill.addColorStop(at, c));
     ctx.fillStyle = fill;
     ctx.fill(new Path2D(SQUIRCLE));
-    ctx.restore();
     if (logo.scale) {
         ctx.translate(logo.offset[0], logo.offset[1]);
         ctx.scale(logo.scale, logo.scale);
@@ -450,7 +406,7 @@ function drawIcon(ctx, id, x, y, size, shadow) {
 }
 
 // Sinal, Wi-Fi e bateria (StatusIcons, em PhoneScreen.jsx): caixa de 166 x 34, 10 unidades = 1cqw
-function drawStatusIcons(ctx, x, y, scale) {
+function drawStatusIcons(ctx, x, y, scale, color) {
     const rect = (rx, ry, w, h, r) => {
         ctx.beginPath();
         roundRect(ctx, rx, ry, w, h, r);
@@ -458,8 +414,8 @@ function drawStatusIcons(ctx, x, y, scale) {
     ctx.save();
     ctx.translate(x, y);
     ctx.scale(scale, scale);
-    ctx.fillStyle = PHONE_WHITE;
-    ctx.strokeStyle = PHONE_WHITE;
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
     // sinal: 4 barras crescendo
     [10.5, 15.5, 21, 26.5].forEach((h, i) => {
         rect(2 + i * 13.4, 30 - h, 9, h, 2.5);

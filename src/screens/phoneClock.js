@@ -1,4 +1,4 @@
-// Hora e data da tela do celular, como na tela bloqueada. Ficam aqui para a camada HTML
+// Hora e data da tela do celular (barra de status e widgets de calendário e relógio). Ficam aqui para a camada HTML
 // (PhoneScreen) e a textura do celular (room/phoneTexture.js) escreverem exatamente o mesmo texto.
 import { useEffect, useState } from 'react';
 
@@ -9,13 +9,13 @@ export function phoneTime(date, lang) {
     return `${hour}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
-// 'quarta-feira, 7 de outubro' / 'Wednesday, October 7'
-export function phoneDate(date, lang) {
-    return new Intl.DateTimeFormat(lang === 'pt' ? 'pt-BR' : 'en-US', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long'
-    }).format(date);
+// Partes da data para o widget de calendário: 'SEXTA-FEIRA' / 'FRIDAY' e 'outubro' / 'October'
+export function phoneWeekday(date, lang) {
+    return new Intl.DateTimeFormat(lang === 'pt' ? 'pt-BR' : 'en-US', { weekday: 'long' }).format(date).toUpperCase();
+}
+
+export function phoneMonth(date, lang) {
+    return new Intl.DateTimeFormat(lang === 'pt' ? 'pt-BR' : 'en-US', { month: 'long' }).format(date);
 }
 
 // Milissegundos até o próximo minuto cheio (e não 60 s a partir de agora)

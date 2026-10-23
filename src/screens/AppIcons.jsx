@@ -25,9 +25,9 @@ function squircle(size = 100, n = 5, steps = 96) {
 
 export const SQUIRCLE = squircle();
 
-// Branco das telas: o mais claro que a tela 3D mostra depois do tone mapping (ACES), para a
-// textura conseguir sair igual ao HTML
-export const PHONE_WHITE = '#dddcda';
+// Branco do celular (modo claro do iOS): o mais claro que a tela 3D mostra depois do tone mapping
+// (ACES), para a textura conseguir sair igual ao HTML. O mesmo --ph-white do phone.css.
+export const PHONE_WHITE = '#dfdfe2';
 
 // Logos do GitHub e do Instagram: paths do Simple Icons (simpleicons.org, v16.34.0), que são CC0 1.0
 // (domínio público). Desenhados numa caixa de 24 x 24.
@@ -87,12 +87,13 @@ export const APP_ART = {
         },
         logo: { paths: [INSTAGRAM_PATH], scale: 2.4, offset: [21.2, 21.2], fill: PHONE_WHITE }
     },
+    // E-mail: azul como o dos apps de e-mail do iOS (um degradê nosso, sem copiar o ícone de ninguém)
     email: {
         background: {
             type: 'linear',
             stops: [
-                [0, '#e78bd0'],
-                [1, '#a54791']
+                [0, '#3a9cf2'],
+                [1, '#1466d8']
             ]
         },
         logo: { strokes: [MAIL_PATH, MAIL_FLAP], width: 5.5, stroke: PHONE_WHITE }

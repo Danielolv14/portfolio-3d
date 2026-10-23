@@ -1,5 +1,6 @@
-// Celular = Contato. A tela inicial é inspirada no iOS 26 (só inspiração: nada da Apple entra aqui):
-// hora e data como na tela bloqueada, um cartão de vidro com a minha foto e os apps.
+// Celular = Contato. A tela inicial é inspirada no iOS 26 no modo claro (só inspiração: nada da Apple
+// entra aqui): papel de parede claro, um widget de contato com a minha foto, widgets de calendário,
+// relógio e Notas, a pílula de busca e a dock de vidro com os apps.
 // O app E-mail é o formulário de contato. "Ler em 2D" e "Voltar ao quarto" ficam fora da tela,
 // ao lado do celular. A textura do celular em repouso (phoneScreenTexture, em room/phoneTexture.js)
 // desenha a mesma tela inicial, com as mesmas medidas (phone.css, em cqw), para a troca não aparecer.
@@ -9,7 +10,7 @@ import { profile } from '../content/content';
 import { IconList } from '../app/Icons';
 import { ContactApps } from './AppIcons';
 import MailCompose from './MailCompose';
-import { phoneDate, phoneTime, useNow } from './phoneClock';
+import { phoneMonth, phoneTime, phoneWeekday, useNow } from './phoneClock';
 import './phone.css';
 
 const prefersReducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
@@ -58,6 +59,7 @@ export default function PhoneScreen({ t, lang, headingRef, onClose, onRead2d }) 
     const now = useNow();
     const time = phoneTime(now, lang);
     const s = t.ui.screen;
+    const c = t.contact;
     // App E-mail: fechado (null), aberto ('open') ou voltando para o ícone ('closing')
     const [app, setApp] = useState(null);
     // De onde o app cresce: o centro do ícone do E-mail, em % do display, e o tamanho dele
@@ -113,17 +115,52 @@ export default function PhoneScreen({ t, lang, headingRef, onClose, onRead2d }) 
 
                 {/* inert: com o app aberto, a tela inicial sai do Tab e do leitor de tela */}
                 <div className="phone-home" inert={app === 'open' ? '' : undefined}>
-                    <div className="phone-lock" aria-hidden="true">
-                        <p className="phone-date">{phoneDate(now, lang)}</p>
-                        <p className="phone-time">{time}</p>
-                    </div>
-
-                    <div className="phone-card">
+                    {/* Widget de contato: foto, nome e onde estudo */}
+                    <div className="phone-widget phone-contact">
                         <img className="phone-photo" src={profile.photo} alt="" />
                         <p className="phone-name">{profile.name}</p>
-                        <p className="phone-role">{t.contact.cardRole}</p>
+                        {c.cardLines.map((line, i) => (
+                            <p key={line} className={`phone-card-line phone-card-line-${i + 1}`}>
+                                {line}
+                            </p>
+                        ))}
                     </div>
 
+                    {/* Calendário e relógio (só enfeite: a hora e a data de verdade) */}
+                    <div className="phone-widget phone-cal" aria-hidden="true">
+                        <p className="phone-cal-weekday">{phoneWeekday(now, lang)}</p>
+                        <p className="phone-cal-day">{now.getDate()}</p>
+                        <p className="phone-cal-month">{phoneMonth(now, lang)}</p>
+                    </div>
+                    <div className="phone-widget phone-clock" aria-hidden="true">
+                        <p className="phone-clock-city">{c.clockCity}</p>
+                        <p className="phone-clock-time">{time}</p>
+                        <p className="phone-clock-today">{c.today}</p>
+                    </div>
+
+                    {/* Notas: um "sobre mim" curto */}
+                    <div className="phone-widget phone-note">
+                        <p className="phone-note-app" aria-hidden="true">
+                            {c.notesApp}
+                        </p>
+                        <p className="phone-note-title">{c.noteTitle}</p>
+                        {c.noteLines.map((line, i) => (
+                            <p key={line} className={`phone-note-line phone-note-line-${i + 1}`}>
+                                {line}
+                            </p>
+                        ))}
+                    </div>
+
+                    <div className="phone-search" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+                            <circle cx="10.5" cy="10.5" r="6.5" />
+                            <path d="m15.5 15.5 5 5" />
+                        </svg>
+                        {c.search}
+                    </div>
+
+                    {/* Dock de vidro com os apps (como na dock do iPhone, sem o nome embaixo) */}
+                    <div className="phone-dock" aria-hidden="true" />
                     <ContactApps t={t} onMail={openMail} mailRef={mailIconRef} className="phone-apps" />
                 </div>
 

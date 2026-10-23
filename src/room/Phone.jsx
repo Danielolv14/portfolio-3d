@@ -134,11 +134,12 @@ export function Phone({ t, onSelect, showLabels, active }) {
         return () => clearTimeout(timer);
     }, [tex, t, lang]);
 
-    // Brilho da tela: à noite, de longe, ela brilha mais (1,2), como as outras telas do quarto. Com o
-    // Contato aberto volta ao brilho de dia, o mesmo para o qual a textura foi calibrada: assim a
-    // camada HTML entra por cima sem salto de cor (o voo da câmera dura mais que essa transição).
+    // Brilho da tela: à noite, de longe, ela brilha um pouco mais (1,1), como as outras telas do quarto
+    // (a tela é clara, então pouco: acima de 1 o Bloom já faz o branco brilhar). Com o Contato aberto
+    // volta ao brilho de dia, o mesmo para o qual a textura foi calibrada: assim a camada HTML entra
+    // por cima sem salto de cor (o voo da câmera dura mais que essa transição).
     useFrame((_, dt) => {
-        const target = active ? PHONE_SCREEN_DAY : lerp(PHONE_SCREEN_DAY, 1.2, dayNight.mix);
+        const target = active ? PHONE_SCREEN_DAY : lerp(PHONE_SCREEN_DAY, 1.1, dayNight.mix);
         level.current = THREE.MathUtils.damp(level.current, target, 6, dt);
         screen.current.color.setScalar(level.current);
     });

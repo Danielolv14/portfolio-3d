@@ -15,17 +15,23 @@
     animation: none;
 }
 
-/* Cores da tela. Todas são cores que a tela 3D consegue mostrar depois do tone mapping (ACES):
-   o branco mais claro possível é cerca de #ddd, então nada aqui é branco puro. */
+/* Cores da tela, no modo claro do iOS. A tela 3D só mostra até cerca de #e2 depois do tone mapping
+   (ACES, com o brilho da tela em 1; room/phoneTexture.js), então o "branco" aqui é #dfdfe2 e nada
+   passa disso: assim a textura em repouso sai igual a esta camada. */
 .phone-display {
-    --ph-white: #dddcda;
-    --ph-soft: #c9c1c6;
-    --ph-bg: #1b1a1f;
-    --ph-line: #3a3740;
-    --ph-muted: #9a949c;
-    --ph-accent: #e775cc;
-    --ph-accent-ink: #2b0f26;
-    --ph-danger: #e88a80;
+    --ph-white: #dfdfe2;
+    --ph-ink: #141417;
+    --ph-soft: #6c6c73;
+    --ph-note-ink: #3a3a3f;
+    --ph-bg: #dfdfe2;
+    --ph-line: #c2c2c8;
+    --ph-accent: #0a6ee0;
+    --ph-accent-ink: #e0e0e0;
+    --ph-danger: #d8392f;
+    --ph-red: #d8392f;
+    --ph-notes: #b88400;
+    --ph-glass: rgba(232, 234, 240, 0.45);
+    --ph-glass-edge: rgba(240, 242, 248, 0.5);
 
     position: absolute;
     inset: 0;
@@ -33,16 +39,16 @@
        formulário não rola a tela inteira para cima */
     overflow: clip;
     border-radius: 13cqw;
-    color: var(--ph-white);
-    color-scheme: dark;
+    color: var(--ph-ink);
+    color-scheme: light;
     font-family: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.2;
-    /* Papel de parede próprio: o rosa do RGB do quarto em cima à direita e o tom da madeira
-       embaixo à esquerda, sobre um degradê de ameixa escura para marrom */
+    /* Papel de parede próprio, claro: azul-lavanda suave, um brilho quente (o tom da madeira do
+       quarto) embaixo à esquerda e um claro em cima à direita */
     background:
-        radial-gradient(circle 78cqw at 92cqw 62cqw, rgba(231, 117, 204, 0.62), rgba(231, 117, 204, 0)),
-        radial-gradient(circle 96cqw at 4cqw 196cqw, rgba(201, 150, 100, 0.7), rgba(201, 150, 100, 0)),
-        linear-gradient(180deg, #2a1230 0%, #4b1d4a 40%, #6a3346 72%, #6e4630 100%);
+        radial-gradient(circle 80cqw at 88cqw 40cqw, rgba(214, 222, 240, 0.6), rgba(214, 222, 240, 0)),
+        radial-gradient(circle 90cqw at 12cqw 190cqw, rgba(224, 198, 176, 0.55), rgba(224, 198, 176, 0)),
+        linear-gradient(180deg, #cdd5e6 0%, #c4cde2 45%, #bcc5dc 100%);
     /* a tela "acende" ao aparecer (a textura por baixo já mostra quase o mesmo) */
     animation: phone-wake 0.22s ease-out both;
 }
@@ -108,7 +114,7 @@
     width: 34cqw;
     height: 1.3cqw;
     border-radius: 0.65cqw;
-    background: var(--ph-white);
+    background: var(--ph-ink);
 }
 
 /* ---------- Tela inicial ---------- */
@@ -118,121 +124,228 @@
     inset: 0;
 }
 
-/* Data em cima e a hora grande e grossa embaixo, como na tela bloqueada */
-.phone-date,
-.phone-time {
+/* Widgets: cartões brancos de cantos arredondados, com uma sombra bem leve. Cada texto tem o topo
+   e o tamanho em cqw (line-height 1), e a textura escreve no mesmo lugar. */
+.phone-widget {
     position: absolute;
-    left: 0;
-    right: 0;
+    border-radius: 5.8cqw;
+    background: var(--ph-white);
+    box-shadow: 0 0.8cqw 2.4cqw rgba(40, 52, 80, 0.12);
+}
+
+.phone-widget p {
+    position: absolute;
     line-height: 1;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.phone-date {
-    top: 18cqw;
-    font-size: 4.6cqw;
-    font-weight: 600;
-}
-
-.phone-time {
-    top: 24cqw;
-    font-size: 24cqw;
-    font-weight: 700;
-}
-
-/* Cartão em "vidro líquido": translúcido, desfoca o papel de parede e tem um brilho fino na borda */
-.phone-card {
-    position: absolute;
-    left: 9cqw;
-    top: 76cqw;
-    width: 82cqw;
-    height: 52cqw;
-    border-radius: 8cqw;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(4cqw) saturate(1.4);
-    -webkit-backdrop-filter: blur(4cqw) saturate(1.4);
-    box-shadow: 0 2cqw 6cqw rgba(24, 6, 22, 0.3);
-}
-
-/* o brilho da borda: um degradê só no contorno (a máscara tira o miolo) */
-.phone-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    padding: 0.45cqw;
-    border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.07) 45%, rgba(255, 255, 255, 0.22));
-    -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-        linear-gradient(#000 0 0) content-box exclude,
-        linear-gradient(#000 0 0);
-    pointer-events: none;
-}
-
-.phone-photo {
-    position: absolute;
-    left: 29cqw;
-    top: 6cqw;
-    width: 24cqw;
-    height: 24cqw;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 0 0 0.6cqw rgba(255, 255, 255, 0.18);
-}
-
-.phone-name,
-.phone-role {
-    position: absolute;
-    left: 4cqw;
-    right: 4cqw;
-    line-height: 1;
-    text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* Contato: x 6,7 · y 16 · 86,6 x 40,5. Foto à esquerda, textos à direita */
+.phone-contact {
+    left: 6.7cqw;
+    top: 16cqw;
+    width: 86.6cqw;
+    height: 40.5cqw;
+}
+
+.phone-photo {
+    position: absolute;
+    left: 4.5cqw;
+    top: 7.75cqw;
+    width: 25cqw;
+    height: 25cqw;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.phone-name,
+.phone-card-line {
+    left: 34.8cqw;
+    right: 3cqw;
+}
+
 .phone-name {
-    top: 34cqw;
-    font-size: 5.6cqw;
+    top: 9cqw;
+    font-size: 5.2cqw;
     font-weight: 700;
 }
 
-.phone-role {
-    top: 42cqw;
-    font-size: 3.6cqw;
+.phone-card-line {
+    font-size: 3.3cqw;
     font-weight: 500;
     color: var(--ph-soft);
 }
 
-/* Apps: uma linha de 4 colunas iguais, com o ícone (16,5cqw) no meio de cada uma. As bordas do
-   primeiro e do último ícone ficam alinhadas com o cartão (9cqw e 91cqw). */
+.phone-card-line-1 {
+    top: 17cqw;
+}
+
+.phone-card-line-2 {
+    top: 22.5cqw;
+}
+
+/* Calendário e relógio: dois quadrados de 41,3 em y 61 */
+.phone-cal,
+.phone-clock {
+    top: 61cqw;
+    width: 41.3cqw;
+    height: 41.3cqw;
+}
+
+.phone-cal {
+    left: 6.7cqw;
+}
+
+.phone-clock {
+    left: 52cqw;
+}
+
+.phone-cal p,
+.phone-clock p {
+    left: 4.5cqw;
+    right: 3cqw;
+}
+
+.phone-cal-weekday,
+.phone-clock-city {
+    top: 5cqw;
+    font-size: 3.2cqw;
+    font-weight: 700;
+}
+
+.phone-cal-weekday {
+    color: var(--ph-red);
+}
+
+.phone-clock-city {
+    color: var(--ph-soft);
+}
+
+.phone-cal-day {
+    top: 10cqw;
+    font-size: 15cqw;
+    font-weight: 400;
+}
+
+.phone-clock-time {
+    top: 12cqw;
+    font-size: 12.5cqw;
+    font-weight: 600;
+}
+
+.phone-cal-month,
+.phone-clock-today {
+    top: 32cqw;
+    font-size: 3.4cqw;
+    font-weight: 500;
+    color: var(--ph-soft);
+}
+
+/* Notas: x 6,7 · y 106,3 · 86,6 x 40,5 */
+.phone-note {
+    left: 6.7cqw;
+    top: 106.3cqw;
+    width: 86.6cqw;
+    height: 40.5cqw;
+}
+
+.phone-note p {
+    left: 4.5cqw;
+    right: 3cqw;
+}
+
+.phone-note-app {
+    top: 4.5cqw;
+    font-size: 3.2cqw;
+    font-weight: 700;
+    color: var(--ph-notes);
+}
+
+.phone-note-title {
+    top: 10.2cqw;
+    font-size: 4.6cqw;
+    font-weight: 700;
+}
+
+.phone-note-line {
+    font-size: 3.4cqw;
+    font-weight: 400;
+    color: var(--ph-note-ink);
+}
+
+.phone-note-line-1 {
+    top: 18cqw;
+}
+
+.phone-note-line-2 {
+    top: 23.5cqw;
+}
+
+.phone-note-line-3 {
+    top: 29cqw;
+}
+
+/* Pílula "Pesquisar" em cima da dock (centro em 50 · 169,3) */
+.phone-search {
+    position: absolute;
+    left: 34.5cqw;
+    top: 165.5cqw;
+    width: 31cqw;
+    height: 7.6cqw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.3cqw;
+    border-radius: 3.8cqw;
+    background: var(--ph-glass);
+    color: var(--ph-soft);
+    font-size: 3.3cqw;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.phone-search svg {
+    width: 3.2cqw;
+    height: 3.2cqw;
+}
+
+/* Dock de vidro: x 4,2 · y 176,3 · 91,6 x 24,6, com um brilho fino no contorno */
+.phone-dock {
+    position: absolute;
+    left: 4.2cqw;
+    top: 176.3cqw;
+    width: 91.6cqw;
+    height: 24.6cqw;
+    border-radius: 10.2cqw;
+    background: var(--ph-glass);
+    box-shadow: inset 0 0 0 0.3cqw var(--ph-glass-edge);
+}
+
+/* Apps na dock: 4 colunas iguais, ícone de 16,5cqw no meio de cada uma; o nome fica só para o
+   leitor de tela (na dock do iPhone os ícones não têm nome) */
 .phone-apps {
     position: absolute;
-    left: 6.333cqw;
-    top: 158cqw;
-    width: 87.333cqw;
+    left: 4.2cqw;
+    top: 180.35cqw;
+    width: 91.6cqw;
     margin: 0;
     padding: 0;
     list-style: none;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    gap: 0;
 }
 
 .phone-apps .app {
     display: grid;
     justify-items: center;
-    gap: 2cqw;
     width: 100%;
     padding: 0;
     border: 0;
     border-radius: 3cqw;
     background: none;
-    color: var(--ph-white);
+    color: var(--ph-ink);
     font: inherit;
     text-decoration: none;
 }
@@ -241,12 +354,15 @@
     display: block;
     width: 16.5cqw;
     height: 16.5cqw;
+    filter: none;
 }
 
 .phone-apps .app-name {
-    font-size: 3.2cqw;
-    font-weight: 500;
-    line-height: 1;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
     white-space: nowrap;
 }
 
@@ -258,7 +374,7 @@
 }
 
 .phone-apps .app:active .app-art {
-    filter: brightness(0.8);
+    filter: brightness(0.85);
 }
 
 /* ---------- App E-mail ---------- */
@@ -316,8 +432,8 @@
 .phone-app .mail {
     --mail-bg: var(--ph-bg);
     --mail-bar: var(--ph-bg);
-    --mail-fg: var(--ph-white);
-    --mail-muted: var(--ph-muted);
+    --mail-fg: var(--ph-ink);
+    --mail-muted: var(--ph-soft);
     --mail-line: var(--ph-line);
     --mail-accent: var(--ph-accent);
     --mail-accent-ink: var(--ph-accent-ink);
@@ -339,6 +455,14 @@
 
 .phone-app .mail-bar {
     border-radius: 0;
+}
+
+/* "Cancelar" do Mail: só o texto, em azul */
+.phone-app .mail-cancel {
+    padding-inline: 0;
+    background: none;
+    color: var(--mail-accent);
+    font-weight: 400;
 }
 
 .phone-app .mail-send {
