@@ -52,6 +52,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 
 ## Arquitetura
 
+- **`index.html` (SEO, 23/10):** Open Graph e Twitter Card com `public/og.jpg` (1200×630, gerada do quarto por `node scripts/previa-link.mjs public/og.jpg day`), JSON-LD `Person` (sem o e-mail), `canonical`, `theme-color` e um `<noscript>` com bio, projetos e contatos em texto (mantenha igual ao `content.js`). Em `public/`: `robots.txt`, `sitemap.xml` e `apple-touch-icon.png`. Se a imagem de prévia mudar, troque o nome do arquivo, porque LinkedIn e WhatsApp guardam a antiga.
 - **`src/app/App.jsx`:** guarda o estado global: `lang`, `night`, `focus` (seção aberta), `flat` (modo sem 3D), `mobile` (largura < 760) e `parked` (a câmera parou na tela).
   - Menu no topo no computador e abas embaixo no celular.
   - Seções abrem num painel lateral (computador) ou numa folha de baixo (celular).

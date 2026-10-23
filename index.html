@@ -3,9 +3,63 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-        <title>Daniel Oliveira · Portfólio</title>
-        <meta name="description" content="Portfólio de Daniel Oliveira, estudante de Engenharia de Software na PUC Minas: um quarto 3D onde cada objeto abre uma seção." />
-        <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+        <title>Daniel Oliveira · Portfólio 3D</title>
+        <meta
+            name="description"
+            content="Portfólio de Daniel Oliveira, estudante de Engenharia de Software na PUC Minas e estagiário Full Stack: um quarto 3D onde cada objeto abre uma seção."
+        />
+        <link rel="canonical" href="https://www.danielolv.dev/" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <!-- Cor da barra do navegador no celular: o fundo do quarto de dia e de noite -->
+        <meta name="theme-color" content="#b4c0cc" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#141a2b" media="(prefers-color-scheme: dark)" />
+
+        <!-- Cartão do link no LinkedIn, WhatsApp etc. (Open Graph). A imagem sai do próprio quarto
+             (public/og.jpg, 1200x630); se ela mudar, troque o nome do arquivo, porque as redes guardam a antiga -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Daniel Oliveira" />
+        <meta property="og:title" content="Daniel Oliveira · Portfólio 3D" />
+        <meta
+            property="og:description"
+            content="Engenharia de Software e desenvolvimento Full Stack. Um portfólio em forma de quarto 3D: cada objeto abre uma seção."
+        />
+        <meta property="og:url" content="https://www.danielolv.dev/" />
+        <meta property="og:image" content="https://www.danielolv.dev/og.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Quarto 3D do portfólio de Daniel Oliveira, com mesa, estante, cama e cantinho DJ" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta property="og:locale:alternate" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Daniel Oliveira · Portfólio 3D" />
+        <meta
+            name="twitter:description"
+            content="Engenharia de Software e desenvolvimento Full Stack. Um portfólio em forma de quarto 3D: cada objeto abre uma seção."
+        />
+        <meta name="twitter:image" content="https://www.danielolv.dev/og.jpg" />
+        <meta name="twitter:image:alt" content="Quarto 3D do portfólio de Daniel Oliveira, com mesa, estante, cama e cantinho DJ" />
+
+        <!-- Dados para o Google ligar o site à pessoa (schema.org) -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "Person",
+                "name": "Daniel Oliveira de Menezes",
+                "alternateName": "Daniel Oliveira",
+                "url": "https://www.danielolv.dev/",
+                "image": "https://www.danielolv.dev/og.jpg",
+                "jobTitle": "Estagiário de desenvolvimento Full Stack",
+                "worksFor": { "@type": "Organization", "name": "Teknisa", "url": "https://www.teknisa.com/" },
+                "alumniOf": { "@type": "CollegeOrUniversity", "name": "PUC Minas" },
+                "knowsAbout": ["Java", "Spring Boot", "React", "PostgreSQL", "APIs REST", "Three.js"],
+                "sameAs": [
+                    "https://www.linkedin.com/in/daniel-oliveira14/",
+                    "https://github.com/Danielolv14",
+                    "https://www.instagram.com/danielolvz/"
+                ]
+            }
+        </script>
         <script>
             // Aplica o tema guardado (App.jsx) antes do primeiro desenho: quem escolheu a noite
             // não vê o fundo claro piscar enquanto o React carrega
@@ -25,6 +79,44 @@
     </head>
     <body>
         <div id="root"></div>
+        <!-- Sem JavaScript (e para buscadores que não rodam JS): o essencial em texto.
+             Mantenha igual ao src/content/content.js quando o conteúdo mudar. -->
+        <noscript>
+            <main style="max-width: 680px; margin: 0 auto; padding: 40px 20px; font-family: system-ui, sans-serif; line-height: 1.5">
+                <h1>Daniel Oliveira</h1>
+                <p>
+                    Estudante de Engenharia de Software na PUC Minas (4º período) e estagiário de desenvolvimento Full Stack na Teknisa,
+                    onde desenvolvo e mantenho a Frente de Caixa (PDV) do módulo de Retail. No back-end: Java com Spring Boot, PostgreSQL e
+                    APIs REST.
+                </p>
+                <p>
+                    Este portfólio é um quarto 3D: ative o JavaScript para explorar.
+                    <em>This portfolio is a 3D room: enable JavaScript to explore it.</em>
+                </p>
+                <h2>Projetos</h2>
+                <ul>
+                    <li>
+                        <a href="https://github.com/Danielolv14/DJFinance-Back-End">DJFinance</a>: API REST em Java e interface em React.
+                    </li>
+                    <li>
+                        <a href="https://github.com/Danielolv14/Tela-de-Login-da-PUC-com-Spring-Boot-Thymeleaf">Login PUC Minas</a>: Spring
+                        Boot e Thymeleaf.
+                    </li>
+                    <li>MinhaReceita: trabalho em equipe da PUC Minas (login e área do farmacêutico).</li>
+                    <li>
+                        <a href="https://github.com/Danielolv14/CandidatosTse-with-Thymeleaf">Candidatos TSE</a>: Spring Boot e Thymeleaf.
+                    </li>
+                    <li><a href="https://github.com/Danielolv14/portfolio-3d">Portfólio 3D</a>: React, Three.js e Blender.</li>
+                </ul>
+                <h2>Contato</h2>
+                <ul>
+                    <li><a href="mailto:danieloliveiramenezes4@gmail.com">danieloliveiramenezes4@gmail.com</a></li>
+                    <li><a href="https://www.linkedin.com/in/daniel-oliveira14/">LinkedIn</a></li>
+                    <li><a href="https://github.com/Danielolv14">GitHub</a></li>
+                    <li><a href="https://www.instagram.com/danielolvz/">Instagram</a></li>
+                </ul>
+            </main>
+        </noscript>
         <script type="module" src="/src/main.jsx"></script>
     </body>
 </html>
