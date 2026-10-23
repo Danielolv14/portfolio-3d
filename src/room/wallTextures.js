@@ -108,68 +108,6 @@ export function doorWoodTexture() {
     });
 }
 
-// Rosto do cofrinho de Stormtrooper. A textura cobre o quadrado [0,1] do contorno do capacete:
-// olhos grandes em gota, "lágrimas" cinza, nariz e a "careta" com grade.
-export function trooperFaceTexture() {
-    return canvasTexture(256, 256, (ctx, w) => {
-        const s = w / 256;
-        ctx.scale(s, s);
-        ctx.fillStyle = '#f5f5f2';
-        ctx.fillRect(0, 0, 256, 256);
-        // linha da testa
-        ctx.strokeStyle = 'rgba(120, 124, 130, 0.5)';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(44, 78);
-        ctx.quadraticCurveTo(128, 58, 212, 78);
-        ctx.stroke();
-        // olhos em gota: ponta alta perto do nariz, bojo caindo para fora (o ar "triste" do capacete)
-        ctx.fillStyle = '#121316';
-        [-1, 1].forEach((side) => {
-            ctx.save();
-            ctx.translate(128 + side * 50, 112);
-            ctx.scale(side, 1);
-            ctx.beginPath();
-            ctx.ellipse(10, 12, 34, 38, -0.6, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.moveTo(-44, -28);
-            ctx.lineTo(31, -18);
-            ctx.lineTo(-9, 40);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-        });
-        // "lágrimas" cinza descendo das bochechas
-        ctx.fillStyle = '#7f848b';
-        [-1, 1].forEach((side) => {
-            for (let i = 0; i < 3; i++) {
-                const x = 128 + side * (64 + i * 10);
-                ctx.fillRect(x - 3, 166 + i * 2, 6, 34 - i * 7);
-            }
-        });
-        // nariz
-        ctx.fillStyle = '#2a2b2f';
-        ctx.beginPath();
-        ctx.moveTo(117, 140);
-        ctx.lineTo(139, 140);
-        ctx.lineTo(128, 162);
-        ctx.closePath();
-        ctx.fill();
-        // careta: boca em arco para baixo, com a grade cinza
-        ctx.fillStyle = '#1d1e22';
-        ctx.beginPath();
-        ctx.moveTo(84, 226);
-        ctx.quadraticCurveTo(128, 156, 172, 226);
-        ctx.lineTo(154, 234);
-        ctx.quadraticCurveTo(128, 194, 102, 234);
-        ctx.closePath();
-        ctx.fill();
-        ctx.fillStyle = '#a4a8ae';
-        for (let i = 0; i < 6; i++) ctx.fillRect(105 + i * 9, 196 + Math.abs(i - 2.5) * 4, 3, 18);
-    });
-}
-
 // Listras pretas e brancas do corpo da pelúcia de caveira (anéis ao redor da cápsula)
 export function stripesTexture() {
     return canvasTexture(64, 256, (ctx, w, h) => {
@@ -178,29 +116,5 @@ export function stripesTexture() {
             ctx.fillStyle = i % 2 ? '#f1efea' : '#1c1c1f';
             ctx.fillRect(0, (i * h) / n, w, h / n);
         }
-    });
-}
-
-// Impressão do troféu de acrílico: faixa amarela, dois escudos e texto genérico
-export function trophyPrintTexture() {
-    return canvasTexture(256, 320, (ctx, w, h) => {
-        ctx.fillStyle = '#17191e';
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = '#f2c318';
-        ctx.fillRect(0, 0, w, 54);
-        ctx.fillRect(0, h - 26, w, 26);
-        ctx.fillStyle = '#17191e';
-        ctx.font = '800 30px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('CAMPEÃO', w / 2, 38);
-        ['#3d7fd9', '#d9d9d9'].forEach((color, i) => {
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.arc(w * (0.3 + i * 0.4), 140, 34, 0, Math.PI * 2);
-            ctx.fill();
-        });
-        ctx.fillStyle = '#f2c318';
-        ctx.font = '700 22px system-ui, sans-serif';
-        ctx.fillText('2025', w / 2, 236);
     });
 }

@@ -50,7 +50,7 @@ def edredom(material, marca):
     curva_q = r * math.pi / 2
     extra = curva_q + cai
     sx, sz = x1 - x0 + extra, z1 - z0 + extra
-    nx, nz = round(sx * 30), round(sz * 30)
+    nx, nz = round(sx * 18), round(sz * 18)
     bm = bmesh.new()
     grade = []
     for i in range(nx + 1):
@@ -158,11 +158,10 @@ def criar():
     # encostado no braço e o boné. O celular (clicável) continua do código ──
     algodao = pbr("algodao", "cotton_jersey", 0.9, tinta="#f1efeb", contraste=0.5, relevo=0.5)
     fronha = pbr("fronha", "cotton_jersey", 0.9, tinta="#d8d6d2", contraste=0.5, relevo=0.5)
-    preto_tecido = pbr("bone", "cotton_jersey", 0.6, tinta="#1d1d20", contraste=0.6)
     pecas.append(macio(caixa("colchao", (1.92, 0.73, -3.5), (5.86, 0.48, 2.85), algodao, p, chanfro=0.08, segmentos=2), niveis=1))
     pecas.append(edredom(algodao, p))
     pecas.append(macio(caixa("travesseiro", (4.42, 1.38, -3.4), (0.3, 0.74, 1.75), fronha, p, chanfro=0.14, segmentos=2, rotacao=(0, 0, -0.45))))
-    pecas.append(bone(preto_tecido, p, (3.9, 1.03, -2.9), -2.95))
+    # O boné em cima da cama saiu em 23/10 (o Daniel achou feio)
 
     # ── Bola de futevôlei (Mikasa amarela, com gomos azuis e verdes), no tapete ──
     amarelo = pbr("bola_amarela", "brown_leather", 0.5, tinta="#f2c21b", contraste=0.3, relevo=0.4)

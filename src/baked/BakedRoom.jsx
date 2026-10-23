@@ -8,22 +8,38 @@ import * as THREE from 'three';
 
 import { dayNight } from '../room/shared';
 import { createBakedMaterial, createSharedUniforms } from './BakedMaterial';
+import { baixarQuarto, leve, texturasDeLuz, urlDe } from './carregamento';
+import { atualizarProgresso } from './progresso';
 
-const BASE = '/room/';
 const { smoothstep, lerp } = THREE.MathUtils;
 
-// No celular, as texturas com metade do tamanho (4x menos memória na placa de vídeo)
-const fileFor = (name, compact) => BASE + (compact ? name.replace(/\.webp$/, '-mobile.webp') : name);
-
-function BakedScene({ manifest, night, compact }) {
+function BakedScene({ manifest, glbUrl, night, compact }) {
     // Geometria comprimida com Draco; o decodificador fica em public/draco (nada vem de CDN).
-    // O GLB traz os materiais e as texturas originais; as texturas de luz vêm à parte
-    // No celular, o GLB com texturas menores: com as de 1024 px o navegador do celular estourava a memória
-    const { scene } = useGLTF(BASE + ((compact && manifest.glb_mobile) || manifest.glb), '/draco/');
+    // O GLB (já baixado pelo BakedRoom, contando os bytes) traz os materiais e as texturas originais;
+    // as texturas de luz vêm à parte
+    const { scene } = useGLTF(glbUrl, '/draco/');
     const groups = Object.entries(manifest.grupos);
     // Todas as texturas de luz de uma vez (o useTexture espera a lista inteira carregar)
-    const files = groups.flatMap(([, g]) => [g.luz_dia, g.luz_noite, g.leds].map((f) => fileFor(f, compact)));
+    const files = texturasDeLuz(manifest).map((f) => urlDe(leve(f), manifest));
     const textures = useTexture(files);
+
+    // O quarto já está na tela: some a barra de carregamento. No computador, as texturas de luz
+    // inteiras chegam depois e entram no lugar das leves (a mesma textura, só a imagem muda)
+    useEffect(() => {
+        const id = requestAnimationFrame(() => atualizarProgresso({ pronto: true }));
+        if (!compact) {
+            const loader = new THREE.ImageLoader();
+            texturasDeLuz(manifest).forEach((f, i) => {
+                loader.load(urlDe(f, manifest), (imagem) => {
+                    textures[i].image = imagem;
+                    textures[i].needsUpdate = true;
+                });
+            });
+        }
+        return () => cancelAnimationFrame(id);
+        // as texturas e o manifesto não mudam durante a vida do componente
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [textures]);
 
     const shared = useMemo(
         () =>
@@ -133,29 +149,35 @@ function BakedScene({ manifest, night, compact }) {
     const envs = useRef(null);
     const exposure = manifest.exposicao ?? { dia: 0, noite: 0 };
     useEffect(() => {
-        const target = new THREE.WebGLCubeRenderTarget(256, { type: THREE.HalfFloatType });
-        const camera = new THREE.CubeCamera(0.05, 60, target);
-        camera.position.set(0, 2.4, 0);
-        const pmrem = new THREE.PMREMGenerator(gl);
-        // Pelos lados abertos do quarto a câmera 360° veria o vazio, e o metal (que só reflete)
-        // ficava preto. O vazio vira um tom quente e claro, como se o quarto continuasse
-        const clear = gl.getClearColor(new THREE.Color());
-        const clearAlpha = gl.getClearAlpha();
-        const capture = (n) => {
-            gl.setClearColor(n ? '#2a2420' : '#cbb9a3', 1);
-            shared.uNight.value = n;
-            shared.uExposure.value = Math.pow(2, n ? exposure.noite : exposure.dia);
-            shared.ledPower.value.set(n, n, n ? 1 : 0.08);
-            camera.update(gl, scene);
-            return pmrem.fromCubemap(target.texture).texture;
-        };
-        envs.current = { day: capture(0), night: capture(1) };
-        gl.setClearColor(clear, clearAlpha);
-        target.dispose();
-        pmrem.dispose();
+        // A foto 360° fica para depois do primeiro quadro: ela desenha o quarto 12 vezes e compila os
+        // shaders de novo, e fazer isso antes deixava o quarto mais ~1 s sem aparecer. Por um instante o
+        // metal fica sem reflexo, e ninguém nota
+        const id = setTimeout(() => {
+            const target = new THREE.WebGLCubeRenderTarget(256, { type: THREE.HalfFloatType });
+            const camera = new THREE.CubeCamera(0.05, 60, target);
+            camera.position.set(0, 2.4, 0);
+            const pmrem = new THREE.PMREMGenerator(gl);
+            // Pelos lados abertos do quarto a câmera 360° veria o vazio, e o metal (que só reflete)
+            // ficava preto. O vazio vira um tom quente e claro, como se o quarto continuasse
+            const clear = gl.getClearColor(new THREE.Color());
+            const clearAlpha = gl.getClearAlpha();
+            const capture = (n) => {
+                gl.setClearColor(n ? '#2a2420' : '#cbb9a3', 1);
+                shared.uNight.value = n;
+                shared.uExposure.value = Math.pow(2, n ? exposure.noite : exposure.dia);
+                shared.ledPower.value.set(n, n, n ? 1 : 0.08);
+                camera.update(gl, scene);
+                return pmrem.fromCubemap(target.texture).texture;
+            };
+            envs.current = { day: capture(0), night: capture(1) };
+            gl.setClearColor(clear, clearAlpha);
+            target.dispose();
+            pmrem.dispose();
+        }, 500);
         return () => {
-            envs.current.day.dispose();
-            envs.current.night.dispose();
+            clearTimeout(id);
+            envs.current?.day.dispose();
+            envs.current?.night.dispose();
             envs.current = null;
             world.environment = null;
         };
@@ -200,18 +222,22 @@ function BakedScene({ manifest, night, compact }) {
 
 // `onFail`: se o manifesto não carregar, o Scene volta para o quarto em código com luz em tempo real
 export default function BakedRoom({ night, compact, onFail }) {
-    const [manifest, setManifest] = useState(null);
+    const [dados, setDados] = useState(null);
     useEffect(() => {
-        fetch(BASE + 'manifest.json')
-            .then((r) => {
-                if (!r.ok) throw new Error(`HTTP ${r.status}`);
-                return r.json();
+        let cancelado = false;
+        // O download começou na abertura da página (main.jsx); aqui só se espera ele terminar
+        baixarQuarto(compact)
+            .then((d) => {
+                if (!cancelado) setDados(d);
             })
-            .then(setManifest)
             .catch((e) => {
                 console.error('quarto assado indisponível, voltando ao quarto em código', e);
+                atualizarProgresso({ pronto: true });
                 onFail?.();
             });
-    }, [onFail]);
-    return manifest ? <BakedScene manifest={manifest} night={night} compact={compact} /> : null;
+        return () => {
+            cancelado = true;
+        };
+    }, [onFail, compact]);
+    return dados ? <BakedScene manifest={dados.manifest} glbUrl={dados.glbUrl} night={night} compact={compact} /> : null;
 }

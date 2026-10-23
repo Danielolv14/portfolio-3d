@@ -224,6 +224,18 @@ def cilindro(nome, posicao, raio, altura, material, marca, segmentos=24, chanfro
     return _objeto(nome, bm, material, posicao, rotacao, marca)
 
 
+def torno(nome, perfil, material, marca, posicao=(0, 0, 0), rotacao=None, segmentos=40):
+    """Peça de revolução, como num torno: o `perfil` [(raio, altura), ...] gira em volta do eixo y do
+    site. Serve para frasco, caneca, ovo, chapéu, varinha. Ponto com raio 0 fecha a ponta."""
+    bm = bmesh.new()
+    vs = [bm.verts.new((r, y, 0)) for r, y in perfil]
+    arestas = [bm.edges.new((vs[i], vs[i + 1])) for i in range(len(vs) - 1)]
+    bmesh.ops.spin(bm, geom=vs + arestas, cent=(0, 0, 0), axis=(0, 1, 0), angle=2 * math.pi, steps=segmentos, use_merge=True)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return _objeto(nome, bm, material, posicao, rotacao, marca)
+
+
 def anel(nome, posicao, raio_ext, raio_int, altura, material, marca, segmentos=48, rotacao=None):
     """Anel (arruela) em pé no eixo y do site: o anel de LED de um fan, uma junta, um aro."""
     bm = bmesh.new()
@@ -373,12 +385,12 @@ def parede(nome, faixa_a, faixa_b, furos, espessura, material, marca, plano="xy"
 ESCALA_MODELOS = 2.6
 
 
-def importar_modelo(id_ph, marca, posicao=(0, 0, 0), rotacao=(0, 0, 0), escala=(ESCALA_MODELOS, ESCALA_MODELOS)):
+def importar_modelo(id_ph, marca, posicao=(0, 0, 0), rotacao=(0, 0, 0), escala=(ESCALA_MODELOS, ESCALA_MODELOS), faces=None):
     """Modelo pronto do Poly Haven (CC0, baixado por pipeline/polyhaven.mjs), com os materiais e as
     texturas dele. Vem em metros e com z para cima; `escala` = (horizontal, vertical) leva para as
     unidades do quarto (ESCALA_MODELOS, igual nos dois sentidos para não deformar).
     `posicao` e `rotacao` no site (o chão do modelo fica em y = posicao[1])."""
-    return _importar_glb(os.path.join(PH, id_ph, f"{id_ph}.gltf"), id_ph, marca, posicao, rotacao, escala)
+    return _importar_glb(os.path.join(PH, id_ph, f"{id_ph}.gltf"), id_ph, marca, posicao, rotacao, escala, faces)
 
 
 def importar_terceiro(pasta, marca, posicao=(0, 0, 0), rotacao=(0, 0, 0), escala=(ESCALA_MODELOS, ESCALA_MODELOS)):
@@ -408,7 +420,7 @@ def _soldar_se_solto(obj):
     print(f"[modelos] {obj.name}: vértices soldados {antes} -> {len(obj.data.vertices)}")
 
 
-def _importar_glb(caminho, nome, marca, posicao, rotacao, escala):
+def _importar_glb(caminho, nome, marca, posicao, rotacao, escala, faces=None):
     if not os.path.exists(caminho):
         raise RuntimeError(f"modelo não encontrado: {caminho}")
     antes = set(bpy.data.objects)
@@ -426,6 +438,12 @@ def _importar_glb(caminho, nome, marca, posicao, rotacao, escala):
             bpy.data.objects.remove(o, do_unlink=True)
     obj = juntar(malhas, nome)
     _soldar_se_solto(obj)
+    # Limite de faces: na visão geral, um objeto pequeno com dezenas de milhares de faces só pesa no download
+    if faces and len(obj.data.polygons) > faces:
+        mod = obj.modifiers.new("reduzir", "DECIMATE")
+        mod.ratio = faces / len(obj.data.polygons)
+        bpy.context.view_layer.objects.active = obj
+        bpy.ops.object.modifier_apply(modifier=mod.name)
     # Chão do modelo em z = 0 e centro em x, y = 0; depois a escala do quarto e o lugar no site
     zs = [v.co.z for v in obj.data.vertices]
     xs = [v.co.x for v in obj.data.vertices]

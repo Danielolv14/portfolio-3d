@@ -178,6 +178,18 @@ def converter(pasta, cfg):
     faces = len(obj.data.polygons)
     limite = cfg.get("faces", 40000)
     if faces > limite:
+        # Malha em "sopa de triângulos" (cada face com os seus 3 vértices) não reduz direito: solda antes
+        import bmesh
+
+        vs = [v.co for v in obj.data.vertices]
+        tamanho = max(max(v[i] for v in vs) - min(v[i] for v in vs) for i in range(3))
+        bm = bmesh.new()
+        bm.from_mesh(obj.data)
+        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=tamanho * 1e-5)
+        bm.to_mesh(obj.data)
+        bm.free()
+        faces = len(obj.data.polygons)
+    if faces > limite:
         mod = obj.modifiers.new("reduzir", "DECIMATE")
         mod.ratio = limite / faces
         bpy.ops.object.modifier_apply(modifier=mod.name)

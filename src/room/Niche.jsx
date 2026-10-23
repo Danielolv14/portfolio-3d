@@ -11,7 +11,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import foto from '../content/foto.jpg';
 import { camoTexture } from './textures';
 import { Bake, Box, C, Cyl, dayNight, Hotspot, lerp, Rounded } from './shared';
-import { stripesTexture, trooperFaceTexture, trophyPrintTexture } from './wallTextures';
+import { stripesTexture } from './wallTextures';
 
 // Caixa do nicho: x da parede até a frente, z de uma lateral à outra
 const X0 = -5.0;
@@ -381,108 +381,6 @@ function Motorbike(props) {
     );
 }
 
-// Troféu de acrílico em base preta, com a impressão amarela e preta
-function Trophy(props) {
-    const print = useMemo(() => trophyPrintTexture(), []);
-    const geometry = useMemo(() => {
-        const s = new THREE.Shape();
-        s.moveTo(-0.08, 0);
-        s.lineTo(0.08, 0);
-        s.lineTo(0.14, 0.56);
-        s.lineTo(-0.14, 0.62);
-        s.closePath();
-        return new THREE.ExtrudeGeometry(s, {
-            depth: 0.024,
-            bevelEnabled: true,
-            bevelThickness: 0.006,
-            bevelSize: 0.006,
-            bevelSegments: 2
-        });
-    }, []);
-    return (
-        <group {...props}>
-            <Rounded size={[0.3, 0.05, 0.14]} radius={0.015} position={[0, 0.025, 0]} color={C.black} roughness={0.3} />
-            <mesh geometry={geometry} position={[0, 0.05, -0.012]} castShadow>
-                <meshStandardMaterial color="#eaf4ff" transparent opacity={0.3} roughness={0.05} />
-            </mesh>
-            <mesh position={[0, 0.43, 0.02]}>
-                <planeGeometry args={[0.2, 0.25]} />
-                <meshStandardMaterial map={print} roughness={0.5} />
-            </mesh>
-        </group>
-    );
-}
-
-// Chaveiro com duas chaves e o controle do portão
-function Keys(props) {
-    return (
-        <group {...props}>
-            <mesh position={[0, 0.006, 0]} rotation-x={Math.PI / 2}>
-                <torusGeometry args={[0.035, 0.006, 8, 20]} />
-                <meshStandardMaterial {...CHROME} />
-            </mesh>
-            <Box
-                size={[0.03, 0.01, 0.12]}
-                position={[0.03, 0.006, 0.08]}
-                rotation-y={0.4}
-                color="#d4b25a"
-                roughness={0.3}
-                metalness={0.8}
-            />
-            <Box size={[0.03, 0.01, 0.11]} position={[-0.02, 0.006, 0.08]} rotation-y={-0.3} {...CHROME} />
-            <Rounded size={[0.07, 0.03, 0.1]} radius={0.012} position={[-0.02, 0.015, -0.08]} color={C.black} roughness={0.5} />
-        </group>
-    );
-}
-
-// Pecinha verde impressa em 3D (um suporte de celular)
-function GreenStand(props) {
-    const green = { color: '#3cae4c', roughness: 0.6 };
-    return (
-        <group {...props}>
-            <Rounded size={[0.16, 0.04, 0.12]} radius={0.015} position={[0, 0.02, 0]} {...green} />
-            <Rounded size={[0.16, 0.14, 0.03]} radius={0.012} position={[0, 0.1, -0.03]} rotation-x={-0.35} {...green} />
-        </group>
-    );
-}
-
-// Cofrinho de Stormtrooper: contorno do capacete com o rosto na frente
-function Trooper(props) {
-    const face = useMemo(() => trooperFaceTexture(), []);
-    const geometry = useMemo(() => {
-        // cúpula em cima, têmporas um pouco para dentro e as bochechas abertas embaixo
-        const s = new THREE.Shape();
-        s.moveTo(0.5, 0.03);
-        s.bezierCurveTo(0.66, 0.03, 0.84, 0.05, 0.95, 0.14);
-        s.bezierCurveTo(1.0, 0.2, 0.97, 0.32, 0.9, 0.4);
-        s.bezierCurveTo(0.87, 0.45, 0.9, 0.55, 0.91, 0.62);
-        s.bezierCurveTo(0.93, 0.88, 0.72, 0.99, 0.5, 0.99);
-        s.bezierCurveTo(0.28, 0.99, 0.07, 0.88, 0.09, 0.62);
-        s.bezierCurveTo(0.1, 0.55, 0.13, 0.45, 0.1, 0.4);
-        s.bezierCurveTo(0.03, 0.32, 0.0, 0.2, 0.05, 0.14);
-        s.bezierCurveTo(0.16, 0.05, 0.34, 0.03, 0.5, 0.03);
-        // a frente (grupo 0) usa x e y do contorno como UV: o rosto cobre o quadrado [0,1]
-        const g = new THREE.ExtrudeGeometry(s, {
-            depth: 0.24,
-            curveSegments: 20,
-            bevelEnabled: true,
-            bevelThickness: 0.12,
-            bevelSize: 0.05,
-            bevelSegments: 6
-        });
-        g.translate(-0.5, 0, -0.12);
-        return g;
-    }, []);
-    return (
-        <group {...props}>
-            <mesh geometry={geometry} position={[0, 0.02, 0]} scale={[0.46, 0.5, 0.42]} castShadow receiveShadow>
-                <meshStandardMaterial attach="material-0" map={face} roughness={0.3} />
-                <meshStandardMaterial attach="material-1" color="#f5f5f2" roughness={0.3} />
-            </mesh>
-        </group>
-    );
-}
-
 function Portrait({ t, onSelect, showLabels, active }) {
     const photo = useMemo(() => {
         const tex = new THREE.TextureLoader().load(foto);
@@ -719,7 +617,7 @@ function Unicorn(props) {
 }
 
 export default function Niche({ t, night, onSelect, showLabels, compact, focus }) {
-    const [base, low, mid, high] = LEVELS;
+    const [base, , mid, high] = LEVELS;
     return (
         <group>
             <Frame />
@@ -747,18 +645,8 @@ export default function Niche({ t, night, onSelect, showLabels, compact, focus }
                     <Robot scale={0.85} />
                 </Item>
 
-                {/* troféu, chaves, porta-retrato e o Stormtrooper */}
-                <Item position={[-4.55, low, 4.74]}>
-                    <GreenStand />
-                </Item>
-                <Item position={[-4.72, low, 4.42]} turn={0.35}>
-                    <Trophy />
-                </Item>
-                <Keys position={[-4.45, low, 3.98]} rotation-y={0.6} />
+                {/* porta-retrato (Sobre mim); os objetos novos dessa prateleira vêm do Blender (modelos/nicho.py) */}
                 <Portrait t={t} onSelect={onSelect} showLabels={showLabels} active={focus === 'about'} />
-                <Item position={[-4.68, low, 2.74]} turn={0.35}>
-                    <Trooper />
-                </Item>
 
                 {/* pelúcias amontoadas na base (no bake saem: a base da estante ganha os Funkos e o trailer) */}
                 <Bake peca="pelucias">

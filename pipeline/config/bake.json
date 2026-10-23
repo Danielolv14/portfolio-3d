@@ -82,18 +82,18 @@
     "rigs": {
         "dia": {
             "ceu": {
-                "elevacaoSol": 28,
-                "forca": 2.2
+                "elevacaoSol": 24,
+                "forca": 1.8
             },
             "sol": {
-                "elevacao": 28,
-                "azimute": 22,
-                "forca": 6,
+                "elevacao": 24,
+                "azimute": 30,
+                "forca": 9,
                 "angulo": 5,
                 "cor": [
                     1,
-                    0.78,
-                    0.55
+                    0.72,
+                    0.45
                 ]
             },
             "luzes": [
@@ -286,9 +286,9 @@
         },
         "dj": {
             "posicao": [
-                2.0,
+                2,
                 3.2,
-                1.0
+                1
             ],
             "alvo": [
                 -0.2,
@@ -357,7 +357,7 @@
             "forca": 20,
             "canal": "B",
             "corSite": [
-                1.0,
+                1,
                 0.72,
                 0.47
             ]
@@ -383,7 +383,7 @@
             "forca": 150,
             "canal": "B",
             "corSite": [
-                1.0,
+                1,
                 0.72,
                 0.47
             ]
@@ -401,7 +401,7 @@
             "forca": 12,
             "canal": "B",
             "corSite": [
-                1.0,
+                1,
                 0.72,
                 0.47
             ]
@@ -443,7 +443,7 @@
                 "max",
                 0.727
             ],
-            "faces": 40000,
+            "faces": 15000,
             "nome": "Pioneer DJ console",
             "autor": "twopixels.studio",
             "link": "https://sketchfab.com/3d-models/0ba527fa6b164c34aa050dcecbaa2ffb"
@@ -454,7 +454,7 @@
                 "altura",
                 0.285
             ],
-            "faces": 30000,
+            "faces": 8000,
             "nome": "KRK Classic 5 Studio Monitor Speaker",
             "autor": "TheGiwi",
             "link": "https://sketchfab.com/3d-models/5c03f6b1082a4decb33ae7511209271a"
@@ -465,7 +465,7 @@
                 "max",
                 0.16
             ],
-            "faces": 30000,
+            "faces": 8000,
             "nome": "Ps5 (controle DualSense)",
             "autor": "kiarash8585",
             "link": "https://sketchfab.com/3d-models/f0b4a0131f784059b0b339d2911478f3"
@@ -476,7 +476,7 @@
                 "max",
                 0.213
             ],
-            "faces": 25000,
+            "faces": 8000,
             "nome": "JBL Charge 3 speaker",
             "autor": "Oleksii.Rozumnyi",
             "link": "https://sketchfab.com/3d-models/661f85fe3e4048f59785b2a75ffa52f8",
@@ -510,7 +510,7 @@
                 "altura",
                 0.18
             ],
-            "faces": 25000,
+            "faces": 10000,
             "nome": "Deadpool Funko Pop",
             "autor": "JJTale",
             "link": "https://sketchfab.com/3d-models/fc56955c30b144a2ad5eff757115633b"
@@ -521,7 +521,7 @@
                 "altura",
                 0.18
             ],
-            "faces": 25000,
+            "faces": 10000,
             "nome": "funko harry potter (I.A)",
             "autor": "deathcow",
             "link": "https://sketchfab.com/3d-models/2be3c180543545cb8ed844f47698f335"
@@ -532,7 +532,7 @@
                 "max",
                 0.22
             ],
-            "faces": 30000,
+            "faces": 10000,
             "nome": "Fleetwood Bounder - Breaking Bad",
             "autor": "Zack_Hawley",
             "link": "https://sketchfab.com/3d-models/85ea7208651a47f6a3b2924dadaeb955"
@@ -543,7 +543,7 @@
                 "max",
                 0.3
             ],
-            "faces": 15000,
+            "faces": 5000,
             "nome": "Nike SB Dunk Low Ben & Jerry's Chunky Dunky",
             "autor": "ShoesPlug",
             "link": "https://sketchfab.com/3d-models/da6bb7c532a04cfaad1164d98213d60b"

@@ -1,5 +1,5 @@
 {
-  "versao": "20261022-191053",
+  "versao": "20261023-095625",
   "preview": false,
   "grupos": {
     "furniture-bed": {
@@ -7,14 +7,14 @@
         "furniture-bed__fixo"
       ],
       "luz_dia": "luz_dia_furniture-bed.webp",
-      "escala_dia": 0.7730437538027779,
+      "escala_dia": 0.7338741089701664,
       "luz_noite": "luz_noite_furniture-bed.webp",
-      "escala_noite": 0.07063446396589512,
+      "escala_noite": 0.07078101953119065,
       "leds": "leds_furniture-bed.webp",
       "escala_leds": [
-        3.1534365120072607,
-        0.4086027551889444,
-        1.2009887347221877
+        3.153435028566861,
+        0.4091338658034811,
+        1.1992103855610736
       ]
     },
     "furniture-desk": {
@@ -24,14 +24,14 @@
         "furniture-desk__hotspot-projects"
       ],
       "luz_dia": "luz_dia_furniture-desk.webp",
-      "escala_dia": 1.1643373641967836,
+      "escala_dia": 1.0530406951904423,
       "luz_noite": "luz_noite_furniture-desk.webp",
-      "escala_noite": 0.054768723905089245,
+      "escala_noite": 0.05458355769515058,
       "leds": "leds_furniture-desk.webp",
       "escala_leds": [
         0.0001,
-        8.248860527041133,
-        2.2780812549592095
+        8.182661628723306,
+        2.217454862594612
       ]
     },
     "furniture-front": {
@@ -39,14 +39,14 @@
         "furniture-front__fixo"
       ],
       "luz_dia": "luz_dia_furniture-front.webp",
-      "escala_dia": 1.900836988210681,
+      "escala_dia": 2.064719703197529,
       "luz_noite": "luz_noite_furniture-front.webp",
-      "escala_noite": 0.2317296366244556,
+      "escala_noite": 0.23099417990446108,
       "leds": "leds_furniture-front.webp",
       "escala_leds": [
         0.0001,
-        0.17235951291024823,
-        0.16866376096010413
+        0.19430300423503066,
+        0.18712353396416243
       ]
     },
     "furniture-niche": {
@@ -54,14 +54,14 @@
         "furniture-niche__fixo"
       ],
       "luz_dia": "luz_dia_furniture-niche.webp",
-      "escala_dia": 0.8435522723197939,
+      "escala_dia": 0.8243686687946602,
       "luz_noite": "luz_noite_furniture-niche.webp",
-      "escala_noite": 0.048997087404132646,
+      "escala_noite": 0.04901574596762669,
       "leds": "leds_furniture-niche.webp",
       "escala_leds": [
         0.0001,
-        0.2187201479077366,
-        0.14445989519357746
+        0.2197505810856844,
+        0.14478245645761925
       ]
     },
     "props-bed": {
@@ -70,14 +70,14 @@
         "props-bed__hotspot-contact"
       ],
       "luz_dia": "luz_dia_props-bed.webp",
-      "escala_dia": 2.634070070743567,
+      "escala_dia": 2.788166867971456,
       "luz_noite": "luz_noite_props-bed.webp",
-      "escala_noite": 0.08546208467334747,
+      "escala_noite": 0.08534689652174818,
       "leds": "leds_props-bed.webp",
       "escala_leds": [
         0.0001,
-        0.5234526068568253,
-        0.1627624647766387
+        0.5168451906442657,
+        0.1641992706358466
       ]
     },
     "props-desk": {
@@ -86,14 +86,14 @@
         "props-desk__fixo"
       ],
       "luz_dia": "luz_dia_props-desk.webp",
-      "escala_dia": 5.568296812534334,
+      "escala_dia": 5.0963861827850625,
       "luz_noite": "luz_noite_props-desk.webp",
-      "escala_noite": 0.088151458628477,
+      "escala_noite": 0.08858558879792798,
       "leds": "leds_props-desk.webp",
       "escala_leds": [
         0.0001,
-        1.48406423175337,
-        0.47042621913554233
+        1.4844953641891647,
+        0.470495447933675
       ]
     },
     "props-floor": {
@@ -101,14 +101,14 @@
         "props-floor__fixo"
       ],
       "luz_dia": "luz_dia_props-floor.webp",
-      "escala_dia": 0.8884252202511049,
+      "escala_dia": 0.8244754786491453,
       "luz_noite": "luz_noite_props-floor.webp",
-      "escala_noite": 0.054508916754276424,
+      "escala_noite": 0.057605479918421056,
       "leds": "leds_props-floor.webp",
       "escala_leds": [
         0.0001,
-        0.07840990260243533,
-        0.13209976486861824
+        0.06725934301317747,
+        0.12027842843532692
       ]
     },
     "props-niche": {
@@ -118,14 +118,14 @@
         "props-niche__hotspot-lamp"
       ],
       "luz_dia": "luz_dia_props-niche.webp",
-      "escala_dia": 0.8303188860416478,
+      "escala_dia": 0.8781765828132677,
       "luz_noite": "luz_noite_props-niche.webp",
-      "escala_noite": 0.05093950122594912,
+      "escala_noite": 0.055415650274604586,
       "leds": "leds_props-niche.webp",
       "escala_leds": [
         0.0001,
-        0.1801504656672478,
-        0.12074495561421293
+        0.19144378578662913,
+        0.12691444537043794
       ]
     },
     "shell": {
@@ -133,14 +133,14 @@
         "shell__fixo"
       ],
       "luz_dia": "luz_dia_shell.webp",
-      "escala_dia": 10.4654900379181,
+      "escala_dia": 9.91750011825565,
       "luz_noite": "luz_noite_shell.webp",
-      "escala_noite": 0.1009899170249713,
+      "escala_noite": 0.10099463784694884,
       "leds": "leds_shell.webp",
       "escala_leds": [
         0.0001,
-        0.9272756257057226,
-        1.1775529395342046
+        0.9273191471099973,
+        1.178962498188096
       ]
     }
   },
@@ -167,13 +167,14 @@
       "nome": "rgb-gabinete + fita-cabeceira + rgb-interno",
       "canal": "B",
       "cor": [
-        1.0,
+        1,
         0.72,
         0.47
       ]
     }
   ],
   "glb": "room.glb",
+  "glb_mobile": "room-mobile.glb",
   "codificacao": {
     "tipo": "log",
     "k": 64.0
@@ -183,12 +184,11 @@
     "noite": -0.5
   },
   "tempos": {
-    "montar": 14.4,
-    "luz_dia": 1479.2,
-    "ref_dia": 102.2,
-    "luz_noite": 309.3,
-    "ref_noite": 76.2,
-    "leds": 1135.6
-  },
-  "glb_mobile": "room-mobile.glb"
+    "montar": 13.7,
+    "luz_dia": 1453.1,
+    "ref_dia": 108.3,
+    "luz_noite": 351.8,
+    "ref_noite": 80.0,
+    "leds": 1309.0
+  }
 }

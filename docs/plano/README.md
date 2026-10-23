@@ -152,7 +152,7 @@ As Fases 2 e 3 podem andar em paralelo depois da 1b, porque mexem em partes dife
 | P5 ✅ | Domínio próprio (ex.: `danieloliveira.dev`, cerca de US$ 12/ano)? | Sim, no lançamento |
 | P6 ✅ | Clima do "dia": meio-dia claro ou fim de tarde dourado? | **Fim de tarde**: luz baixa e quente pela janela, o que dá mais contraste e beleza |
 | P7 | ~~Quais são as ideias novas?~~ | Respondida em 21/10: telas imersivas, estante, janela, modelagem ([07](07-ideias.md)) |
-| P8 🔶 | (parcial em 21/10: ver 09, seção 4) Lista de gostos para a estante (séries, filmes, jogos, esportes e time, música e DJ, hobbies, valores, conquistas), com uma frase por item | Mandar antes do ciclo 3 da Fase 2 ([09](09-estante-sobre-mim.md#4-o-que-o-daniel-precisa-mandar-pergunta-p8)) |
+| P8 ❌ | (descartada em 23/10: a estante fica só com os objetos, sem frases) Lista de gostos para a estante (séries, filmes, jogos, esportes e time, música e DJ, hobbies, valores, conquistas), com uma frase por item | Mandar antes do ciclo 3 da Fase 2 ([09](09-estante-sobre-mim.md#4-o-que-o-daniel-precisa-mandar-pergunta-p8)) |
 | P9 ✅ | O celular passa a ter dock, como um iPhone de verdade? (em 07/10 ficou "sem dock") | **Sim**, com 4 apps: Telefone→Contatos, E-mail, Fotos, Música |
 | P10 ⏳ | Fotos para o app Fotos do celular | 6–12 fotos que o Daniel aprove publicar |
 | P11 ⏳ | Certificados, cursos e formação para a TV (LinkedIn) | Mandar o que tiver; senão, só Formação e Experiência |

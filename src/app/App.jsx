@@ -4,6 +4,7 @@ import { content, profile, SECTIONS } from '../content/content';
 import { IconClose, IconCube, IconList, IconMoon, IconSun, sectionIcon } from './Icons';
 import ScreenOverlay from '../screens/ScreenOverlay';
 import { hasScreen } from '../screens/screens';
+import { porcentagem, useProgressoQuarto } from '../baked/progresso';
 import { SectionHeader, sectionComponents } from '../sections/Sections';
 
 const Scene = lazy(() => import('../scene/Scene'));
@@ -79,6 +80,8 @@ export default function App() {
     const [focus, setFocus] = useState(null);
     const [flat, setFlat] = useState(!webgl);
     const [ready, setReady] = useState(false);
+    // O quarto aparece de fato só depois de baixado (a dica de girar espera por ele)
+    const quarto = useProgressoQuarto();
     // Seção cuja tela a câmera já alcançou (o Scene avisa quando ela para)
     const [parked, setParked] = useState(null);
     const headingRef = useRef(null);
@@ -279,8 +282,8 @@ export default function App() {
                             compact={mobile}
                         />
                     </Suspense>
-                    {!ready && <p className="loading">{t.ui.loading}</p>}
-                    {!focus && ready && <p className="hint">{mobile || touch ? t.ui.hintTouch : t.ui.hint}</p>}
+                    <Carregando texto={t.ui.loading} canvasPronto={ready} />
+                    {!focus && ready && quarto.pronto && <p className="hint">{mobile || touch ? t.ui.hintTouch : t.ui.hint}</p>}
 
                     {screenOpen && (
                         <ScreenOverlay
@@ -351,6 +354,24 @@ export default function App() {
                     })}
                 </nav>
             )}
+        </div>
+    );
+}
+
+// "Montando o quarto… 63%": fica até o quarto aparecer de fato (não só até o canvas ser criado), com a
+// barra andando pelos bytes do GLB e pelas texturas de luz já baixadas
+function Carregando({ texto, canvasPronto }) {
+    const progresso = useProgressoQuarto();
+    if (canvasPronto && progresso.pronto) return null;
+    const p = porcentagem(progresso);
+    return (
+        <div className="loading" role="status" aria-live="polite">
+            <span>
+                {texto} <b>{p}%</b>
+            </span>
+            <span className="loading-barra" aria-hidden="true">
+                <i style={{ width: `${p}%` }} />
+            </span>
         </div>
     );
 }

@@ -341,6 +341,35 @@ h3 {
     left: 50%;
     bottom: 50%;
     transform: translate(-50%, 50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 220px;
+    padding: 12px 18px;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.loading b {
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Barra do carregamento do quarto (a largura vem da porcentagem) */
+.loading-barra {
+    display: block;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--line);
+    overflow: hidden;
+}
+
+.loading-barra i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent);
+    transition: width 0.25s ease-out;
 }
 
 @media (max-width: 759.98px) {

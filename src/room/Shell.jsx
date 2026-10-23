@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { posterTexture, tilesTexture } from './textures';
 import { Bake, Box, C, Cyl, dayNight, Rounded, WALL_H } from './shared';
 import { doorWoodTexture, graniteTexture } from './wallTextures';
+import WindowView from './WindowView';
 
 // Tinta das paredes, o bege-pêssego quente das fotos da cama
 const WALL = '#dfc4a3';
@@ -85,33 +86,11 @@ function Baseboard({ length, along, at }) {
 }
 
 function Window() {
-    const sky = useRef();
-    const disc = useRef();
-    const stars = useRef();
     const glass = useRef();
-    const colors = useMemo(
-        () => ({
-            skyDay: new THREE.Color('#a9d6f2'),
-            skyNight: new THREE.Color('#121a35'),
-            sun: new THREE.Color('#fff1b8'),
-            moon: new THREE.Color('#eef2ff')
-        }),
-        []
-    );
-    const starPositions = useMemo(() => {
-        const arr = [];
-        // só na metade do vidro; a veneziana cobre o resto
-        for (let i = 0; i < 18; i++) arr.push(WIN.x0 + Math.random() * WIN_W * 0.5, 3.0 + Math.random() * 1.3, -5.53);
-        return new Float32Array(arr);
-    }, []);
     const granite = useMemo(() => graniteTexture(WIN_W + 0.3), []);
 
     useFrame(() => {
-        const m = dayNight.mix;
-        sky.current.color.lerpColors(colors.skyDay, colors.skyNight, m);
-        disc.current.color.lerpColors(colors.sun, colors.moon, m);
-        stars.current.opacity = m;
-        glass.current.opacity = THREE.MathUtils.lerp(0.14, 0.06, m);
+        glass.current.opacity = THREE.MathUtils.lerp(0.14, 0.06, dayNight.mix);
     });
 
     // Folha de vidro à esquerda (trilho de trás) e de veneziana à direita (trilho da frente)
@@ -139,31 +118,9 @@ function Window() {
 
     return (
         <group>
-            {/* Lá fora: céu, sol/lua, estrelas e a casa do vizinho, vistos só pelo vão.
-                Fica fora do bake: a vista vai ser refeita como paisagem viva (docs/plano/03-iluminacao.md) */}
+            {/* Lá fora (fora do bake, ao vivo): sol de fim de tarde de dia e cidade chuvosa à noite */}
             <Bake kind="live">
-                <mesh position={[WIN_CX, WIN_CY, -5.55]}>
-                    <planeGeometry args={[WIN_W + 1.4, WIN_H + 1.6]} />
-                    <meshBasicMaterial ref={sky} toneMapped={false} />
-                </mesh>
-                <mesh position={[WIN.x0 + 0.62, 3.9, -5.53]}>
-                    <circleGeometry args={[0.2, 32]} />
-                    <meshBasicMaterial ref={disc} toneMapped={false} />
-                </mesh>
-                <points>
-                    <bufferGeometry>
-                        <bufferAttribute attach="attributes-position" args={[starPositions, 3]} />
-                    </bufferGeometry>
-                    <pointsMaterial ref={stars} size={0.035} color="#ffffff" transparent opacity={0} />
-                </points>
-                <mesh position={[WIN_CX, 2.25, -5.5]}>
-                    <planeGeometry args={[WIN_W + 1, 0.7]} />
-                    <meshStandardMaterial color="#a39a8e" roughness={1} />
-                </mesh>
-                <mesh position={[WIN_CX - 0.3, 2.68, -5.46]} rotation-x={-0.6}>
-                    <planeGeometry args={[WIN_W, 0.3]} />
-                    <meshStandardMaterial color="#a8553c" roughness={0.9} />
-                </mesh>
+                <WindowView cx={WIN_CX} cy={WIN_CY} w={WIN_W} h={WIN_H} />
             </Bake>
 
             {/* Guarnição de alumínio rente à parede */}

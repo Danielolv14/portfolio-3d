@@ -8,6 +8,7 @@ import { Component, useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 import BakedRoom from '../baked/BakedRoom';
+import { atualizarProgresso } from '../baked/progresso';
 import Room from '../room/Room';
 import { findScreen } from '../screens/screens';
 import ScreenTracker from '../screens/ScreenTracker';
@@ -323,6 +324,10 @@ export default function Scene({
     const showLabels = !focus;
     const [baked, setBaked] = useState(!PREFER_SOURCE);
     const onBakedFail = useCallback(() => setBaked(false), []);
+    // O quarto em código aparece na hora: a barra de carregamento já pode sumir (no assado, o BakedRoom avisa)
+    useEffect(() => {
+        if (!baked) atualizarProgresso({ pronto: true });
+    }, [baked]);
     // Clique fora (no quarto ou no vazio) fecha a seção. O 2º clique de um duplo clique não conta:
     // ele cai onde estava a etiqueta ou o objeto que abriu a seção (a câmera já saiu do lugar)
     // e fecharia na hora o que o 1º clique abriu.

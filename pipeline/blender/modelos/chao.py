@@ -55,7 +55,8 @@ def criar():
     ziper = cor("ziper", "#2f3034", rugosidade=0.5)
     branco = cor("logo_branco", "#f2f2ef", rugosidade=0.6)
     metal = cor("metal_ziper", "#c9ccd1", rugosidade=0.3, metal=0.8)
-    pecas = [transformar(mochila(m, tecido, tecido2, ziper, branco, metal), (-3.7, 0.0, 0.9), (0, 1.25, 0))]
+    # A mochila saiu em 23/10 (o Daniel achou feia); a função fica para uma versão nova
+    pecas = []
 
     # Par de Dunk perto da porta (o mesmo pé duas vezes, girado: na visão geral não se nota)
     for posicao, giro in (((-3.78, 0, 1.8), 0.62), ((-3.45, 0, 2.15), 0.22)):

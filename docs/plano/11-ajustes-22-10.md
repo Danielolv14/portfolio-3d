@@ -118,9 +118,17 @@ Especificação completa em [`08-telas.md`](08-telas.md), seções 1 e 2 (é só
 
 ---
 
-## Pendente para depois (pedido do Daniel: "deixa para depois")
+## Pendente para depois: situação em 23/10
 
-- Indicador de carregamento com porcentagem (o GLB tem 44 MB).
-- GLB leve para o celular (texturas em 1K).
-- Vista da janela em BH estilizada (janela viva).
-- Objetos da estante que ainda vêm do código (robô, moto, troféu, chaves, suporte verde, Stormtrooper, garrafinha) e o console PS5 feito por script.
+- ✅ **GLB leve para o celular** (22/10, `73e9889`): texturas de no máximo 1024 px no computador e um `room-mobile.glb` (512 px, sem relevo) para o celular, que não abria o site.
+- ✅ **Indicador de carregamento** (23/10): "Montando o quarto… 63%", com a barra andando pelos bytes do GLB e pelas texturas de luz (`src/baked/progresso.js`, `Carregando` no `App.jsx`). Ele só some quando o quarto aparece de fato (antes sumia quando o canvas era criado, e o fundo ficava vazio).
+- ✅ **Carregamento mais rápido** (23/10):
+  - o download do quarto começa na abertura da página (`src/baked/carregamento.js`, chamado no `main.jsx`), em paralelo com o JavaScript, e não depois do three.js;
+  - as texturas de luz leves vêm junto e o computador troca pelas inteiras depois;
+  - a foto 360° dos reflexos fica para depois do primeiro quadro;
+  - os arquivos levam `?v=<versão do bake>` e o `vercel.json` manda o navegador guardar `/room/*` por um ano (o `manifest.json` nunca vem do cache);
+  - as malhas dos modelos prontos caíram para cerca de um terço (limite de `faces` no conversor e em `importar_modelo`).
+- ✅ **Janela viva** (23/10): o Daniel trocou BH por **sol de fim de tarde de dia e cidade chuvosa à noite** (`src/room/WindowView.jsx`: céu, duas camadas de prédios em profundidades diferentes para a paralaxe, chuva caindo e gotas no vidro). O sol do bake ficou mais baixo, forte e dourado, e entra pela janela até o tapete.
+- ✅ **Estante** (23/10): saíram o troféu, as chaves, o suporte verde e o Stormtrooper (do código também); a mochila e o boné em cima da cama também saíram. Entraram, por script: chapéu pork pie e frasco com líquido azul (Breaking Bad), ovo de dragão no suporte (GOT), varinha (HP), caneca com `</>` e, pendurados, o crachá do estágio e a credencial BACKSTAGE. O porta-retrato (Sobre mim) ficou. O Daniel vai procurar mais modelos prontos para a estante.
+- ❌ **Frases e gostos para a estante (P8): descartado** pelo Daniel (23/10). A estante fica só com os objetos, sem cartões.
+- ⏳ Robô, moto e garrafinha (outras prateleiras) e o console PS5 por script: esperar os modelos que o Daniel vai procurar.
