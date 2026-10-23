@@ -125,6 +125,13 @@ export const IconPin = () => (
     </svg>
 );
 
+export const IconInfo = () => (
+    <svg {...base}>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v5M12 7.6v.1" />
+    </svg>
+);
+
 export const sectionIcon = {
     about: IconUser,
     projects: IconMonitor,

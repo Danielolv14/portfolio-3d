@@ -333,8 +333,16 @@ Este é um projeto individual da disciplina, mas sugestões são bem-vindas:
 
 ---
 
+## 🧩 Créditos de terceiros
+
+O quarto usa modelos 3D do Sketchfab sob **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)** (Pioneer DJ console, de twopixels.studio; KRK Classic 5, de TheGiwi; Ps5, de kiarash8585; JBL Charge 3, de Oleksii.Rozumnyi; Deadpool Funko Pop, de JJTale; funko harry potter, de deathcow; Fleetwood Bounder, de Zack_Hawley; Nike SB Dunk Low Chunky Dunky, de ShoesPlug) e texturas e modelos **CC0** do [Poly Haven](https://polyhaven.com). Em todos os modelos houve mudança de escala, redução de polígonos e conversão para glTF; na JBL, também a cor.
+
+A lista completa, com o link de cada modelo, está em [`docs/creditos.md`](docs/creditos.md) e no botão **Créditos** do site.
+
+---
+
 ## 📄 Licença
 
-Este projeto é distribuído sob a **[Licença MIT](LICENSE)**.
+O código é distribuído sob a **[Licença MIT](LICENSE)**. Os modelos e texturas de terceiros continuam com a licença de cada autor (veja acima).
 
 ---

@@ -381,6 +381,99 @@ h3 {
     }
 }
 
+/* Botão "Créditos" no canto do quarto: a licença CC BY dos modelos pede o crédito visível */
+.credits-link {
+    position: absolute;
+    right: 16px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px 8px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 85%, transparent);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 600;
+}
+
+.credits-link svg {
+    width: 16px;
+    height: 16px;
+}
+
+.credits-link:hover {
+    color: var(--fg);
+    border-color: var(--accent);
+}
+
+/* No celular a dica ocupa o meio de baixo: o botão sobe para o canto de cima, abaixo do menu */
+@media (max-width: 759.98px) {
+    .credits-link {
+        bottom: auto;
+        top: calc(env(safe-area-inset-top, 0px) + 72px);
+    }
+}
+
+.credits {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+}
+
+.credits-intro,
+.credits-note {
+    margin: 0;
+    color: var(--muted);
+}
+
+.credits-note {
+    font-size: var(--step--1);
+}
+
+.credits-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.credits-list li {
+    display: grid;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    min-width: 0;
+}
+
+.credits-list a {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.credits-list span {
+    font-size: var(--step--1);
+    color: var(--muted);
+}
+
+.credits a {
+    color: var(--fg);
+    text-underline-offset: 2px;
+}
+
+.credits a:hover {
+    color: var(--accent);
+}
+
+.flat-credits {
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+}
+
 /* Etiquetas presas aos objetos do quarto */
 .tag {
     display: inline-flex;

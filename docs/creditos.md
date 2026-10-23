@@ -1,5 +1,7 @@
 # Créditos
 
+> O site mostra esta mesma lista no botão **Créditos** (canto do quarto) e no fim do modo 2D. Ela fica em `src/content/creditos.js`: ao entrar ou sair um modelo, atualize os dois.
+
 O quarto, o código e as artes próprias são de Daniel Oliveira de Menezes. Abaixo estão os recursos de terceiros usados no quarto 3D, com a licença de cada um. As marcas que aparecem nos modelos (Pioneer DJ, KRK, Sony PlayStation, JBL, Nike, Funko, Marvel, Warner Bros., AMC) pertencem aos seus donos; aqui elas só retratam objetos do quarto.
 
 ## Texturas e modelos CC0 (Poly Haven)

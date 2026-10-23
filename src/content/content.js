@@ -190,6 +190,19 @@ export const content = {
                 escHome: 'Esc volta à tela inicial'
             }
         },
+        // Créditos dos modelos de terceiros (src/sections/Credits.jsx; a lista fica em creditos.js)
+        credits: {
+            button: 'Créditos',
+            title: 'Créditos',
+            intro: 'O quarto, o código e as artes próprias são de Daniel Oliveira de Menezes. Os modelos e texturas abaixo são de terceiros, usados conforme a licença de cada um.',
+            ccByTitle: 'Modelos 3D (Sketchfab)',
+            by: 'de',
+            changes: 'Alterações feitas em todos: escala, redução de polígonos e conversão para glTF; na JBL, também a cor.',
+            cc0Title: 'Texturas e modelos',
+            textures: 'Texturas',
+            models: 'Modelos',
+            trademarks: 'As marcas que aparecem nos modelos pertencem aos seus donos e só retratam objetos do quarto.'
+        },
         about: {
             role: 'Estudante de Engenharia de Software, curioso e motivado',
             readIn: 'Ler em',
@@ -353,6 +366,19 @@ export const content = {
                 escHint: 'Esc goes back to the room',
                 escHome: 'Esc goes back to the home screen'
             }
+        },
+        // Créditos dos modelos de terceiros (src/sections/Credits.jsx; a lista fica em creditos.js)
+        credits: {
+            button: 'Credits',
+            title: 'Credits',
+            intro: 'The room, the code and the original art are by Daniel Oliveira de Menezes. The models and textures below are third-party works, used under their licenses.',
+            ccByTitle: '3D models (Sketchfab)',
+            by: 'by',
+            changes: 'Changes made to all of them: scale, polygon reduction and conversion to glTF; on the JBL, also the color.',
+            cc0Title: 'Textures and models',
+            textures: 'Textures',
+            models: 'Models',
+            trademarks: 'Brands shown on the models belong to their owners and only portray objects in the room.'
         },
         about: {
             role: 'A curious and driven Software Engineering student',

@@ -1,11 +1,12 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { content, profile, SECTIONS } from '../content/content';
-import { IconClose, IconCube, IconList, IconMoon, IconSun, sectionIcon } from './Icons';
+import { IconClose, IconCube, IconInfo, IconList, IconMoon, IconSun, sectionIcon } from './Icons';
 import ScreenOverlay from '../screens/ScreenOverlay';
 import { hasScreen } from '../screens/screens';
 import { porcentagem, useProgressoQuarto } from '../baked/progresso';
 import { SectionHeader, sectionComponents } from '../sections/Sections';
+import Credits from '../sections/Credits';
 
 const Scene = lazy(() => import('../scene/Scene'));
 
@@ -84,6 +85,9 @@ export default function App() {
     const quarto = useProgressoQuarto();
     // Seção cuja tela a câmera já alcançou (o Scene avisa quando ela para)
     const [parked, setParked] = useState(null);
+    // Painel de créditos dos modelos de terceiros (fora das seções: não move a câmera)
+    const [credits, setCredits] = useState(false);
+    const creditsBtnRef = useRef(null);
     const headingRef = useRef(null);
     // Quem abriu a seção (botão do menu, etiqueta...), para devolver o foco quando ela fechar
     const openerRef = useRef(null);
@@ -147,9 +151,23 @@ export default function App() {
         target?.focus({ preventScroll: true });
     }, [focus]);
 
+    // Créditos: foco no título ao abrir e de volta no botão ao fechar (se o foco se perdeu com o painel)
+    const creditsWasOpen = useRef(false);
+    useEffect(() => {
+        const wasOpen = creditsWasOpen.current;
+        creditsWasOpen.current = credits;
+        if (credits) headingRef.current?.focus({ preventScroll: true });
+        else if (wasOpen && (!document.activeElement || document.activeElement === document.body)) {
+            creditsBtnRef.current?.focus({ preventScroll: true });
+        }
+    }, [credits]);
+
     useEffect(() => {
         const onKey = (e) => {
-            if (e.key === 'Escape') setFocus(null);
+            if (e.key === 'Escape') {
+                setFocus(null);
+                setCredits(false);
+            }
         };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
@@ -164,8 +182,14 @@ export default function App() {
         const el = document.activeElement;
         const outside = el && el !== document.body && !el.closest('.panel, .screen');
         openerRef.current = outside ? el : null;
+        setCredits(false);
         setFocus(id);
     }, []);
+
+    const openCredits = () => {
+        setFocus(null);
+        setCredits(true);
+    };
 
     // Objetos do quarto: seções abrem o painel ou a tela; a luminária "&" é o atalho de dia/noite
     const onSelect = useCallback(
@@ -208,7 +232,15 @@ export default function App() {
     return (
         <div className={`app${flat ? ' app-flat' : ''}`}>
             <header className="topbar">
-                <button type="button" className="brand" onClick={() => (flat ? window.scrollTo(0, 0) : setFocus(null))}>
+                <button
+                    type="button"
+                    className="brand"
+                    onClick={() => {
+                        setCredits(false);
+                        if (flat) window.scrollTo(0, 0);
+                        else setFocus(null);
+                    }}
+                >
                     <span className="brand-mark" aria-hidden="true">
                         &lt;/&gt;
                     </span>
@@ -253,6 +285,7 @@ export default function App() {
                             title={flat ? t.ui.view3d : t.ui.view2d}
                             onClick={() => {
                                 setFocus(null);
+                                setCredits(false);
                                 setFlat((f) => !f);
                             }}
                         >
@@ -284,6 +317,12 @@ export default function App() {
                     </Suspense>
                     <Carregando texto={t.ui.loading} canvasPronto={ready} />
                     {!focus && ready && quarto.pronto && <p className="hint">{mobile || touch ? t.ui.hintTouch : t.ui.hint}</p>}
+                    {!focus && !credits && ready && quarto.pronto && (
+                        <button type="button" className="credits-link" ref={creditsBtnRef} onClick={openCredits}>
+                            <IconInfo />
+                            {t.credits.button}
+                        </button>
+                    )}
 
                     {screenOpen && (
                         <ScreenOverlay
@@ -317,6 +356,25 @@ export default function App() {
                             </div>
                         </aside>
                     )}
+
+                    {credits && !focus && (
+                        <aside className="panel" role="dialog" aria-labelledby="credits-title">
+                            <div className="panel-top">
+                                <button
+                                    type="button"
+                                    className="tool"
+                                    onClick={() => setCredits(false)}
+                                    aria-label={t.ui.close}
+                                    title={t.ui.close}
+                                >
+                                    <IconClose />
+                                </button>
+                            </div>
+                            <div className="panel-body">
+                                <Credits t={t} lang={lang} headingRef={headingRef} headingId="credits-title" />
+                            </div>
+                        </aside>
+                    )}
                 </main>
             )}
 
@@ -331,6 +389,9 @@ export default function App() {
                             </section>
                         );
                     })}
+                    <footer className="flat-section flat-credits">
+                        <Credits t={t} lang={lang} />
+                    </footer>
                 </main>
             )}
 
