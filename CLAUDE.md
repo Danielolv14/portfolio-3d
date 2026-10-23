@@ -47,7 +47,7 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
   - `VITE_EMAILJS_TEMPLATE_ID_FOR_SENDER`
   - `VITE_EMAILJS_PUBLIC_KEY`
   
-  Sem essas variáveis o formulário avisa que o envio não está configurado. A conta ainda não foi criada.
+  Sem essas variáveis o formulário avisa que o envio não está configurado. **Conta criada em 23/10** (Gmail do Daniel, plano grátis: 200 envios por mês, e cada mensagem gasta 2): serviço `service_xt6t26r`, modelos `template_4zhwjg9` ("Portfólio - para mim", com Reply To = quem escreveu) e `template_tj7tefq` ("Portfólio - resposta automática"). As 4 variáveis estão na Vercel (Production, tipo Config). A resposta automática **não repete a mensagem**, senão o formulário viraria um jeito de mandar spam para qualquer endereço. Variável nova do Vite só entra num build novo: depois de mudar na Vercel, publique de novo.
 - O `vite.config.js` usa `server.watch.usePolling`, porque no PC do Daniel o projeto fica no OneDrive, que perde eventos de arquivo.
 
 ## Arquitetura
