@@ -480,44 +480,92 @@ def texto(nome, conteudo, fonte, altura, espessura, material, marca, posicao=(0,
     return _objeto(nome, bm, material, posicao, rotacao, marca)
 
 
-def bola_volei(nome, posicao, raio, cores, marca, rotacao=None, sulco=0.04, res=(28, 9)):
-    """Bola de vôlei/futevôlei como a de verdade: as 6 faces de um cubo, cada uma com 3 gomos, levadas
-    para a esfera. Faces vizinhas têm os gomos cruzados. Perto das costuras o raio cai um pouco (o
-    sulco). `cores`: função (eixo da face, índice do gomo) -> material."""
+def bola_ft5(nome, posicao, raio, preto, amarelo, marca, frente, cima=(0, 1, 0), divisoes=16, sulco=0.008):
+    """Bola de futevôlei Mikasa FT-5: um octaedro com cada face dividida em 4 triângulos (32 no total),
+    levado para a esfera e pintado em xadrez preto e amarelo. Nas faces de um tipo o triângulo do meio
+    é amarelo e os 3 de canto são pretos; nas vizinhas, o contrário. Assim os pretos se tocam pelas
+    pontas (em 4 nos vértices do octaedro, em 6 nos meios das arestas), como na bola de verdade. Cada
+    triângulo é subdividido (`divisoes`), e nas emendas a superfície afunda um pouco (`sulco`, fração
+    do raio).
+    No sistema da bola, o triângulo preto do logo é o de canto em (1, 0, 0) da face (+, +, +), e o
+    amarelo do meio dessa face fica em cima dele. `frente` (no site): para onde o triângulo do logo
+    olha; `cima`: o lado de cima, para o texto ficar em pé.
+    Devolve (bola, giro, centros): `giro` leva do sistema da bola para o site, e `centros` tem a direção
+    (no sistema da bola) do meio dos triângulos com escrito: "logo", "marca" (MIKASA) e "lados" (os
+    dois amarelos de baixo do logo), para `na_bola`."""
+    def meio(*vs):
+        return sum((Vector(v) for v in vs), Vector()).normalized()
+
+    a, ab, ca = Vector((1, 0, 0)), meio((1, 0, 0), (0, 1, 0)), meio((1, 0, 0), (0, 0, 1))
+    centros = {
+        "logo": meio(a, ab, ca),
+        "marca": meio((1, 1, 1)),
+        "lados": (meio(a, ab, meio((1, 0, 0), (0, 0, -1))), meio(a, ca, meio((1, 0, 0), (0, -1, 0)))),
+    }
+    # Rotação: sistema da bola -> site (o logo olha para `frente`, o amarelo do MIKASA fica em cima)
+    f_l = centros["logo"]
+    u_l = (centros["marca"] - centros["marca"].dot(f_l) * f_l).normalized()
+    r_l = u_l.cross(f_l)
+    f_s = Vector(frente).normalized()
+    u_s = (Vector(cima) - Vector(cima).dot(f_s) * f_s).normalized()
+    r_s = u_s.cross(f_s)
+    giro = Matrix((r_s, u_s, f_s)).transposed() @ Matrix((r_l, u_l, f_l))
+
+    partes = {True: bmesh.new(), False: bmesh.new()}
+    n = divisoes
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            for sz in (-1, 1):
+                va, vb, vc = Vector((sx, 0, 0)), Vector((0, sy, 0)), Vector((0, 0, sz))
+                mab, mbc, mca = meio(va, vb), meio(vb, vc), meio(vc, va)
+                tipo = sx * sy * sz > 0
+                triangulos = [((va, mab, mca), False), ((vb, mbc, mab), False), ((vc, mca, mbc), False), ((mab, mbc, mca), True)]
+                for (v0, v1, v2), do_meio in triangulos:
+                    escuro = tipo != do_meio  # faces (+): cantos pretos e meio amarelo; nas outras, o contrário
+                    bm = partes[escuro]
+                    grade = {}
+                    for i in range(n + 1):
+                        for j in range(n + 1 - i):
+                            k = n - i - j
+                            d = ((v0 * k + v1 * i + v2 * j) / n).normalized()
+                            # afunda nas bordas do triângulo (as emendas) e um pouco no passo seguinte
+                            borda = min(i, j, k)
+                            grade[i, j] = bm.verts.new(giro @ (d * raio * (1 - sulco * max(0.0, 1 - borda / 1.3))))
+                    for i in range(n):
+                        for j in range(n - i):
+                            faces = [(grade[i, j], grade[i + 1, j], grade[i, j + 1])]
+                            if i + j < n - 1:
+                                faces.append((grade[i + 1, j], grade[i + 1, j + 1], grade[i, j + 1]))
+                            for vs in faces:
+                                f = bm.faces.new(vs)
+                                f.normal_update()
+                                if f.normal.dot(f.calc_center_median()) < 0:
+                                    f.normal_flip()
     pecas = []
-    for k in range(3):
-        ao_longo, atravessado = (k + 1) % 3, (k + 2) % 3
-        for s in (-1, 1):
-            for g in range(3):
-                bm = bmesh.new()
-                b0, b1 = -1 + g * 2 / 3, -1 + (g + 1) * 2 / 3
-                nu, nv = res
-                grade = []
-                for i in range(nu + 1):
-                    linha = []
-                    t = -1 + 2 * i / nu
-                    for j in range(nv + 1):
-                        w = b0 + (b1 - b0) * j / nv
-                        p = [0.0, 0.0, 0.0]
-                        p[k], p[ao_longo], p[atravessado] = s, t, w
-                        d = Vector(p).normalized()
-                        # distância até a costura mais perto (bordas do gomo e da face), no cubo
-                        borda = min(abs(t - 1), abs(t + 1), abs(w - b0), abs(w - b1))
-                        queda = 1 - min(borda / 0.09, 1) ** 0.5
-                        linha.append(bm.verts.new(d * raio * (1 - sulco * queda)))
-                    grade.append(linha)
-                for i in range(nu):
-                    for j in range(nv):
-                        f = bm.faces.new([grade[i][j], grade[i + 1][j], grade[i + 1][j + 1], grade[i][j + 1]])
-                        f.normal_update()
-                        if f.normal.dot(f.calc_center_median()) < 0:
-                            f.normal_flip()
-                pecas.append(_objeto(f"{nome}_gomo", bm, cores(k, g), (0, 0, 0), None, marca))
+    for escuro, bm in partes.items():
+        # triângulos da mesma cor só se tocam nas pontas, mas a mesma face tem pontos repetidos nas bordas
+        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=raio * 1e-4)
+        pecas.append(_objeto(f"{nome}_{'preto' if escuro else 'amarelo'}", bm, preto if escuro else amarelo, posicao, None, marca))
     obj = juntar(pecas, nome)
     for poly in obj.data.polygons:
         poly.use_smooth = True
-    obj.data.set_sharp_from_angle(angle=math.radians(50))
-    return transformar(obj, posicao, rotacao or (0, 0, 0))
+    return obj, giro, centros
+
+
+def na_bola(obj, posicao, raio, giro, direcao, x=0.0, y=0.0, folga=0.0015, cima=(0, 1, 0)):
+    """Curva um texto (feito com `texto`, no plano xy, de frente para +z) sobre a bola de `bola_ft5`,
+    no ponto `direcao` (no sistema da bola) deslocado `x`, `y` ali, em pé em relação a `cima`."""
+    s_inv = SITE_PARA_BLENDER.inverted()
+    n = (giro @ Vector(direcao)).normalized()
+    u = (Vector(cima) - Vector(cima).dot(n) * n).normalized()
+    r = u.cross(n)
+    base = Vector(posicao)
+    for v in obj.data.vertices:
+        p = s_inv @ v.co  # de volta para o site (o texto foi criado na origem)
+        q = (n * raio + r * (p.x + x) + u * (p.y + y)).normalized()
+        v.co = SITE_PARA_BLENDER @ (base + q * (raio + folga + p.z))
+    obj.data.update()
+    return obj
 
 
 def curva(p0, controle, p1, passos=16):

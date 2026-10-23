@@ -11,12 +11,19 @@ import math
 
 import bmesh
 import bpy
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 
-from modelos.base import _objeto, bola_volei, caixa, cilindro, cor, felpudo, juntar, macio, pbr, placa, textura, transformar
+from modelos.base import (ESCALA_MODELOS, _objeto, bola_ft5, caixa, cilindro, cor, felpudo, juntar, macio, na_bola, pbr, placa, texto,
+                          textura, transformar)
 
 GRUPO = "furniture-bed"
 GRUPO_OBJETOS = "props-bed"
+
+# Fontes dos escritos da bola (as mais parecidas com as da Mikasa FT-5 que vêm no Windows)
+FONTE_MIKASA = "C:/Windows/Fonts/ariblk.ttf"
+FONTE_TEXTO = "C:/Windows/Fonts/arial.ttf"
+FONTE_SERIFA = "C:/Windows/Fonts/timesbd.ttf"
+FONTE_ASSINATURA = "C:/Windows/Fonts/segoescb.ttf"
 RAD90 = 1.5708
 
 
@@ -163,13 +170,45 @@ def criar():
     pecas.append(macio(caixa("travesseiro", (4.42, 1.38, -3.4), (0.3, 0.74, 1.75), fronha, p, chanfro=0.14, segmentos=2, rotacao=(0, 0, -0.45))))
     # O boné em cima da cama saiu em 23/10 (o Daniel achou feio)
 
-    # ── Bola de futevôlei (Mikasa amarela, com gomos azuis e verdes), no tapete ──
-    amarelo = pbr("bola_amarela", "brown_leather", 0.5, tinta="#f2c21b", contraste=0.3, relevo=0.4)
-    azul = pbr("bola_azul", "brown_leather", 0.5, tinta="#1f5fbf", contraste=0.3, relevo=0.4)
-    verde = pbr("bola_verde", "brown_leather", 0.5, tinta="#2e9a52", contraste=0.3, relevo=0.4)
-    pecas.append(bola_volei("bola", (2.6, 0.45, -0.6), 0.4, lambda k, g: azul if (k, g) == (0, 1) else verde if (k, g) == (2, 1) else amarelo,
-                            p, rotacao=(0.4, 0.8, 0.2)))
+    # ── Bola de futevôlei Mikasa FT-5 (a do Daniel, 23/10), em tamanho real, no tapete ──
+    pecas += bola_mikasa(p)
 
     moveis = [o for o in pecas if o["bk_group"] == GRUPO]
     objetos = [o for o in pecas if o["bk_group"] == GRUPO_OBJETOS]
     return [juntar(moveis, f"{GRUPO}_fixo"), juntar(objetos, f"{GRUPO_OBJETOS}_fixo")]
+
+
+def bola_mikasa(p):
+    """Mikasa FT-5 amarela e preta (bola_ft5: 32 triângulos em xadrez) com os escritos dela curvados na
+    superfície. 68–70 cm de circunferência (tamanho 5): raio de 11 cm. O triângulo preto do logo
+    ("Goalmaster", em dourado) olha para a câmera da visão geral; em cima dele, o amarelo com MIKASA,
+    FT-5 e "Footvolley ball"; embaixo à direita, o amarelo com SOFT BILT, NYLON WOUND, WATER PROOF e
+    SIZE 5. Material liso e brilhante, como o couro sintético dela."""
+    raio = 0.11 * ESCALA_MODELOS
+    centro = (2.6, 0.09 + raio - 0.015, -0.6)  # apoiada no tapete, afundando um pouco no pelo
+    frente = Vector((14.68, 13.64, 14.68)) - Vector(centro)  # câmera "geral" do bake.json
+    amarelo = cor("bola_amarela", "#dccc00", rugosidade=0.3)
+    preto = cor("bola_preta", "#16161a", rugosidade=0.32)
+    tinta = cor("bola_tinta", "#101012", rugosidade=0.5)
+    ouro = cor("bola_ouro", "#c9a24a", rugosidade=0.3, metal=0.85)
+    bola, giro, centros = bola_ft5("bola", centro, raio, preto, amarelo, p, frente)
+    # dos dois amarelos de baixo do logo, o da direita (visto da câmera)
+    direita = Vector((0, 1, 0)).cross(frente.normalized())
+    lado = max(centros["lados"], key=lambda d: (giro @ d).dot(direita))
+    escritos = [
+        # texto, fonte, altura da letra, triângulo, deslocamento (x, y) dentro dele, material
+        ("MIKASA", FONTE_MIKASA, 0.034, centros["marca"], (0.0, 0.022), tinta),
+        ("JAPAN", FONTE_TEXTO, 0.009, centros["marca"], (0.045, 0.0), tinta),
+        ("FT-5", FONTE_TEXTO, 0.026, centros["marca"], (0.0, -0.024), tinta),
+        ("Footvolley ball", FONTE_TEXTO, 0.015, centros["marca"], (0.0, -0.054), tinta),
+        ("Goalmaster", FONTE_ASSINATURA, 0.022, centros["logo"], (0.008, 0.012), ouro),
+        ("SOFT BILT", FONTE_SERIFA, 0.014, lado, (0.0, 0.028), tinta),
+        ("NYLON WOUND", FONTE_SERIFA, 0.014, lado, (0.0, 0.009), tinta),
+        ("WATER PROOF", FONTE_SERIFA, 0.014, lado, (0.0, -0.01), tinta),
+        ("SIZE 5", FONTE_SERIFA, 0.014, lado, (0.0, -0.029), tinta),
+    ]
+    pecas = [bola]
+    for conteudo, fonte, altura, direcao, (x, y), material in escritos:
+        letreiro = texto("bola_escrito", conteudo, fonte, altura, 0.0012, material, p)
+        pecas.append(na_bola(letreiro, centro, raio, giro, direcao, x, y))
+    return pecas

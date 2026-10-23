@@ -63,4 +63,4 @@ Ele escolheu alguns modelos diferentes da lista acima. Todos são CC BY e estão
 | `trailer_bb` | Trailer do Breaking Bad em miniatura | Base da estante |
 | `dunk` | Nike SB Dunk Low "Chunky Dunky" | Par no chão, perto da porta (`chao.py`) |
 
-**Feitos por script:** bola de futevôlei Mikasa amarela (18 gomos com sulco, `base.bola_volei`), mochila Nike da foto do Daniel (letreiro "NIKE" em fonte Impact e swoosh em relevo, `base.texto`), roupa de cama (edredom matelassê com a mesma conta do código, travesseiro no braço) e boné.
+**Feitos por script:** bola de futevôlei **Mikasa FT-5** (desde 23/10: octaedro com cada face dividida em 4, 32 triângulos em xadrez preto e amarelo-limão, emendas afundadas e os escritos da bola curvados na superfície; `base.bola_ft5` + `base.na_bola`, usada em `cama.bola_mikasa`; tamanho real, 11 cm de raio), mochila Nike da foto do Daniel (letreiro "NIKE" em fonte Impact e swoosh em relevo, `base.texto`), roupa de cama (edredom matelassê com a mesma conta do código, travesseiro no braço) e boné.
