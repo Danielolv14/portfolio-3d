@@ -2,8 +2,10 @@
 // As cores seguem as fotos do quarto do Daniel.
 import * as THREE from 'three';
 
-import { monthLabel, profile } from '../content/content';
-import { languageColor, projectList } from '../screens/github';
+import { profile } from '../content/content';
+import { linkedinPt } from '../content/linkedin';
+import { COVER_BUILDINGS, COVER_H, COVER_LIGHT, COVER_SKY, COVER_W, cityCover } from '../screens/cityCover';
+import { GITHUB_LOGIN, github, githubAvatar, profileReadmeBlocks } from '../screens/github';
 
 function canvasTexture(width, height, draw, { repeat } = {}) {
     const canvas = document.createElement('canvas');
@@ -288,7 +290,7 @@ export function monitorScreenTexture() {
     const draw = (t) => {
         texture.userData.t = t;
         const g = t.projects.gh;
-        const items = projectList(t);
+        const repoCount = (github.repos ?? []).length;
         ctx.textBaseline = 'middle';
         ctx.fillStyle = c.bg;
         ctx.fillRect(0, 0, W, H);
@@ -345,7 +347,7 @@ export function monitorScreenTexture() {
             text(label, tx * u, tabMid, em, { weight });
             tx += textWidth(label, em, { weight });
             if (i === 1) {
-                const n = String(items.length);
+                const n = String(repoCount);
                 const w = textWidth(n, 0.85 * em) + 1.1 * 0.85 * em;
                 ctx.fillStyle = c.line;
                 roundRect(ctx, (tx + 0.5 * em) * u, tabMid - 0.65 * em * u, w * u, 1.3 * em * u, 0.65 * em * u);
@@ -361,7 +363,7 @@ export function monitorScreenTexture() {
             tx += 0.4 * em;
         });
 
-        // coluna do perfil: foto redonda, nome e usuário
+        // coluna do perfil: foto redonda, nome e usuário (os do GitHub)
         const top = tabsBottom + px(3) + 1.1 * em;
         const side = 15 * em;
         const r = (side / 2) * u;
@@ -379,62 +381,124 @@ export function monitorScreenTexture() {
         }
         ctx.restore();
         let y = top + side + 0.9 * em;
-        text(profile.name, padX * u, (y + 0.96 * em) * u, 1.6 * em, { weight: 600 });
+        text(github.user?.name ?? profile.name, padX * u, (y + 0.96 * em) * u, 1.6 * em, { weight: 600 });
         y += 1.92 * em + 0.5 * em;
-        text('Danielolv14', padX * u, (y + 0.9 * em) * u, 1.15 * em, { color: c.muted });
+        text(GITHUB_LOGIN, padX * u, (y + 0.9 * em) * u, 1.15 * em, { color: c.muted });
 
-        // projetos fixados em duas colunas, como os cartões do HTML
+        // README do perfil no topo da coluna principal, com as medidas do .gh-profile-readme e do .gh-md
+        // (monitor.css). Desenha bloco a bloco até passar da tela; a barra de tarefas cobre o resto.
         const mainX = padX + side + 2 * em;
         const mainW = 100 - padX - mainX;
-        y = top + 0.6 * em;
-        text(g.pinned, mainX * u, (y + lh / 2) * u, em);
-        y += lh + 0.6 * em;
-        const small = 0.92 * em;
-        const cardW = (mainW - em) / 2;
-        const cardH = 2 * em + lh + 0.5 * em + 2 * 1.55 * small + 0.5 * em + 0.85 * lh;
-        // corta o texto com reticências para caber na largura
-        const clip = (value, size, width, opts) => {
-            let v = value;
-            while (v.length > 1 && textWidth(v, size, opts) > width) v = v.slice(0, -2);
-            return v === value ? v : `${v.trimEnd()}…`;
-        };
-        items.forEach((item, i) => {
-            const x = mainX + (i % 2) * (cardW + em);
-            const cy = y + Math.floor(i / 2) * (cardH + em);
-            ctx.strokeStyle = c.line;
-            ctx.lineWidth = px(1) * u;
-            roundRect(ctx, x * u, cy * u, cardW * u, cardH * u, 0.45 * em * u);
-            ctx.stroke();
-            const inner = cardW - 2 * em;
-            const head = (cy + em + lh / 2) * u;
-            ctx.strokeStyle = c.muted;
-            roundRect(ctx, (x + em) * u, head - 0.5 * em * u, 0.9 * em * u, 1.05 * em * u, 0.12 * em * u);
-            ctx.stroke();
-            text(clip(item.repoName, em, inner - 6 * em, { weight: 600 }), (x + em + 1.55 * em) * u, head, em, {
-                weight: 600,
-                color: c.link
-            });
-            // descrição em até duas linhas
-            const desc = cy + em + lh + 0.5 * em;
-            let line = '';
-            let row = 0;
-            for (const word of item.description.split(' ')) {
-                const next = line ? `${line} ${word}` : word;
-                if (row === 0 && line && textWidth(next, small) > inner) {
-                    text(line, (x + em) * u, (desc + 0.5 * 1.55 * small) * u, small, { color: c.muted });
-                    row = 1;
-                    line = word;
-                } else line = next;
+        ctx.strokeStyle = c.line;
+        ctx.lineWidth = px(1) * u;
+        roundRect(ctx, mainX * u, top * u, mainW * u, (100 - top) * u, 0.45 * em * u);
+        ctx.stroke();
+        const pad = 1.5 * em;
+        const left = mainX + pad;
+        const inner = mainW - 2 * pad;
+        const line = 1.55; // line-height do .gh-md
+        const mono = { font: 'JetBrains Mono' };
+        // quebra um texto em linhas que cabem em `width` (cqw), como o navegador faz
+        const wrap = (value, size, width, opts) => {
+            const lines = [];
+            let current = '';
+            for (const word of value.split(' ')) {
+                const next = current ? `${current} ${word}` : word;
+                if (current && textWidth(next, size, opts) > width) {
+                    lines.push(current);
+                    current = word;
+                } else current = next;
             }
-            text(clip(line, small, inner), (x + em) * u, (desc + (row + 0.5) * 1.55 * small) * u, small, { color: c.muted });
-            // linguagem com a bolinha de cor e o mês
-            const foot = (cy + cardH - em - 0.85 * (lh / 2)) * u;
-            ctx.fillStyle = languageColor(item.language);
-            ctx.beginPath();
-            ctx.arc((x + em + 0.425 * em) * u, foot, 0.425 * em * u, 0, Math.PI * 2);
-            ctx.fill();
-            text(`${item.language}    ${monthLabel(item.date, t)}`, (x + em + 1.15 * em) * u, foot, 0.85 * em, { color: c.muted });
-        });
+            if (current) lines.push(current);
+            return lines;
+        };
+        // uma linha do bloco de código com as cores do tema escuro do GitHub (as mesmas do monitor.css)
+        const KEYWORDS = /^(public|private|class|extends|implements|new|return)$/;
+        const codeLine = (value, x, cy, size) => {
+            let cx = x;
+            for (const part of value.split(/(\b[A-Za-z]\w*\b|"[^"]*")/)) {
+                if (!part) continue;
+                const color = part.startsWith('"') ? '#a5d6ff' : KEYWORDS.test(part) ? '#ff7b72' : /^[A-Z]/.test(part) ? '#d2a8ff' : c.fg;
+                text(part, cx * u, cy * u, size, { ...mono, color });
+                cx += textWidth(part, size, mono);
+            }
+        };
+        let ry = top + pad;
+        // "Danielolv14 / README.md"
+        const pathSize = 0.8 * em;
+        const path = `${GITHUB_LOGIN} / README`;
+        text(path, left * u, (ry + (line * pathSize) / 2) * u, pathSize, mono);
+        text('.md', (left + textWidth(path, pathSize, mono)) * u, (ry + (line * pathSize) / 2) * u, pathSize, { ...mono, color: c.muted });
+        ry += line * pathSize + 0.9 * em;
+        for (const block of profileReadmeBlocks()) {
+            if (ry > H / u) break;
+            if (block.type === 'h2') {
+                const size = 1.5 * em;
+                text(block.text, left * u, (ry + (1.25 * size) / 2) * u, size, { weight: 600 });
+                ry += 1.25 * size + 0.3 * em;
+                ctx.fillStyle = c.line;
+                ctx.fillRect(left * u, ry * u, inner * u, px(1) * u);
+                ry += px(1);
+            } else if (block.type === 'h3') {
+                const size = 1.25 * em;
+                text(block.text, left * u, (ry + (line * size) / 2) * u, size, { weight: 600 });
+                ry += line * size;
+            } else if (block.type === 'code') {
+                // a linha em `código`: fundo arredondado em volta do texto
+                const size = 0.85 * em;
+                const mid = ry + (line * em) / 2;
+                ctx.fillStyle = c.bar;
+                roundRect(
+                    ctx,
+                    left * u,
+                    (mid - 0.8 * size) * u,
+                    (textWidth(block.text, size, mono) + 0.8 * size) * u,
+                    1.6 * size * u,
+                    0.4 * size * u
+                );
+                ctx.fill();
+                text(block.text, (left + 0.4 * size) * u, mid * u, size, mono);
+                ry += line * em;
+            } else if (block.type === 'p') {
+                for (const l of wrap(block.text, em, inner)) {
+                    text(l, left * u, (ry + (line * em) / 2) * u, em);
+                    ry += line * em;
+                }
+            } else if (block.type === 'hr') {
+                ry += 0.4 * em;
+                ctx.fillStyle = c.line;
+                ctx.fillRect(left * u, ry * u, inner * u, 0.25 * em * u);
+                ry += 0.25 * em + 0.4 * em;
+            } else if (block.type === 'tools') {
+                // etiquetas das tecnologias (.gh-tools li), quebrando a linha quando não cabem
+                const size = 0.8 * em;
+                const ch = line * size + 0.3 * size + px(2);
+                let cx = left;
+                for (const item of block.items) {
+                    const w = textWidth(item, size, mono) + 1.4 * size + px(2);
+                    if (cx > left && cx + w > left + inner) {
+                        cx = left;
+                        ry += ch + 0.4 * em;
+                    }
+                    roundRect(ctx, cx * u, ry * u, w * u, ch * u, 0.4 * size * u);
+                    ctx.fillStyle = c.bar;
+                    ctx.fill();
+                    ctx.stroke();
+                    text(item, (cx + 0.7 * size + px(1)) * u, (ry + ch / 2) * u, size, mono);
+                    cx += w + 0.4 * em;
+                }
+                ry += ch;
+            } else if (block.type === 'pre') {
+                const size = 0.85 * em;
+                const rowH = 1.45 * size;
+                ctx.fillStyle = c.bar;
+                roundRect(ctx, left * u, ry * u, inner * u, (2 * size + block.lines.length * rowH) * u, 0.45 * em * u);
+                ctx.fill();
+                block.lines.forEach((l, i) => codeLine(l, left + size, ry + size + (i + 0.5) * rowH, size));
+                ry += 2 * size + block.lines.length * rowH;
+            }
+            ry += 0.8 * em; // gap do .gh-md
+        }
 
         // barra de tarefas (.win-task): a dica do teclado à esquerda e as saídas à direita
         const taskbar = cq(4, 40);
@@ -492,7 +556,7 @@ export function monitorScreenTexture() {
     };
 
     avatar.onload = () => texture.userData.t && draw(texture.userData.t);
-    avatar.src = profile.photo;
+    avatar.src = github.user ? githubAvatar : profile.photo;
     texture.userData.redraw = draw;
     // Chamado pelo Scene.jsx antes do voo até a tela, com a largura (px) que ela vai ter na página
     texture.userData.fit = (width) => {
@@ -537,8 +601,8 @@ const TV_COLORS = {
     }
 };
 
-// Tela da TV em repouso: o cartão do topo do perfil (capa, foto, nome, título e o botão Conectar) e o
-// começo da aba Experiência, com as medidas do tv.css. `redraw(t, night)` redesenha no idioma e no
+// Tela da TV em repouso: o cartão do topo do perfil do LinkedIn (capa, foto, nome, título, local,
+// conexões e o botão Conectar) e o começo do "Sobre", com as medidas do tv.css. `redraw(t, night)` redesenha no idioma e no
 // tema atuais (o TV, em Desk.jsx, chama quando um dos dois muda).
 export function tvScreenTexture() {
     const canvas = document.createElement('canvas');
@@ -557,6 +621,8 @@ export function tvScreenTexture() {
     const em = Math.min(Math.max(1.1, (13 / pageW) * 100), (28 / pageW) * 100);
     const lh = 1.55 * em;
     const avatar = new Image();
+    // a cidade da capa é a mesma em todo desenho
+    const city = cityCover();
 
     // tudo em cqw; o canvas recebe em px
     const text = (value, x, y, size, { weight = 400, color, align = 'left' } = {}) => {
@@ -587,7 +653,8 @@ export function tvScreenTexture() {
         texture.userData.night = night;
         const c = TV_COLORS[night ? 'night' : 'day'];
         const l = t.experience.li;
-        const job = t.experience.items[0];
+        const job = l.experience[0];
+        const school = l.education[l.education.length - 1];
         ctx.textBaseline = 'middle';
         ctx.fillStyle = c.bg;
         ctx.fillRect(0, 0, W, H);
@@ -607,31 +674,69 @@ export function tvScreenTexture() {
         ctx.textAlign = 'center';
         ctx.fillText(t.ui.screen.path.experience, W / 2, (bar / 2) * u);
 
-        // cartão do topo
+        // quebra um texto em linhas que cabem em `max` (cqw)
+        const wrap = (value, size, max, weight = 400) => {
+            const lines = [];
+            let current = '';
+            for (const word of value.split(' ')) {
+                const next = current ? `${current} ${word}` : word;
+                if (current && width(next, size, weight) > max) {
+                    lines.push(current);
+                    current = word;
+                } else current = next;
+            }
+            if (current) lines.push(current);
+            return lines;
+        };
+
+        // cartão do topo (as medidas do tv.css, em em)
         const padX = 2.6;
         const x = padX;
         const y = bar + 2.4;
         const w = 100 - 2 * padX;
         const cover = 9 * em;
-        const bodyH = 4.4 * em + 1.8 * em * 1.2 + (0.3 + 0.5) * em + 1.1 * lh + lh + em + 0.8 * em + lh + 1.6 * em;
+        // coluna da direita (empresa e faculdade) e a largura que sobra para o título
+        const rows = [job?.org, school?.school].filter(Boolean);
+        const rightW = Math.max(0, ...rows.map((name) => width(name, em, 600))) + 0.6 * em + 1.76 * em;
+        const headSize = 1.1 * em;
+        const headLines = wrap(l.headline, headSize, Math.min(40 * headSize, w - 3.6 * em - 2 * em - rightW));
+        const bodyH =
+            4.4 * em +
+            1.8 * em * 1.2 +
+            (0.3 + 0.5) * headSize +
+            headLines.length * 1.55 * headSize +
+            lh +
+            0.3 * em +
+            lh +
+            em +
+            lh +
+            0.8 * em +
+            1.6 * em;
         ctx.save();
         roundRect(ctx, x * u, y * u, w * u, (cover + bodyH) * u, 0.6 * em * u);
         ctx.clip();
         ctx.fillStyle = c.card;
         ctx.fillRect(x * u, y * u, w * u, (cover + bodyH) * u);
-        const g = ctx.createLinearGradient(x * u, y * u, (x + w) * u, (y + cover) * u);
-        g.addColorStop(0, c.cover[0]);
-        g.addColorStop(1, c.cover[1]);
-        ctx.fillStyle = g;
+        // capa: a mesma cidade do SVG (cityCover.js), cortada como o preserveAspectRatio "xMidYMax slice"
+        const sky = ctx.createLinearGradient(0, y * u, 0, (y + cover) * u);
+        sky.addColorStop(0, COVER_SKY[0]);
+        sky.addColorStop(1, COVER_SKY[1]);
+        ctx.fillStyle = sky;
         ctx.fillRect(x * u, y * u, w * u, cover * u);
-        // a faixa clara diagonal da capa
-        ctx.fillStyle = 'rgba(255,255,255,0.14)';
-        ctx.beginPath();
-        ctx.moveTo((x + w * 0.62) * u, y * u);
-        ctx.lineTo((x + w * 0.66) * u, y * u);
-        ctx.lineTo((x + w * 0.59) * u, (y + cover) * u);
-        ctx.lineTo((x + w * 0.55) * u, (y + cover) * u);
-        ctx.fill();
+        const k = Math.max(w / COVER_W, cover / COVER_H);
+        const ox = x + (w - COVER_W * k) / 2;
+        const oy = y + cover - COVER_H * k;
+        const { buildings, windows } = city;
+        for (const b of buildings) {
+            ctx.fillStyle = COVER_BUILDINGS[b.shade];
+            ctx.fillRect((ox + b.x * k) * u, (oy + b.y * k) * u, b.w * k * u, b.h * k * u);
+        }
+        ctx.fillStyle = COVER_LIGHT;
+        for (const win of windows) {
+            ctx.globalAlpha = win.alpha;
+            ctx.fillRect((ox + win.x * k) * u, (oy + win.y * k) * u, win.w * k * u, win.h * k * u);
+        }
+        ctx.globalAlpha = 1;
         ctx.restore();
         box(x, y, w, cover + bodyH, 0.6 * em, null, c.line);
 
@@ -649,32 +754,59 @@ export function tvScreenTexture() {
         ctx.clip();
         if (avatar.complete && avatar.naturalWidth) {
             const s = side - 0.5 * em;
-            const k = Math.max(s / avatar.naturalWidth, s / avatar.naturalHeight);
+            const ks = Math.max(s / avatar.naturalWidth, s / avatar.naturalHeight);
             ctx.drawImage(
                 avatar,
-                (ax + 0.25 * em + (s - avatar.naturalWidth * k) / 2) * u,
-                (ay + 0.25 * em + (s - avatar.naturalHeight * k) / 2) * u,
-                avatar.naturalWidth * k * u,
-                avatar.naturalHeight * k * u
+                (ax + 0.25 * em + (s - avatar.naturalWidth * ks) / 2) * u,
+                (ay + 0.25 * em + (s - avatar.naturalHeight * ks) / 2) * u,
+                avatar.naturalWidth * ks * u,
+                avatar.naturalHeight * ks * u
             );
         }
         ctx.restore();
 
-        // nome, título, local e o botão Conectar
+        // nome com o selo de verificado e os pronomes, título, local, conexões e o botão Conectar
         const bx = x + 1.8 * em;
         let by = y + cover + 4.4 * em;
-        text(profile.name, bx, by + 0.9 * em, 1.8 * em, { weight: 600, color: c.fg });
-        by += 1.8 * em * 1.2 + 0.3 * em;
-        text(l.headline, bx, by + 0.55 * lh, 1.1 * em, { color: c.fg });
-        by += 1.1 * lh + 0.5 * em;
-        text(t.about.location, bx + 1.3 * em, by + lh / 2, em, { color: c.muted });
+        const nameSize = 1.8 * em;
+        const nameMid = by + (nameSize * 1.2) / 2;
+        text(l.name, bx, nameMid, nameSize, { weight: 600, color: c.fg });
+        let nx = bx + width(l.name, nameSize, 600) + 0.3 * nameSize;
+        // escudo com o visto (o mesmo desenho do IconVerified, numa grade de 16)
+        const shield = 0.7 * nameSize;
+        const g16 = (shield * u) / 16;
+        const sx = nx * u;
+        const sy = nameMid * u - (shield * u) / 2;
+        ctx.strokeStyle = c.muted;
+        ctx.lineWidth = 1.3 * g16;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(sx + 8 * g16, sy + 1 * g16);
+        ctx.lineTo(sx + 2.5 * g16, sy + 3 * g16);
+        ctx.lineTo(sx + 2.5 * g16, sy + 7.2 * g16);
+        ctx.quadraticCurveTo(sx + 2.5 * g16, sy + 12.5 * g16, sx + 8 * g16, sy + 15 * g16);
+        ctx.quadraticCurveTo(sx + 13.5 * g16, sy + 12.5 * g16, sx + 13.5 * g16, sy + 7.2 * g16);
+        ctx.lineTo(sx + 13.5 * g16, sy + 3 * g16);
+        ctx.closePath();
+        ctx.moveTo(sx + 5.6 * g16, sy + 8 * g16);
+        ctx.lineTo(sx + 7.3 * g16, sy + 9.7 * g16);
+        ctx.lineTo(sx + 10.5 * g16, sy + 6.3 * g16);
+        ctx.stroke();
+        nx += shield + 0.3 * nameSize;
+        text(l.pronouns, nx, nameMid, 0.5 * nameSize, { color: c.muted });
+        by += nameSize * 1.2 + 0.3 * headSize;
+        headLines.forEach((line, i) => text(line, bx, by + (i + 0.5) * 1.55 * headSize, headSize, { color: c.fg }));
+        by += headLines.length * 1.55 * headSize + 0.5 * headSize;
+        text(l.location, bx, by + lh / 2, em, { color: c.muted });
+        by += lh + 0.3 * em;
+        text(l.connections, bx, by + lh / 2, em, { weight: 600, color: c.accent });
         by += lh + em;
         const bw = width(l.connect, em, 600) + 2.4 * em + 1.4 * em;
         box(bx, by, bw, lh + 0.8 * em, (lh + 0.8 * em) / 2, c.accent);
         text(l.connect, bx + 1.2 * em, by + (lh + 0.8 * em) / 2, em, { weight: 600, color: c.accentInk });
 
         // empresa e faculdade à direita, com o monograma
-        const rows = [job?.org, t.about.education[0]?.school].filter(Boolean);
         const right = x + w - 1.8 * em;
         rows.forEach((name, i) => {
             const ry = y + cover + 4.4 * em + i * (1.76 * em + 0.7 * em);
@@ -683,33 +815,23 @@ export function tvScreenTexture() {
             box(right - nw - 0.6 * em - 1.76 * em, ry, 1.76 * em, 1.76 * em, 0.2 * em, c.logo);
         });
 
-        // o começo do cartão das abas (Experiência marcada)
+        // o começo do cartão "Sobre" (.li-about): título, o primeiro parágrafo e o "… mais"
         const ty = y + cover + bodyH + em;
         box(x, ty, w, H / u, 0.6 * em, c.card, c.line);
-        let tx = x + 1.8 * em;
-        Object.values(l.tabs).forEach((label, i) => {
-            const tw = width(label, em, 600) + 1.6 * em;
-            text(label, tx + 0.8 * em, ty + 0.9 * em + lh / 2, em, { weight: 600, color: i === 0 ? c.accent : c.muted });
-            if (i === 0) {
-                ctx.fillStyle = c.accent;
-                ctx.fillRect(tx * u, (ty + 1.6 * em + lh) * u, tw * u, (2 / pageW) * 100 * u);
-            }
-            tx += tw + 0.4 * em;
-        });
-        ctx.fillStyle = c.line;
-        ctx.fillRect(x * u, (ty + 1.6 * em + lh + (2 / pageW) * 100) * u, w * u, (1 / pageW) * 100 * u);
-        if (job) {
-            const jy = ty + 1.6 * em + lh + 0.4 * em + em;
-            box(x + 1.8 * em, jy, 3.6 * em, 3.6 * em, 0.25 * em, c.logo);
-            text(job.org[0], x + 3.6 * em, jy + 1.8 * em, em, { weight: 700, color: c.logoInk, align: 'center' });
-            text(job.role, x + 6.4 * em, jy + 0.55 * em * 1.1 * 1.4, 1.1 * em, { weight: 600, color: c.fg });
-            text(`${job.org} · ${l.fullTime}`, x + 6.4 * em, jy + 1.1 * em * 1.4 + 0.25 * em + lh / 2, em, { color: c.fg });
+        let sy2 = ty + 1.4 * em;
+        text(l.aboutTitle, x + 1.8 * em, sy2 + (1.55 * 1.3 * em) / 2, 1.3 * em, { weight: 600, color: c.fg });
+        sy2 += 1.55 * 1.3 * em + 0.6 * em;
+        for (const line of wrap(l.about[0], em, w - 3.6 * em)) {
+            text(line, x + 1.8 * em, sy2 + lh / 2, em, { color: c.fg });
+            sy2 += lh;
         }
+        sy2 += 0.6 * em + 0.3 * em;
+        text(l.seeMore, x + 1.8 * em, sy2 + 0.2 * em + lh / 2, em, { weight: 600, color: c.accent });
         texture.needsUpdate = true;
     };
 
     avatar.onload = () => texture.userData.t && draw(texture.userData.t, texture.userData.night);
-    avatar.src = profile.photo;
+    avatar.src = linkedinPt.photo;
     texture.userData.redraw = draw;
     return texture;
 }

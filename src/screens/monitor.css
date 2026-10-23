@@ -151,6 +151,139 @@
     border-radius: 0.45em;
 }
 
+/* Redes do perfil (Instagram, LinkedIn): o nome da rede no lugar do ícone */
+.gh-social {
+    min-width: 5.4em;
+    color: var(--scr-muted);
+    font-size: 0.85em;
+}
+
+/* README do perfil (o cartão "Danielolv14 / README.md"). A textura do monitor em repouso desenha o
+   começo dele com estas mesmas medidas (room/textures.js) */
+.gh-profile-readme {
+    padding: 1.5em;
+}
+
+.gh-readme-path {
+    margin: 0 0 0.9em;
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    color: var(--scr-fg);
+}
+
+.gh-readme-path span {
+    color: var(--scr-muted);
+}
+
+.gh-md {
+    display: grid;
+    gap: 0.8em;
+    line-height: 1.55;
+}
+
+.gh-md :is(h1, h2, h3, h4, p, ul, pre) {
+    margin: 0;
+}
+
+.gh-md h2 {
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--scr-line);
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.gh-md h3 {
+    font-size: 1.25em;
+    font-weight: 600;
+}
+
+.gh-md hr {
+    width: 100%;
+    height: 0.25em;
+    margin: 0.4em 0;
+    border: 0;
+    background: var(--scr-line);
+}
+
+.gh-md code {
+    padding: 0.2em 0.4em;
+    border-radius: 0.4em;
+    background: var(--scr-bar);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+}
+
+.gh-md a {
+    color: var(--scr-link);
+}
+
+/* o bloco de código Java do "About", com as cores do tema escuro do GitHub */
+.gh-md pre {
+    overflow-x: auto;
+    padding: 1em;
+    border-radius: 0.45em;
+    background: var(--scr-bar);
+    font-size: 0.85em;
+    line-height: 1.45;
+}
+
+.gh-md pre code {
+    padding: 0;
+    background: none;
+    font-size: 1em;
+}
+
+.gh-md .pl-k {
+    color: #ff7b72;
+}
+
+.gh-md :is(.pl-en, .pl-smi) {
+    color: #d2a8ff;
+}
+
+.gh-md .pl-s,
+.gh-md .pl-s .pl-pds {
+    color: #a5d6ff;
+}
+
+.gh-md :is(.pl-c1, .pl-v) {
+    color: #79c0ff;
+}
+
+.gh-md .pl-c {
+    color: #8b949e;
+}
+
+/* "Languages and Tools": os ícones viram etiquetas; os selos com link (LinkedIn, Gmail...), botões */
+.gh-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    padding: 0;
+    list-style: none;
+}
+
+.gh-tools li {
+    padding: 0.15em 0.7em;
+    border: 1px solid var(--scr-line);
+    border-radius: 0.4em;
+    background: var(--scr-bar);
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+}
+
+.gh-md .gh-chip-link {
+    display: inline-block;
+    margin-right: 0.4em;
+    padding: 0.2em 0.8em;
+    border-radius: 0.4em;
+    background: var(--scr-accent-soft);
+    font-size: 0.85em;
+    font-weight: 600;
+    text-decoration: none;
+}
+
 .gh-pins {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

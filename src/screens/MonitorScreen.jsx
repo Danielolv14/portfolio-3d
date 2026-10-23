@@ -1,12 +1,25 @@
-// Monitor = Projetos, no estilo de um perfil do GitHub (decisão 8: só inspiração, sem logos).
-// Uma "janela" de navegador: barra com o endereço, as abas do perfil (Visão geral e Repositórios),
-// a página de um projeto (o README) e a barra de tarefas com as saídas. A textura do monitor em
-// repouso (monitorScreenTexture, em room/textures.js) desenha a Visão geral com as mesmas cores.
-import { useState } from 'react';
+// Monitor = Projetos, no estilo do perfil do Daniel no GitHub, do jeito que ele está hoje: foto, nome,
+// bio e redes do perfil, o README do perfil, os repositórios fixados, o gráfico de contribuições e a
+// lista de repositórios (tudo buscado no build, scripts/github.mjs). Uma "janela" de navegador: barra
+// com o endereço, as abas do perfil, a página de um projeto (o README com a mídia e os links, para os
+// repositórios que têm projeto no content.js) e a barra de tarefas com as saídas. A textura do monitor
+// em repouso (monitorScreenTexture, em room/textures.js) desenha o começo da Visão geral.
+import { useMemo, useState } from 'react';
 
-import { channels, monthLabel, profile } from '../content/content';
+import { channels, profile } from '../content/content';
 import { IconArrow, IconClose, IconList, IconLock, IconPin, IconUsers } from '../app/Icons';
-import { contributionWeeks, github, languageColor, projectList } from './github';
+import {
+    GITHUB_LOGIN,
+    contributionWeeks,
+    github,
+    githubAvatar,
+    languageColor,
+    pinnedList,
+    profileReadme,
+    projectList,
+    repoList,
+    socialList
+} from './github';
 import './monitor.css';
 
 const GITHUB_URL = channels.find((c) => c.id === 'github').href;
@@ -46,26 +59,67 @@ function Visibility({ item, g }) {
     return <span className="gh-label">{item.privateRepo ? g.private : g.public}</span>;
 }
 
+// Nome do repositório: abre a página do projeto quando ele existe no content.js; senão, o GitHub
+function RepoName({ repo, open, big }) {
+    const className = `gh-link${big ? ' gh-link-big' : ''}`;
+    if (repo.project) {
+        return (
+            <button type="button" className={className} onClick={() => open(repo.project.id)}>
+                {repo.name}
+            </button>
+        );
+    }
+    return (
+        <a className={className} href={repo.url} target="_blank" rel="noreferrer">
+            {repo.name}
+        </a>
+    );
+}
+
+// Coluna do perfil, como no GitHub: foto, nome, usuário, bio, seguir, seguidores, local e redes
 function Profile({ t, g }) {
+    const user = github.user;
     return (
         <aside className="gh-profile">
-            <img className="gh-avatar" src={profile.photo} alt={profile.name} />
-            <h3 className="gh-name">{profile.name}</h3>
-            <p className="gh-login">{github.user?.login ?? 'Danielolv14'}</p>
-            <p className="gh-bio">{t.about.role}</p>
+            <img className="gh-avatar" src={user ? githubAvatar : profile.photo} alt={profile.name} />
+            <h3 className="gh-name">{user?.name ?? profile.name}</h3>
+            <p className="gh-login">{GITHUB_LOGIN}</p>
+            <p className="gh-bio">{user?.bio ?? t.about.role}</p>
             <a className="gh-follow" href={GITHUB_URL} target="_blank" rel="noreferrer">
                 {g.profile} <IconArrow />
             </a>
-            {github.user && (
+            {user && (
                 <p className="gh-meta">
-                    <IconUsers /> <b>{github.user.followers}</b> {g.followers(github.user.followers)} · <b>{github.user.following}</b>{' '}
-                    {g.following}
+                    <IconUsers /> <b>{user.followers}</b> {g.followers(user.followers)} · <b>{user.following}</b> {g.following}
                 </p>
             )}
             <p className="gh-meta">
-                <IconPin /> {t.about.location}
+                <IconPin /> {user?.location ?? t.about.location}
             </p>
+            {socialList().map((s) => (
+                <p key={s.url} className="gh-meta">
+                    <span className="gh-social">{s.label}</span>
+                    <a className="gh-link" href={s.url} target="_blank" rel="noreferrer">
+                        {s.handle}
+                    </a>
+                </p>
+            ))}
         </aside>
+    );
+}
+
+// README do perfil (o cartão "Danielolv14 / README.md" do topo da Visão geral)
+function ProfileReadme() {
+    const html = useMemo(profileReadme, []);
+    if (!html) return null;
+    return (
+        <section className="gh-box gh-profile-readme">
+            <p className="gh-readme-path">
+                {GITHUB_LOGIN} / README<span>.md</span>
+            </p>
+            {/* HTML que o próprio GitHub gerou e limpou, arrumado em github.js (sem nada carregado de fora) */}
+            <div className="gh-md" dangerouslySetInnerHTML={{ __html: html }} />
+        </section>
     );
 }
 
@@ -95,71 +149,69 @@ function Contributions({ g, t }) {
     );
 }
 
-function Overview({ t, g, items, open }) {
+function Overview({ t, g, pins, open }) {
     return (
         <div className="gh-overview">
             <Profile t={t} g={g} />
             <div className="gh-main">
-                <h4 className="gh-sub">{g.pinned}</h4>
-                <ul className="gh-pins">
-                    {items.map((item) => (
-                        <li key={item.id} className="gh-box gh-pin">
-                            <p className="gh-pin-head">
-                                <IconRepo />
-                                <button type="button" className="gh-link" onClick={() => open(item.id)}>
-                                    {item.repoName}
-                                </button>
-                                <Visibility item={item} g={g} />
-                            </p>
-                            <p className="gh-desc">{item.description}</p>
-                            <p className="gh-foot">
-                                <Language name={item.language} />
-                                {item.stars > 0 && (
-                                    <span>
-                                        <IconStar /> {item.stars}
-                                    </span>
-                                )}
-                                {item.team && (
-                                    <span>
-                                        <IconUsers /> {t.projects.team}
-                                    </span>
-                                )}
-                                <span>{monthLabel(item.date, t)}</span>
-                            </p>
-                        </li>
-                    ))}
-                </ul>
+                <ProfileReadme />
+                {pins.length > 0 && (
+                    <>
+                        <h4 className="gh-sub">{g.pinned}</h4>
+                        <ul className="gh-pins">
+                            {pins.map((repo) => (
+                                <li key={repo.url} className="gh-box gh-pin">
+                                    <p className="gh-pin-head">
+                                        <IconRepo />
+                                        <RepoName repo={repo} open={open} />
+                                        <Visibility item={repo} g={g} />
+                                    </p>
+                                    {/* como no GitHub: sem descrição no repositório, o cartão fica sem o texto */}
+                                    {repo.description && <p className="gh-desc">{repo.description}</p>}
+                                    <p className="gh-foot">
+                                        {repo.language && <Language name={repo.language} />}
+                                        {repo.stars > 0 && (
+                                            <span>
+                                                <IconStar /> {repo.stars}
+                                            </span>
+                                        )}
+                                    </p>
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                )}
                 <Contributions g={g} t={t} />
             </div>
         </div>
     );
 }
 
-function Repositories({ t, g, items, open }) {
+function Repositories({ t, g, repos, open }) {
     return (
         <ul className="gh-repos">
-            {items.map((item) => (
-                <li key={item.id} className="gh-repo">
+            {repos.map((repo) => (
+                <li key={repo.url} className="gh-repo">
                     <p className="gh-pin-head">
-                        <button type="button" className="gh-link gh-link-big" onClick={() => open(item.id)}>
-                            {item.name}
-                        </button>
-                        <Visibility item={item} g={g} />
+                        <RepoName repo={repo} open={open} big />
+                        <Visibility item={repo} g={g} />
                     </p>
-                    <p className="gh-desc">{item.description}</p>
-                    <ul className="gh-topics">
-                        {item.tech.map((tech) => (
-                            <li key={tech}>{tech}</li>
-                        ))}
-                    </ul>
+                    {repo.description && <p className="gh-desc">{repo.description}</p>}
+                    {repo.topics.length > 0 && (
+                        <ul className="gh-topics">
+                            {repo.topics.map((topic) => (
+                                <li key={topic}>{topic}</li>
+                            ))}
+                        </ul>
+                    )}
                     <p className="gh-foot">
-                        <Language name={item.language} />
-                        {item.stars > 0 && (
+                        {repo.language && <Language name={repo.language} />}
+                        {repo.stars > 0 && (
                             <span>
-                                <IconStar /> {item.stars}
+                                <IconStar /> {repo.stars}
                             </span>
                         )}
-                        <span>{item.pushed ? `${g.updated} ${dayLabel(item.pushed, t)}` : `${g.started} ${monthLabel(item.date, t)}`}</span>
+                        {repo.pushed && <span>{`${g.updated} ${dayLabel(repo.pushed, t)}`}</span>}
                     </p>
                 </li>
             ))}
@@ -174,7 +226,7 @@ function Repo({ t, g, item, back }) {
         <article className="gh-repo-page">
             <p className="gh-crumb">
                 <button type="button" className="gh-link" onClick={back}>
-                    {github.user?.login ?? 'Danielolv14'}
+                    {GITHUB_LOGIN}
                 </button>
                 <span aria-hidden="true">/</span>
                 <b>{item.repoName}</b>
@@ -222,6 +274,8 @@ export default function MonitorScreen({ t, headingRef, onClose, onRead2d }) {
     const s = t.ui.screen;
     const g = t.projects.gh;
     const items = projectList(t);
+    const pins = pinnedList(t);
+    const repos = repoList(t);
     const [tab, setTab] = useState('overview');
     // projeto aberto (a página do repositório); ao voltar, fica a aba de onde ele foi aberto
     const [openId, setOpenId] = useState(null);
@@ -266,16 +320,16 @@ export default function MonitorScreen({ t, headingRef, onClose, onRead2d }) {
                         >
                             {id === 'repos' ? <IconRepo /> : <IconList />}
                             {label}
-                            {id === 'repos' && <span className="gh-count">{items.length}</span>}
+                            {id === 'repos' && <span className="gh-count">{repos.length}</span>}
                         </button>
                     ))}
                 </nav>
                 {current ? (
                     <Repo t={t} g={g} item={current} back={() => setOpenId(null)} />
                 ) : tab === 'overview' ? (
-                    <Overview t={t} g={g} items={items} open={setOpenId} />
+                    <Overview t={t} g={g} pins={pins} open={setOpenId} />
                 ) : (
-                    <Repositories t={t} g={g} items={items} open={setOpenId} />
+                    <Repositories t={t} g={g} repos={repos} open={setOpenId} />
                 )}
             </div>
 

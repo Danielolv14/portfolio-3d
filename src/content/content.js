@@ -1,4 +1,5 @@
 import foto from './foto.jpg';
+import { linkedinEn, linkedinPt } from './linkedin';
 
 // Todo o texto e os dados do site.
 // O que muda com o idioma fica em `pt` / `en`; links, datas e tecnologias ficam uma vez só em cada item.
@@ -40,6 +41,8 @@ const PROJECTS = [
         date: '2026-08',
         tech: ['Java', 'Spring Boot', 'Spring Security', 'Thymeleaf', 'H2'],
         links: [{ kind: 'repo', url: 'https://github.com/Danielolv14/Tela-de-Login-da-PUC-com-Spring-Boot-Thymeleaf' }],
+        // outro repositório do mesmo projeto (é o que está fixado no perfil do GitHub); no monitor, abre esta página
+        otherRepos: ['https://github.com/Danielolv14/Login-PUC-Minas-with-Thymeleaf-and-Springboot'],
         pt: {
             name: 'Login PUC Minas',
             description:
@@ -283,25 +286,8 @@ export const content = {
         },
         experience: {
             intro: 'Do mais recente ao mais antigo.',
-            // Tela da TV, no estilo de um perfil do LinkedIn (src/screens/TvScreen.jsx)
-            li: {
-                headline: 'Estudante de Engenharia de Software · Estagiário Full Stack na Teknisa',
-                connect: 'Conectar',
-                tabs: { experience: 'Experiência', education: 'Formação', skills: 'Competências' },
-                about: 'Sobre',
-                showMore: 'Ver destaques',
-                showLess: 'Ocultar destaques',
-                skillsUsed: (n) => (n ? `Usada em ${n} ${n === 1 ? 'projeto' : 'projetos'}` : 'No estágio e nos estudos'),
-                // "4 meses", "1 ano e 2 meses"
-                duration: (months) => {
-                    const y = Math.floor(months / 12);
-                    const m = months % 12;
-                    const ys = y ? `${y} ${y === 1 ? 'ano' : 'anos'}` : '';
-                    const ms = m ? `${m} ${m === 1 ? 'mês' : 'meses'}` : '';
-                    return [ys, ms].filter(Boolean).join(' e ') || '1 mês';
-                },
-                fullTime: 'Estágio'
-            },
+            // Tela da TV: o perfil do LinkedIn (src/content/linkedin.js, mostrado em src/screens/TvScreen.jsx)
+            li: linkedinPt,
             items: localize(EXPERIENCES, 'pt')
         },
         contact: {
@@ -458,23 +444,7 @@ export const content = {
         },
         experience: {
             intro: 'Newest first.',
-            li: {
-                headline: 'Software Engineering student · Full Stack Intern at Teknisa',
-                connect: 'Connect',
-                tabs: { experience: 'Experience', education: 'Education', skills: 'Skills' },
-                about: 'About',
-                showMore: 'Show highlights',
-                showLess: 'Hide highlights',
-                skillsUsed: (n) => (n ? `Used in ${n} ${n === 1 ? 'project' : 'projects'}` : 'At work and in my studies'),
-                duration: (months) => {
-                    const y = Math.floor(months / 12);
-                    const m = months % 12;
-                    const ys = y ? `${y} ${y === 1 ? 'yr' : 'yrs'}` : '';
-                    const ms = m ? `${m} ${m === 1 ? 'mo' : 'mos'}` : '';
-                    return [ys, ms].filter(Boolean).join(' ') || '1 mo';
-                },
-                fullTime: 'Internship'
-            },
+            li: linkedinEn,
             items: localize(EXPERIENCES, 'en')
         },
         contact: {

@@ -1,348 +1,115 @@
-# 🏷️ Quarto Portfólio 3D 👨‍💻
+# Daniel Oliveira · 3D Room Portfolio
 
-> [!NOTE]
-> Portfólio profissional em forma de **quarto 3D interativo**: cada objeto do quarto abre uma seção (Sobre mim, Projetos, Experiências e Contato) e a câmera "voa" até ele. Também tem um **modo sem 3D**, com o mesmo conteúdo em página comum.
+**A portfolio you walk into.** My real bedroom, rebuilt in 3D: every object opens a part of my professional story and the camera flies to it.
+
+**Live:** [www.danielolv.dev](https://www.danielolv.dev) · **Português:** [README.pt-BR.md](README.pt-BR.md)
+
+![The room by day, with my name and the site address](public/og.jpg)
+
+## What's inside
+
+| Object in the room | Opens | How it looks |
+| --- | --- | --- |
+| Monitor | **Projects** | My GitHub profile as it is today: profile README, pinned repos, contribution graph and every public repository, fetched at build time |
+| TV | **Experience** | My LinkedIn profile: headline, about, experience, education, licenses & certifications and skills |
+| Phone on the bed | **Contact** | An iPhone-style home screen; the Mail app is a real contact form (EmailJS) |
+| Photo frame on the shelf | **About me** | Who I am, what I study and what I like |
+| The "&" lamp | **Day / night** | Switches between a golden late-afternoon and a rainy city night |
+
+There is also a **2D mode** with the same content as a regular page (for weaker phones, screen readers and anyone who just wants to read), and everything is available in **Portuguese and English**.
 
 <table>
   <tr>
-    <td width="800px">
-      <div align="justify">
-        Este repositório contém o <b>LAB01 – Portfólio Profissional</b> da disciplina <i>Desenvolvimento e Integração de Aplicações Web (DIAW)</i> do curso de <b>Engenharia de Software da PUC Minas</b>, com o <a href="https://github.com/joaopauloaramuni">Prof. Dr. João Paulo Aramuni</a>. Em vez de uma página de rolagem tradicional, o portfólio é uma <b>recriação em 3D do meu quarto de verdade</b>, feita com <i>React</i> e <i>Three.js</i> a partir de fotos: o porta-retrato no nicho abre o <b>Sobre mim</b>, o monitor abre os <b>Projetos</b>, a TV abre as <b>Experiências</b> e o celular em cima da cama abre o <b>Contato</b>. A luminária "&" do nicho alterna entre dia e noite, e à noite o quarto fica iluminado pelo RGB rosa do gabinete. O site é <b>responsivo</b> e oferece um <b>modo sem 3D</b> para celulares mais fracos e para acessibilidade.
-      </div>
-    </td>
-    <td>
-      <div>
-        <img src="docs/logo.svg" alt="Logo do Quarto Portfólio 3D" width="120px"/>
-      </div>
-    </td>
+    <td><img src="docs/imagens/monitor-github.jpg" alt="The monitor open on the GitHub-style profile" /></td>
+    <td><img src="docs/imagens/tv-linkedin.jpg" alt="The TV open on the LinkedIn-style profile" /></td>
   </tr>
 </table>
 
----
+## Highlights
 
-## 🚧 Status do Projeto
+- **Baked lighting.** The light is rendered offline in Blender (Cycles) by a scripted pipeline: one lightmap for the day, one for the night and a mask for the LEDs. The browser just paints textures, so there are no real-time lights at all.
+- **Code stays the source of truth.** The room is first laid out in React (`src/room/`). A script exports it, Blender scripts model the detailed pieces and swap in ready-made models, and the bake comes back as a GLB. Re-baking the whole room is one command.
+- **Invisible interaction layer.** The room built in code stays mounted, but hidden, on top of the baked one. It handles clicks, labels, hover and the moving chair, and the baked meshes copy its movement.
+- **Live screens.** When the camera parks in front of the monitor, TV or phone, an HTML layer is placed exactly over the 3D screen. Before that, a canvas texture draws the same page, with colors calibrated against tone mapping, so the swap doesn't jump.
+- **Real data.** `scripts/github.mjs` runs before every build and pulls my GitHub profile, pinned repos, profile README, avatar and contribution calendar. If GitHub is down, the last saved copy is used.
+- **A window that is alive.** A golden sun by day and a rainy city by night, drawn live (`src/room/WindowView.jsx`).
+- **Fast loading.** The room starts downloading before React mounts, with a real progress bar. Every room file is versioned (`?v=`) and cached for a year. Phones get a lighter GLB (5 MB instead of 12.6 MB).
+- **Shareable.** Open Graph card, structured data (schema.org `Person`), sitemap, and plain-text content for crawlers and browsers without JavaScript.
 
-[![Versão](https://img.shields.io/badge/Versão-v0.2.0-blue?style=for-the-badge)](#-status-do-projeto) ![React](https://img.shields.io/badge/React-18.3.1-007ec6?style=for-the-badge&logo=react&logoColor=white) ![Vite](https://img.shields.io/badge/Vite-5.4.10-007ec6?style=for-the-badge&logo=vite&logoColor=white) ![Three.js](https://img.shields.io/badge/Three.js-0.164.1-007ec6?style=for-the-badge&logo=threedotjs&logoColor=white) ![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-8.16.6-007ec6?style=for-the-badge) ![Licença](https://img.shields.io/badge/Licença-MIT-007ec6?style=for-the-badge&logo=opensourceinitiative&logoColor=white)
-
-| Sprint | Prazo | Entrega | Situação |
-| :--- | :---: | :--- | :---: |
-| **Lab01S01** | 12/10/2026 | README inicial, wireframes, protótipo do front-end, navegação e layout base | 🟡 Falta o link do Figma |
-| **Lab01S02** | 19/10/2026 | Conteúdo real em PT/EN, linha do tempo de projetos, experiências, formulário enviando e-mail, preview na Vercel | 🟡 Em andamento |
-| **Lab01S03** | 26/10/2026 | Deploy final, quarto personalizado, GIFs dos projetos, README final | ⏳ A fazer |
-| **Apresentação** | 02/11/2026 | Design, arquitetura e funcionalidades | ⏳ A fazer |
-
----
-
-## 📚 Índice
-- [Links Úteis](#-links-úteis)
-- [Sobre o Projeto](#-sobre-o-projeto)
-- [Funcionalidades Principais](#-funcionalidades-principais)
-- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Arquitetura](#-arquitetura)
-- [Instalação e Execução](#-instalação-e-execução)
-  - [Pré-requisitos](#pré-requisitos)
-  - [Variáveis de Ambiente](#-variáveis-de-ambiente)
-  - [Instalação de Dependências](#-instalação-de-dependências)
-  - [Como Executar a Aplicação](#-como-executar-a-aplicação)
-- [Deploy](#-deploy)
-- [Estrutura de Pastas](#-estrutura-de-pastas)
-- [Demonstração](#-demonstração)
-  - [Wireframes (Figma)](#-wireframes-figma)
-  - [Protótipo do Front-end](#-protótipo-do-front-end)
-- [Testes](#-testes)
-- [Documentações utilizadas](#-documentações-utilizadas)
-- [Autores](#-autores)
-- [Contribuição](#-contribuição)
-- [Agradecimentos](#-agradecimentos)
-- [Licença](#-licença)
-
----
-
-## 🔗 Links Úteis
-* 🌐 **Demo Online:** [portfolio-3d-wyhb.vercel.app](https://portfolio-3d-wyhb.vercel.app)
-  > 💻 **Descrição:** link do portfólio em produção.
-* 🎨 **Protótipo no Figma:** _link a adicionar_
-  > 🖼️ **Descrição:** wireframes de média fidelidade da visão do quarto, do painel de cada seção e da versão de celular.
-
----
-
-## 📝 Sobre o Projeto
-
-- **Por que existe:** é o trabalho LAB01 da disciplina DIAW, que pede um site de portfólio com menu de navegação, apresentação em português e inglês, projetos em linha do tempo, experiências e um formulário de contato que envia e-mail de verdade.
-- **Qual problema resolve:** recrutadores e professores veem muitos portfólios parecidos. Um quarto 3D que a pessoa explora clicando nos objetos deixa a visita mais memorável e já demonstra, na prática, habilidades de front-end e 3D na web.
-- **Contexto:** acadêmico (4º período de Engenharia de Software), mas pensado para continuar sendo usado como portfólio profissional depois da disciplina.
-- **Onde pode ser usado:** no currículo, no LinkedIn e em processos seletivos de estágio.
-
-O conceito foi inspirado em portfólios 3D conhecidos (ver [Agradecimentos](#-agradecimentos)), evitando problemas que encontramos neles: quarto cortado no celular, painel de debug visível em produção, falta de versão em inglês e de formulário, e conteúdo preso dentro de um iframe de outro site.
-
----
-
-## ✨ Funcionalidades Principais
-
-- 🧭 **Menu de navegação:** no topo no computador e em abas embaixo no celular; cada item leva a câmera até o objeto da seção.
-- 🛋️ **Quarto 3D interativo:** recriado a partir das fotos do meu quarto: o setup (gabinete camuflado com LED rosa, monitor no braço, TV com light bar, cadeira de tela e um relógio LCD que mostra a hora, o dia e a data reais), a porta, o nicho com a luminária "&", a JBL, o Stormtrooper e as pelúcias, a cama com cabeceira de madeira, o criado-mudo com a luminária de cobre, o tapete felpudo e os pôsteres dos meus filmes favoritos. Dá para arrastar para girar, rolar para aproximar e clicar (ou tocar) nos objetos. Cada objeto clicável tem uma etiqueta que também funciona pelo teclado.
-- 👤 **Sobre mim em PT/EN:** formação, área, interesses e objetivos, com botão Português/English.
-- 🗂️ **Projetos em linha do tempo:** do mais antigo ao mais recente, com descrição, tecnologias, link do GitHub e espaço para o GIF do projeto funcionando.
-- 💼 **Experiências:** empresa/instituição, cargo/atividade, período e descrição.
-- ✉️ **Contato:** ícones clicáveis (e-mail, LinkedIn, GitHub e Instagram) e formulário com validação de nome, e-mail e mensagem. A mensagem chega por e-mail pelo **EmailJS**, e quem escreveu recebe uma confirmação automática.
-- 🌐 **Internacionalização:** o site inteiro alterna entre português e inglês, pelo menu ou pelo botão dentro do Sobre mim.
-- 🌗 **Dia e noite:** começa conforme o tema do sistema. A luminária "&" ou o botão do menu trocam as luzes do quarto, o céu da janela e as cores do site: tons de madeira de dia e o rosa do RGB à noite.
-- 📄 **Modo sem 3D:** as mesmas seções como página comum. Liga sozinho se o navegador não tiver WebGL.
-- ♿ **Acessibilidade:** respeita `prefers-reduced-motion`, a tecla ESC fecha o painel e o foco vai para o título da seção aberta.
-
----
-
-## 🛠 Tecnologias Utilizadas
-
-### 💻 Front-end
-
-* **Biblioteca de interface:** [React](https://react.dev/) 18.3.1
-* **3D:** [Three.js](https://threejs.org/) 0.164.1, [React Three Fiber](https://r3f.docs.pmnd.rs/) 8.16.6 (Three.js em componentes React) e [Drei](https://drei.docs.pmnd.rs/) 9.106.0 (componentes prontos: etiquetas HTML, caixas arredondadas, controle de câmera)
-* **Câmera:** [camera-controls](https://github.com/yomotsu/camera-controls) 2.10.1
-* **Pós-processamento:** [@react-three/postprocessing](https://github.com/pmndrs/react-postprocessing) 2.16.3 e [postprocessing](https://github.com/pmndrs/postprocessing) 6.36.0 (brilho nas luzes e sombra de contato entre os objetos)
-* **Linguagem:** JavaScript (ES2022+) e JSX
-* **Estilização:** CSS puro com variáveis (tokens de cor para dia e noite, tirados das cores do quarto)
-* **Gerenciamento de estado:** estado do próprio React (`useState`), sem biblioteca extra
-* **Build tool:** [Vite](https://vitejs.dev/) 5.4.10 com `@vitejs/plugin-react` 4.3.1
-* **Envio de e-mail:** [EmailJS](https://www.emailjs.com/) com `@emailjs/browser` 4.4.1
-* **Fontes:** Unbounded, Figtree e JetBrains Mono (Google Fonts)
-
-### 🖥️ Back-end
-
-* Não há servidor próprio. O formulário envia os e-mails pelo **[EmailJS](https://www.emailjs.com/)**, direto do navegador.
-
-### ⚙️ Infraestrutura & DevOps
-
-* **Hospedagem:** [Vercel](https://vercel.com/) (plano gratuito) _(planejado)_
-* **Modelagem 3D e iluminação:** [Blender](https://www.blender.org/) com o motor Cycles, para "assar" a iluminação em imagens _(planejado para a Sprint 3)_
-
----
-
-## 🏗 Arquitetura
-
-É uma **SPA (aplicação de página única)** só de front-end. O componente `App` guarda o estado global (idioma, dia/noite, seção aberta e modo sem 3D) e o repassa para a cena 3D e para o painel. Todo o texto fica em `content.js`, separado do código, nos dois idiomas.
-
-Decisões importantes:
-
-- **Navegar = mover a câmera.** Cada seção tem um "ponto de vista" (posição da câmera e ponto para onde ela olha). Ao abrir uma seção, a câmera voa até lá e desloca a imagem para o objeto não ficar escondido atrás do painel.
-- **Um conteúdo, duas telas.** Os mesmos componentes de seção (`Sections.jsx`) são usados no painel do modo 3D e no modo sem 3D. Assim o conteúdo nunca fica diferente entre os dois.
-- **Quarto feito no código, a partir de fotos.** Cada móvel é montado com formas simples (caixas arredondadas, cilindros, esferas, texto em 3D) e texturas desenhadas em `<canvas>` (madeira, camuflado, porcelanato, edredom, pôsteres), sem modelos de terceiros. O quarto fica dividido por área em `src/room/`.
-- **Luz que muda com o modo.** Um valor de 0 (dia) a 1 (noite) é animado aos poucos e controla todas as luzes, telas e lâmpadas. O pós-processamento faz as luzes brilharem (Bloom) e escurece os cantos onde os objetos se encostam (N8AO). No celular, só o brilho fica ligado.
-- **Carregamento sob demanda.** A cena 3D é carregada com `lazy()`; o modo sem 3D não precisa dela.
+## How it's built
 
 ```mermaid
-flowchart TD
-    main["main.jsx"] --> app["App.jsx<br/>idioma · dia/noite · seção aberta · modo sem 3D"]
-    app --> scene["Scene.jsx<br/>Canvas 3D + câmera"]
-    app --> panel["Painel da seção<br/>(modo 3D)"]
-    app --> flat["Página comum<br/>(modo sem 3D)"]
-    scene --> room["Room.jsx + src/room/<br/>estrutura · mesa · nicho · cama · luzes"]
-    scene --> rig["CameraRig<br/>voo da câmera até cada seção"]
-    scene --> fx["Pós-processamento<br/>Bloom · N8AO"]
-    room --> tex["textures.js<br/>texturas desenhadas em canvas"]
-    panel --> sections["Sections.jsx<br/>Sobre mim · Projetos · Experiências · Contato"]
-    flat --> sections
-    sections --> content["content.js<br/>textos em PT e EN"]
-    room -- "clique no objeto" --> app
+flowchart LR
+    A["Room in React<br/>(src/room)"] -->|export GLB| B["Blender 4.5 scripts<br/>modeling, CC0 textures,<br/>third-party models"]
+    B -->|Cycles bake| C["GLB + WebP lightmaps<br/>day · night · LED mask"]
+    C --> D["Site<br/>baked room"]
+    A -->|hidden, same scene| E["Interaction layer<br/>clicks, labels, screens"]
+    E --> D
 ```
 
----
+### Tech stack
 
-## 🔧 Instalação e Execução
+- **Web:** React 18, Vite 6, three.js 0.164, React Three Fiber 8, drei 9, camera-controls, postprocessing, EmailJS
+- **3D:** Blender 4.5 LTS driven by Python scripts (`pipeline/blender/`), Cycles baking, WebP textures, Draco
+- **Tooling:** ESLint 9, Prettier 3, Playwright (screenshots, performance and inventory scripts), GitHub Actions
+- **Hosting:** Vercel, with a custom domain
 
-### Pré-requisitos
+### Project structure
 
-* **Node.js:** versão 18 ou superior
-* **Gerenciador de pacotes:** npm (vem com o Node.js)
-* **Navegador com WebGL** (Chrome, Edge, Firefox ou Safari atuais). Sem WebGL o site abre direto no modo sem 3D.
-
----
-
-### 🔑 Variáveis de Ambiente
-
-O formulário de contato usa o EmailJS. Copie o arquivo **`.env.example`** para **`.env.local`** na raiz do projeto e preencha:
-
-| Variável | Descrição | Exemplo |
-| :--- | :--- | :--- |
-| `VITE_EMAILJS_SERVICE_ID` | ID do serviço de e-mail (a conta Gmail ligada ao EmailJS). | `service_xxxxxxx` |
-| `VITE_EMAILJS_TEMPLATE_ID_FOR_ME` | Modelo do e-mail que chega para mim com a mensagem. | `template_xxxxxxx` |
-| `VITE_EMAILJS_TEMPLATE_ID_FOR_SENDER` | Modelo da confirmação enviada para quem escreveu (opcional). | `template_yyyyyyy` |
-| `VITE_EMAILJS_PUBLIC_KEY` | Chave pública da conta EmailJS. | `sua_public_key_aqui` |
-
-Os modelos recebem as variáveis `{{from_name}}`, `{{from_email}}`, `{{reply_to}}` e `{{message}}`. Sem essas variáveis o site funciona normalmente, e o formulário avisa que o envio ainda não está configurado.
-
-> **Obs:** no Vite, só as variáveis que começam com `VITE_` ficam disponíveis no código do navegador. Na Vercel, as mesmas variáveis são cadastradas em _Project Settings > Environment Variables_.
-
----
-
-### 📦 Instalação de Dependências
-
-1. **Clone o repositório:**
-
-```bash
-git clone https://github.com/Danielolv14/portfolio-3d.git
-cd portfolio-3d
+```
+src/
+  app/        page shell: top bar, panels, loading, theme and language
+  scene/      Canvas, camera rig (one viewpoint per section), effects
+  room/       the room built in code (interaction layer + bake source)
+  baked/      the baked room: loading, materials, progress
+  screens/    monitor (GitHub), TV (LinkedIn) and phone (iOS) screens
+  sections/   About, Projects, Experience, Contact, Credits (panel and 2D mode)
+  content/    all the text in PT and EN, GitHub data, LinkedIn data
+pipeline/     export → Blender → bake → optimize (see pipeline/README.md)
+scripts/      GitHub data, screenshots, link preview image, performance
+docs/         plan, credits, metrics and history
 ```
 
-2. **Instale as dependências:**
+## Running locally
 
 ```bash
 npm install
+npm run dev        # http://localhost:5173
+npm run check      # lint + formatting + build (the same as CI)
 ```
 
----
+The contact form needs an [EmailJS](https://www.emailjs.com) account. Copy `.env.example` to `.env.local` and fill in `VITE_EMAILJS_SERVICE_ID`, `VITE_EMAILJS_TEMPLATE_ID_FOR_ME`, `VITE_EMAILJS_TEMPLATE_ID_FOR_SENDER` and `VITE_EMAILJS_PUBLIC_KEY`. Without them, the form says sending isn't configured.
 
-### ⚡ Como Executar a Aplicação
+Re-baking the room needs Blender 4.5 LTS and, ideally, an NVIDIA GPU: `npm run previa` gives a quick preview, and `npm run bake` runs the full bake (about an hour). The step-by-step guide is in [`pipeline/README.md`](pipeline/README.md).
 
-**Modo de desenvolvimento** (recarrega sozinho ao salvar):
+## Performance
 
-```bash
-npm run dev
-```
+Baking the light took the room from **459 to 38 draw calls** and from **37 to 168 FPS** on a simulated phone (4× CPU slowdown), measured on 2026-10-21. The details are in [`docs/metricas/`](docs/metricas/).
 
-🎨 *O site estará disponível em **http://localhost:5173**.*
+## Credits
 
-**Versão de produção local** (gera a pasta `dist/` e a serve):
+The 3D models from Sketchfab are used under **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)**:
 
-```bash
-npm run build
-npm run preview
-```
+- Pioneer DJ console by twopixels.studio
+- KRK Classic 5 by TheGiwi
+- Ps5 by kiarash8585
+- JBL Charge 3 by Oleksii.Rozumnyi
+- Deadpool Funko Pop by JJTale
+- funko harry potter by deathcow
+- Fleetwood Bounder by Zack_Hawley
+- Nike SB Dunk Low Chunky Dunky by ShoesPlug
 
-🚀 *A prévia estará disponível em **http://localhost:4173**.*
+Textures and models from [Poly Haven](https://polyhaven.com) are **CC0**. All the models were rescaled, reduced and converted to glTF, and the JBL was also recolored. The full list with links is in [`docs/creditos.md`](docs/creditos.md) and behind the **Credits** button on the site.
 
----
+I studied [Bruno Simon](https://bruno-simon.com/), [Henry Heffernan](https://henryheffernan.com/) and [Room_Portfolio](https://github.com/AT010303/Room_Portfolio) for ideas. Room_Portfolio has no license, so nothing was copied from it: the techniques were reimplemented from scratch.
 
-## 🚀 Deploy
+## License
 
-O deploy será feito na **Vercel** (plano gratuito), que detecta projetos Vite automaticamente:
+The code is under the [MIT License](LICENSE). Third-party models and textures keep their own licenses (see above).
 
-1. Entrar em [vercel.com](https://vercel.com/) com a conta do GitHub e clicar em **Add New → Project**.
-2. Importar este repositório. A Vercel preenche sozinha: _Framework_ **Vite**, _Build Command_ `npm run build` e _Output Directory_ `dist`.
-3. Cadastrar as variáveis do EmailJS (ver [Variáveis de Ambiente](#-variáveis-de-ambiente)).
-4. Clicar em **Deploy**. A cada `push` na branch `main` a Vercel publica uma nova versão, e cada Pull Request ganha um link de prévia.
+## Author
 
----
+**Daniel Oliveira de Menezes**: Software Engineering student at PUC Minas and Full Stack Developer intern at Teknisa.
+[LinkedIn](https://www.linkedin.com/in/daniel-oliveira14/) · [GitHub](https://github.com/Danielolv14) · [danielolv.dev](https://www.danielolv.dev)
 
-## 📂 Estrutura de Pastas
-
-```
-.
-├── /public                    # 🌐 Arquivos servidos como estão (favicon)
-├── /docs
-│   ├── /plano                 # 🗺️ Plano da versão profissional (fases, pipeline do Blender, luz, arte, telas)
-│   ├── /metricas              # 📏 Capturas e números de antes e depois
-│   ├── /historico             # 🗄️ Material da fase da faculdade (wireframes, protótipos, plano antigo)
-│   └── logo.svg
-├── /scripts                   # 🧪 Capturas (captura.mjs) e medição de desempenho (desempenho.mjs)
-└── /src
-    ├── main.jsx               # 🚪 Ponto de entrada
-    ├── /app                   # 🧠 App.jsx (estado global, menu, painel, modo sem 3D), ícones e estilos
-    ├── /scene                 # 🎥 Scene.jsx: Canvas 3D, câmera e efeitos (carregado sob demanda)
-    ├── /room                  # 🛋️ O quarto em código: Room.jsx, cada área num arquivo e texturas em canvas
-    ├── /screens               # 🖥️ Conteúdo dentro do monitor e do celular (camada HTML sobre a tela)
-    ├── /sections              # 📄 Sobre mim, Projetos, Experiências e Contato (formulário e EmailJS)
-    └── /content               # ✍️ Textos em PT/EN, dados dos projetos e a foto
-```
-
----
-
-## 🎥 Demonstração
-
-### 🎨 Wireframes (Figma)
-
-Wireframes de média fidelidade, em tons de cinza, com anotações numeradas explicando cada interação. Os arquivos `.svg` em [`docs/historico/wireframes/`](docs/historico/wireframes) podem ser arrastados para o Figma, onde viram formas e textos editáveis. Eles são gerados pelo script [`scripts/wireframes.mjs`](scripts/wireframes.mjs).
-
-| Visão geral (computador) | Seção Projetos aberta |
-| :---: | :---: |
-| <img src="docs/historico/wireframes/01-computador-visao-geral.png" alt="Wireframe da visão geral do quarto no computador, com menu, ferramentas e etiquetas nos objetos" width="420px"> | <img src="docs/historico/wireframes/02-computador-projetos.png" alt="Wireframe da câmera no monitor com o painel de Projetos e a linha do tempo" width="420px"> |
-| **Seção Contato aberta** | **Modo sem 3D** |
-| <img src="docs/historico/wireframes/03-computador-contato.png" alt="Wireframe do painel de Contato com os canais e o formulário" width="420px"> | <img src="docs/historico/wireframes/06-computador-sem-3d.png" alt="Wireframe da versão em página comum, sem 3D" width="420px"> |
-
-| Celular: visão geral | Celular: Sobre mim |
-| :---: | :---: |
-| <img src="docs/historico/wireframes/04-celular-visao-geral.png" alt="Wireframe do quarto na tela do celular, com abas embaixo" height="420px"> | <img src="docs/historico/wireframes/05-celular-sobre-mim.png" alt="Wireframe da folha de Sobre mim subindo de baixo, com o botão Português/English" height="420px"> |
-
-### 💻 Protótipo do Front-end
-
-| Visão geral (dia) | Visão geral (noite) |
-| :---: | :---: |
-| <img src="docs/historico/prototipos/desktop-visao-geral-dia.jpg" alt="Quarto 3D visto de cima, no modo dia, com etiquetas nos objetos clicáveis" width="420px"> | <img src="docs/historico/prototipos/desktop-visao-geral-noite.jpg" alt="O mesmo quarto no modo noite, com a luminária e o RGB rosa do gabinete acesos" width="420px"> |
-| **Projetos (dentro do monitor)** | **Contato (câmera no celular)** |
-| <img src="docs/historico/prototipos/desktop-projetos.jpg" alt="Projetos aberto dentro da tela do monitor, com a linha do tempo e os botões Ler em 2D e Voltar ao quarto" width="420px"> | <img src="docs/historico/prototipos/desktop-contato.jpg" alt="Câmera aproximada do celular com o painel de Contato e o formulário" width="420px"> |
-| **Sobre mim (noite)** | **Modo sem 3D** |
-| <img src="docs/historico/prototipos/desktop-sobre-noite.jpg" alt="Painel Sobre mim aberto no modo noite" width="420px"> | <img src="docs/historico/prototipos/desktop-sem-3d.jpg" alt="Versão em página comum, sem 3D" width="420px"> |
-
-| Celular: visão geral | Celular: Experiências |
-| :---: | :---: |
-| <img src="docs/historico/prototipos/celular-visao-geral.jpg" alt="Quarto 3D na tela do celular, com abas de navegação embaixo" height="420px"> | <img src="docs/historico/prototipos/celular-experiencias.jpg" alt="Painel de Experiências subindo de baixo no celular" height="420px"> |
-
----
-
-## 🧪 Testes
-
-Ainda não há testes automatizados. A cada entrega o site é verificado manualmente:
-
-- abrir cada seção pelo menu, pelas etiquetas e clicando nos objetos;
-- trocar idioma e dia/noite com uma seção aberta e fechada;
-- testar no computador e no celular (tela em pé), e no modo sem 3D;
-- enviar o formulário vazio, com e-mail inválido e preenchido corretamente;
-- navegar só com o teclado (Tab, Enter e ESC).
-
----
-
-## 🔗 Documentações utilizadas
-
-* 📖 **Biblioteca de interface:** [Documentação oficial do **React**](https://react.dev/reference/react)
-* 📖 **3D:** [Documentação do **Three.js**](https://threejs.org/docs/), do [**React Three Fiber**](https://r3f.docs.pmnd.rs/) e do [**Drei**](https://drei.docs.pmnd.rs/)
-* 📖 **Câmera:** [**camera-controls**](https://github.com/yomotsu/camera-controls)
-* 📖 **Build tool:** [Guia de configuração do **Vite**](https://vitejs.dev/config/)
-* 📖 **Formulário:** [Documentação do **EmailJS**](https://www.emailjs.com/docs/)
-* 📖 **Deploy:** [**Vite** na **Vercel**](https://vercel.com/docs/frameworks/vite)
-* 📖 **Guia de estilo:** [**Conventional Commits**](https://www.conventionalcommits.org/en/v1.0.0/)
-
----
-
-## 👥 Autores
-
-| 👤 Nome | 🖼️ Foto | :octocat: GitHub | 💼 LinkedIn | 📤 Gmail |
-|---------|----------|-----------------|-------------|-----------|
-| Daniel Oliveira de Menezes | <div align="center"><img src="https://github.com/Danielolv14.png" width="70px" height="70px"></div> | <div align="center"><a href="https://github.com/Danielolv14"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | <div align="center"><a href="https://www.linkedin.com/in/daniel-oliveira14/"><img src="https://joaopauloaramuni.github.io/image/linkedin2.png" width="50px" height="50px"></a></div> | <div align="center"><a href="mailto:danieloliveiramenezes4@gmail.com"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
-
----
-
-## 🤝 Contribuição
-
-Este é um projeto individual da disciplina, mas sugestões são bem-vindas:
-
-1. Faça um `fork` do projeto.
-2. Crie uma branch para sua sugestão (`git checkout -b feature/minha-sugestao`).
-3. Faça o commit (`git commit -m 'feat: descreve a sugestão'`), seguindo o [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-4. Envie a branch (`git push origin feature/minha-sugestao`).
-5. Abra um **Pull Request**.
-
----
-
-## 🙏 Agradecimentos
-
-* [**Engenharia de Software PUC Minas**](https://www.instagram.com/engsoftwarepucminas/) - pelo apoio institucional e pela estrutura acadêmica.
-* [**Prof. Dr. João Paulo Aramuni**](https://github.com/joaopauloaramuni) - pela proposta do trabalho e pelo template deste README.
-* [**Bruno Simon**](https://bruno-simon.com/) - referência em portfólios 3D na web ("My Room in 3D").
-* [**Henry Heffernan**](https://henryheffernan.com/) - inspiração para o portfólio em forma de ambiente explorável.
-* [**Room_Portfolio (AT010303)**](https://github.com/AT010303/Room_Portfolio) - estudado para entender a iluminação "assada" no Blender e a navegação pela câmera.
-
----
-
-## 🧩 Créditos de terceiros
-
-O quarto usa modelos 3D do Sketchfab sob **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)** (Pioneer DJ console, de twopixels.studio; KRK Classic 5, de TheGiwi; Ps5, de kiarash8585; JBL Charge 3, de Oleksii.Rozumnyi; Deadpool Funko Pop, de JJTale; funko harry potter, de deathcow; Fleetwood Bounder, de Zack_Hawley; Nike SB Dunk Low Chunky Dunky, de ShoesPlug) e texturas e modelos **CC0** do [Poly Haven](https://polyhaven.com). Em todos os modelos houve mudança de escala, redução de polígonos e conversão para glTF; na JBL, também a cor.
-
-A lista completa, com o link de cada modelo, está em [`docs/creditos.md`](docs/creditos.md) e no botão **Créditos** do site.
-
----
-
-## 📄 Licença
-
-O código é distribuído sob a **[Licença MIT](LICENSE)**. Os modelos e texturas de terceiros continuam com a licença de cada autor (veja acima).
-
----
+This project started as LAB01 of the Web Application Development and Integration course at PUC Minas and grew into my professional portfolio.
