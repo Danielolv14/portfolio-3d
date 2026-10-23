@@ -2,7 +2,7 @@
 
 **Um portfólio para entrar.** O meu quarto de verdade, refeito em 3D: cada objeto abre uma parte da minha história profissional, e a câmera voa até ele.
 
-**No ar:** [www.danielolv.dev](https://www.danielolv.dev) · **English:** [README.md](README.md)
+**No ar:** [www.danielolv.dev](https://www.danielolv.dev) · **Como foi feito:** [estudo de caso](docs/estudo-de-caso/README.pt-BR.md) · **English:** [README.md](README.md)
 
 ![O quarto de dia, com o meu nome e o endereço do site](public/og.jpg)
 
@@ -84,7 +84,7 @@ Refazer o bake precisa do Blender 4.5 LTS e, de preferência, de uma GPU NVIDIA:
 
 ## Desempenho
 
-Assar a luz levou o quarto de **459 para 38 draw calls** e de **37 para 168 FPS** num celular simulado (CPU 4× mais lenta), medidos em 21/10/2026. Os detalhes estão em [`docs/metricas/`](docs/metricas/).
+A versão 1, com luz em tempo real, tinha **459 draw calls** e rodava a **37 FPS** num celular simulado (CPU 4× mais lenta). Hoje, com a luz assada, modelos e texturas de verdade, são **162 draw calls** e **87 FPS** no mesmo teste (medido em 23/10/2026). A história completa está no [estudo de caso](docs/estudo-de-caso/README.pt-BR.md), e as medições em [`docs/metricas/`](docs/metricas/).
 
 ## Créditos
 

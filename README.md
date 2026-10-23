@@ -2,7 +2,7 @@
 
 **A portfolio you walk into.** My real bedroom, rebuilt in 3D: every object opens a part of my professional story and the camera flies to it.
 
-**Live:** [www.danielolv.dev](https://www.danielolv.dev) · **Português:** [README.pt-BR.md](README.pt-BR.md)
+**Live:** [www.danielolv.dev](https://www.danielolv.dev) · **How it was made:** [case study](docs/estudo-de-caso/README.md) · **Português:** [README.pt-BR.md](README.pt-BR.md)
 
 ![The room by day, with my name and the site address](public/og.jpg)
 
@@ -84,7 +84,7 @@ Re-baking the room needs Blender 4.5 LTS and, ideally, an NVIDIA GPU: `npm run p
 
 ## Performance
 
-Baking the light took the room from **459 to 38 draw calls** and from **37 to 168 FPS** on a simulated phone (4× CPU slowdown), measured on 2026-10-21. The details are in [`docs/metricas/`](docs/metricas/).
+Version 1, with real-time lights, had **459 draw calls** and ran at **37 FPS** on a simulated phone (4× CPU slowdown). Today, with baked light, real models and textures, it has **162 draw calls** and runs at **87 FPS** on the same test (measured on 2026-10-23). The whole story is in the [case study](docs/estudo-de-caso/README.md), and the measurements are in [`docs/metricas/`](docs/metricas/).
 
 ## Credits
 
