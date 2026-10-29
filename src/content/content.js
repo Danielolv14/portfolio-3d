@@ -1,5 +1,10 @@
 import foto from './foto.jpg';
 import { linkedinEn, linkedinPt } from './linkedin';
+import printDjfinance from './projetos/djfinance.jpg';
+import printLoginPuc from './projetos/login-puc.jpg';
+import printMinhaReceita from './projetos/minhareceita.jpg';
+import printPortfolio from './projetos/portfolio-3d.jpg';
+import printTse from './projetos/candidatos-tse.jpg';
 
 // Todo o texto e os dados do site.
 // O que muda com o idioma fica em `pt` / `en`; links, datas e tecnologias ficam uma vez só em cada item.
@@ -18,6 +23,7 @@ const PROJECTS = [
         date: '2026-03',
         // nomes de tecnologias são os mesmos em PT e EN (por isso "Google APIs", o nome do produto)
         tech: ['Java', 'Spring Boot', 'PostgreSQL', 'React', 'Tailwind CSS', 'Google APIs'],
+        media: printDjfinance,
         links: [
             { kind: 'back', url: 'https://github.com/Danielolv14/DJFinance-Back-End' },
             { kind: 'front', url: 'https://github.com/Danielolv14/DJFinance-Front-End' },
@@ -40,6 +46,8 @@ const PROJECTS = [
         id: 'loginpuc',
         date: '2026-08',
         tech: ['Java', 'Spring Boot', 'Spring Security', 'Thymeleaf', 'H2'],
+        // prints em 16:9, o formato da mídia do card
+        media: printLoginPuc,
         links: [{ kind: 'repo', url: 'https://github.com/Danielolv14/Tela-de-Login-da-PUC-com-Spring-Boot-Thymeleaf' }],
         // outro repositório do mesmo projeto (é o que está fixado no perfil do GitHub); no monitor, abre esta página
         otherRepos: ['https://github.com/Danielolv14/Login-PUC-Minas-with-Thymeleaf-and-Springboot'],
@@ -60,6 +68,7 @@ const PROJECTS = [
         id: 'minhareceita',
         date: '2026-08',
         tech: ['Java 21', 'Spring Boot', 'MongoDB', 'HTML', 'CSS', 'JavaScript'],
+        media: printMinhaReceita,
         links: [],
         privateRepo: true,
         team: true,
@@ -80,6 +89,7 @@ const PROJECTS = [
         id: 'tse',
         date: '2026-09',
         tech: ['Java', 'Spring Boot', 'Thymeleaf', 'OpenCSV'],
+        media: printTse,
         links: [{ kind: 'repo', url: 'https://github.com/Danielolv14/CandidatosTse-with-Thymeleaf' }],
         pt: {
             name: 'Candidatos TSE',
@@ -98,6 +108,7 @@ const PROJECTS = [
         id: 'portfolio',
         date: '2026-10',
         tech: ['React', 'Three.js', 'React Three Fiber', 'Vite'],
+        media: printPortfolio,
         links: [{ kind: 'repo', url: 'https://github.com/Danielolv14/portfolio-3d' }],
         pt: {
             name: 'Portfólio 3D',
