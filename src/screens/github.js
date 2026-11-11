@@ -53,6 +53,14 @@ export function projectList(t) {
     return [...t.projects.items].sort((a, b) => a.date.localeCompare(b.date)).map(withRepoData);
 }
 
+// Projetos na ordem da vitrine (aba Projetos do monitor e a textura dele em repouso): a de
+// `t.projects.showcase`; um projeto que não estiver na lista vai para o fim
+export function showcaseList(t) {
+    const order = t.projects.showcase ?? [];
+    const rank = (id) => (order.includes(id) ? order.indexOf(id) : order.length);
+    return projectList(t).sort((a, b) => rank(a.id) - rank(b.id));
+}
+
 // Qual projeto do content.js tem este repositório (pelos links ou por `otherRepos`)
 function projectOf(url, t) {
     const u = url.toLowerCase();
@@ -156,34 +164,6 @@ export function profileReadme() {
         a.rel = 'noreferrer';
     });
     return root.innerHTML;
-}
-
-// O README em blocos de texto, na ordem, para a textura do monitor desenhar o começo dele:
-// { type: 'h2' | 'h3' | 'code' | 'p' | 'hr' | 'tools' | 'pre', text?, items?, lines? }
-export function profileReadmeBlocks() {
-    const html = profileReadme();
-    if (!html) return [];
-    const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
-    const blocks = [];
-    for (const el of doc.body.firstElementChild.children) {
-        const heading = el.matches('h1, h2, h3, h4') ? el : el.querySelector(':scope > h1, :scope > h2, :scope > h3, :scope > h4');
-        const text = el.textContent.trim();
-        if (heading)
-            blocks.push({ type: heading.tagName === 'H2' || heading.tagName === 'H1' ? 'h2' : 'h3', text: heading.textContent.trim() });
-        else if (el.matches('hr')) blocks.push({ type: 'hr' });
-        else if (el.matches('ul.gh-tools')) blocks.push({ type: 'tools', items: [...el.children].map((li) => li.textContent) });
-        else if (el.querySelector('pre') || el.matches('pre'))
-            blocks.push({ type: 'pre', lines: el.textContent.replace(/\n+$/, '').split('\n') });
-        else if (
-            el.matches('p') &&
-            el.children.length === 1 &&
-            el.firstElementChild.matches('code') &&
-            text === el.firstElementChild.textContent.trim()
-        )
-            blocks.push({ type: 'code', text });
-        else if (text) blocks.push({ type: 'p', text: text.replace(/\s+/g, ' ') });
-    }
-    return blocks;
 }
 
 // Gráfico de contribuições: colunas de 7 dias (domingo em cima), com o nível 0–4 de cada dia.

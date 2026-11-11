@@ -2,10 +2,10 @@
 // As cores seguem as fotos do quarto do Daniel.
 import * as THREE from 'three';
 
-import { profile } from '../content/content';
+import { monthLabel } from '../content/content';
 import { linkedinPt } from '../content/linkedin';
 import { COVER_BUILDINGS, COVER_H, COVER_LIGHT, COVER_SKY, COVER_W, cityCover } from '../screens/cityCover';
-import { GITHUB_LOGIN, github, githubAvatar, profileReadmeBlocks } from '../screens/github';
+import { github, showcaseList } from '../screens/github';
 
 function canvasTexture(width, height, draw, { repeat } = {}) {
     const canvas = document.createElement('canvas');
@@ -237,7 +237,8 @@ const MONITOR_COLORS = {
     tab: '#ff9b84',
     accent: '#2fa84a',
     accentInk: '#ffffff',
-    avatar: '#3a3f4a',
+    // etiquetas das tecnologias (.gh-topics li: --scr-accent-soft sobre o fundo)
+    chip: '#2b3d5c',
     dots: ['#ff8a80', '#f7c96c', '#6fc874']
 };
 
@@ -245,7 +246,7 @@ const MONITOR_COLORS = {
 const MONITOR_LAYOUT = { bar: 3.6, padX: 2.6 };
 
 // Tela do monitor em repouso: a mesma janela da camada HTML (src/screens/MonitorScreen.jsx), com a
-// barra de título, os projetos de verdade e a barra de tarefas. `redraw(t)` redesenha no idioma novo,
+// barra de título, a aba Projetos (com os prints) e a barra de tarefas. `redraw(t)` redesenha no idioma novo,
 // e `fit(largura)` recebe a largura (px) que a tela vai ter na página quando a câmera parar.
 export function monitorScreenTexture() {
     const canvas = document.createElement('canvas');
@@ -261,8 +262,17 @@ export function monitorScreenTexture() {
     const u = W / 100; // 1 "cqw"
     const c = MONITOR_COLORS;
     const { bar, padX } = MONITOR_LAYOUT;
-    // a foto do perfil chega depois do primeiro desenho; quando chega, desenha de novo
-    const avatar = new Image();
+    // os prints dos projetos chegam depois do primeiro desenho; cada um que chega desenha de novo
+    const shots = new Map();
+    const shot = (src) => {
+        if (!shots.has(src)) {
+            const img = new Image();
+            img.onload = () => texture.userData.t && draw(texture.userData.t);
+            img.src = src;
+            shots.set(src, img);
+        }
+        return shots.get(src);
+    };
 
     // Largura da tela na página. O CSS tem limites em px (letra de 14 a 32px, barra de 40px...): numa
     // tela pequena o mínimo vale mais que o cqw, e a textura faz igual para a troca não dar salto.
@@ -323,19 +333,24 @@ export function monitorScreenTexture() {
         ctx.lineTo(x0 - s, y0 + s);
         ctx.stroke();
 
-        // Visão geral do perfil (MonitorScreen.jsx + monitor.css), com as medidas do CSS em em
+        // Conteúdo da janela (MonitorScreen.jsx + monitor.css), com as medidas do CSS em em
         const em = cq(1.15, 13, 28);
         const lh = 1.55 * em; // altura de uma linha (line-height do body)
         const px = (n) => (n / pageW) * 100; // n px da página, em cqw
 
-        // abas: "Visão geral" (marcada) e "Repositórios" com a contagem
+        // abas, na ordem do HTML: "Projetos" (marcada) e "Repositórios" com a contagem, "Visão geral" no meio
+        const items = showcaseList(t);
         const tabsTop = bar + 0.7 * em;
         const tabMid = (tabsTop + 0.55 * em + lh / 2) * u;
         const tabsBottom = tabsTop + 0.55 * em + lh + 0.75 * em;
         ctx.fillStyle = c.line;
         ctx.fillRect(0, (tabsBottom + px(2)) * u, W, px(1) * u);
         let tx = padX;
-        [g.overview, g.repositories].forEach((label, i) => {
+        [
+            [g.projects, items.length],
+            [g.overview, null],
+            [g.repositories, repoCount]
+        ].forEach(([label, count], i) => {
             const x0 = tx;
             const weight = i === 0 ? 600 : 400;
             // ícone (um quadradinho no lugar do desenho do HTML) e o nome da aba
@@ -346,8 +361,8 @@ export function monitorScreenTexture() {
             tx += 0.8 * em + 1.1 * em + 0.5 * em;
             text(label, tx * u, tabMid, em, { weight });
             tx += textWidth(label, em, { weight });
-            if (i === 1) {
-                const n = String(repoCount);
+            if (count !== null) {
+                const n = String(count);
                 const w = textWidth(n, 0.85 * em) + 1.1 * 0.85 * em;
                 ctx.fillStyle = c.line;
                 roundRect(ctx, (tx + 0.5 * em) * u, tabMid - 0.65 * em * u, w * u, 1.3 * em * u, 0.65 * em * u);
@@ -363,41 +378,11 @@ export function monitorScreenTexture() {
             tx += 0.4 * em;
         });
 
-        // coluna do perfil: foto redonda, nome e usuário (os do GitHub)
+        // Aba Projetos (Showcase em MonitorScreen.jsx, .gh-showcase e .gh-card... em monitor.css, com as
+        // mesmas medidas em em): a frase de cima e os cartões, linha a linha, até passar da tela; a
+        // barra de tarefas cobre o resto.
         const top = tabsBottom + px(3) + 1.1 * em;
-        const side = 15 * em;
-        const r = (side / 2) * u;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc((padX + side / 2) * u, top * u + r, r, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.fillStyle = c.avatar;
-        ctx.fillRect(padX * u, top * u, side * u, side * u);
-        if (avatar.complete && avatar.naturalWidth) {
-            const k = Math.max(side / avatar.naturalWidth, side / avatar.naturalHeight);
-            const iw = avatar.naturalWidth * k;
-            const ih = avatar.naturalHeight * k;
-            ctx.drawImage(avatar, (padX + (side - iw) / 2) * u, (top + (side - ih) / 2) * u, iw * u, ih * u);
-        }
-        ctx.restore();
-        let y = top + side + 0.9 * em;
-        text(github.user?.name ?? profile.name, padX * u, (y + 0.96 * em) * u, 1.6 * em, { weight: 600 });
-        y += 1.92 * em + 0.5 * em;
-        text(GITHUB_LOGIN, padX * u, (y + 0.9 * em) * u, 1.15 * em, { color: c.muted });
-
-        // README do perfil no topo da coluna principal, com as medidas do .gh-profile-readme e do .gh-md
-        // (monitor.css). Desenha bloco a bloco até passar da tela; a barra de tarefas cobre o resto.
-        const mainX = padX + side + 2 * em;
-        const mainW = 100 - padX - mainX;
-        ctx.strokeStyle = c.line;
-        ctx.lineWidth = px(1) * u;
-        roundRect(ctx, mainX * u, top * u, mainW * u, (100 - top) * u, 0.45 * em * u);
-        ctx.stroke();
-        const pad = 1.5 * em;
-        const left = mainX + pad;
-        const inner = mainW - 2 * pad;
-        const line = 1.55; // line-height do .gh-md
-        const mono = { font: 'JetBrains Mono' };
+        text(g.showcaseIntro, padX * u, (top + lh / 2) * u, em, { color: c.muted });
         // quebra um texto em linhas que cabem em `width` (cqw), como o navegador faz
         const wrap = (value, size, width, opts) => {
             const lines = [];
@@ -412,92 +397,151 @@ export function monitorScreenTexture() {
             if (current) lines.push(current);
             return lines;
         };
-        // uma linha do bloco de código com as cores do tema escuro do GitHub (as mesmas do monitor.css)
-        const KEYWORDS = /^(public|private|class|extends|implements|new|return)$/;
-        const codeLine = (value, x, cy, size) => {
-            let cx = x;
-            for (const part of value.split(/(\b[A-Za-z]\w*\b|"[^"]*")/)) {
-                if (!part) continue;
-                const color = part.startsWith('"') ? '#a5d6ff' : KEYWORDS.test(part) ? '#ff7b72' : /^[A-Z]/.test(part) ? '#d2a8ff' : c.fg;
-                text(part, cx * u, cy * u, size, { ...mono, color });
-                cx += textWidth(part, size, mono);
+        // uma coluna só quando a janela é estreita (o @container win (width < 640px) do CSS)
+        const cols = pageW < 640 ? 1 : 2;
+        const gapX = 1.2 * em;
+        const colW = (100 - 2 * padX - (cols - 1) * gapX) / cols;
+        const hair = px(1); // 1px da página (bordas)
+        const padL = 1.1 * em; // padding dos lados do .gh-card-body
+        const inner = colW - 2 * hair - 2 * padL;
+        const mediaH = ((colW - 2 * hair) * 9) / 16; // .gh-card-media em 16:9, com a borda de baixo
+        const titleSize = 1.15 * em;
+        const headH = 1.55 * titleSize; // a linha do título manda na altura da linha de cima
+        const descLine = 1.5 * em;
+        const chipSize = 0.82 * em;
+        const chipH = 1.55 * chipSize + 0.2 * chipSize;
+        const chipPad = 0.7 * chipSize;
+        const chipGap = 0.4 * em;
+        const btnSize = 0.9 * em;
+        const btnH = 1.55 * btnSize + 0.6 * btnSize + 2 * hair;
+        const gap = 0.65 * em; // gap do .gh-card-body
+        // o que cada cartão ocupa (a linha do grid fica com a altura do maior)
+        const layout = (item) => {
+            const desc = wrap(item.description, em, inner);
+            const chips = [];
+            let cx = 0;
+            let row = 0;
+            for (const tech of item.tech) {
+                const w = textWidth(tech, chipSize, { weight: 500 }) + 2 * chipPad;
+                if (cx > 0 && cx + w > inner) {
+                    cx = 0;
+                    row += 1;
+                }
+                chips.push({ tech, x: cx, row, w });
+                cx += w + chipGap;
             }
+            const chipsH = (row + 1) * chipH + row * chipGap;
+            const foot = item.links.length > 0;
+            const bodyH = em + headH + gap + desc.length * descLine + gap + chipsH + (foot ? gap + 0.2 * em + btnH : 0) + 1.1 * em;
+            return { item, desc, chips, bodyH, foot };
         };
-        let ry = top + pad;
-        // "Danielolv14 / README.md"
-        const pathSize = 0.8 * em;
-        const path = `${GITHUB_LOGIN} / README`;
-        text(path, left * u, (ry + (line * pathSize) / 2) * u, pathSize, mono);
-        text('.md', (left + textWidth(path, pathSize, mono)) * u, (ry + (line * pathSize) / 2) * u, pathSize, { ...mono, color: c.muted });
-        ry += line * pathSize + 0.9 * em;
-        for (const block of profileReadmeBlocks()) {
-            if (ry > H / u) break;
-            if (block.type === 'h2') {
-                const size = 1.5 * em;
-                text(block.text, left * u, (ry + (1.25 * size) / 2) * u, size, { weight: 600 });
-                ry += 1.25 * size + 0.3 * em;
-                ctx.fillStyle = c.line;
-                ctx.fillRect(left * u, ry * u, inner * u, px(1) * u);
-                ry += px(1);
-            } else if (block.type === 'h3') {
-                const size = 1.25 * em;
-                text(block.text, left * u, (ry + (line * size) / 2) * u, size, { weight: 600 });
-                ry += line * size;
-            } else if (block.type === 'code') {
-                // a linha em `código`: fundo arredondado em volta do texto
-                const size = 0.85 * em;
-                const mid = ry + (line * em) / 2;
+        // botão de link do rodapé (.gh-card-foot .gh-btn): fundo, contorno, texto e a seta
+        const linkButton = (label, x, y) => {
+            const iconSize = 1.05 * btnSize;
+            const w = 2 * hair + 2 * 0.85 * btnSize + textWidth(label, btnSize, { weight: 600 }) + 0.4 * btnSize + iconSize;
+            roundRect(ctx, x * u, y * u, w * u, btnH * u, 0.45 * em * u);
+            ctx.fillStyle = c.bar;
+            ctx.fill();
+            ctx.strokeStyle = c.line;
+            ctx.lineWidth = hair * u;
+            ctx.stroke();
+            const mid = (y + btnH / 2) * u;
+            const lx = x + hair + 0.85 * btnSize;
+            text(label, lx * u, mid, btnSize, { weight: 600 });
+            // a seta do IconArrow (grade de 24): M7 17 L17 7 M9 7 h8 v8
+            const k = (iconSize * u) / 24;
+            const ix = (lx + textWidth(label, btnSize, { weight: 600 }) + 0.4 * btnSize) * u;
+            const iy = mid - (iconSize / 2) * u;
+            ctx.strokeStyle = c.fg;
+            ctx.lineWidth = 2 * k;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(ix + 7 * k, iy + 17 * k);
+            ctx.lineTo(ix + 17 * k, iy + 7 * k);
+            ctx.moveTo(ix + 9 * k, iy + 7 * k);
+            ctx.lineTo(ix + 17 * k, iy + 7 * k);
+            ctx.lineTo(ix + 17 * k, iy + 15 * k);
+            ctx.stroke();
+            return w;
+        };
+        let y = top + lh + 0.9 * em;
+        for (let i = 0; i < items.length && y < H / u; i += cols) {
+            const row = items.slice(i, i + cols).map(layout);
+            const cardH = 2 * hair + mediaH + Math.max(...row.map((r) => r.bodyH));
+            row.forEach(({ item, desc, chips, foot }, k) => {
+                const x = padX + k * (colW + gapX);
+                const mx = x + hair;
+                const mw = colW - 2 * hair;
+                const imgH = mediaH - hair;
+                // o print, preso em cima (object-position: top) e cortado no canto arredondado do cartão
+                ctx.save();
+                roundRect(ctx, x * u, y * u, colW * u, cardH * u, 0.45 * em * u);
+                ctx.clip();
+                ctx.beginPath();
+                ctx.rect(mx * u, (y + hair) * u, mw * u, imgH * u);
+                ctx.clip();
                 ctx.fillStyle = c.bar;
-                roundRect(
-                    ctx,
-                    left * u,
-                    (mid - 0.8 * size) * u,
-                    (textWidth(block.text, size, mono) + 0.8 * size) * u,
-                    1.6 * size * u,
-                    0.4 * size * u
-                );
-                ctx.fill();
-                text(block.text, (left + 0.4 * size) * u, mid * u, size, mono);
-                ry += line * em;
-            } else if (block.type === 'p') {
-                for (const l of wrap(block.text, em, inner)) {
-                    text(l, left * u, (ry + (line * em) / 2) * u, em);
-                    ry += line * em;
+                ctx.fillRect(mx * u, (y + hair) * u, mw * u, imgH * u);
+                const img = item.media ? shot(item.media) : null;
+                if (img?.complete && img.naturalWidth) {
+                    const s = Math.max(mw / img.naturalWidth, imgH / img.naturalHeight);
+                    ctx.drawImage(
+                        img,
+                        (mx + (mw - img.naturalWidth * s) / 2) * u,
+                        (y + hair) * u,
+                        img.naturalWidth * s * u,
+                        img.naturalHeight * s * u
+                    );
                 }
-            } else if (block.type === 'hr') {
-                ry += 0.4 * em;
+                ctx.restore();
                 ctx.fillStyle = c.line;
-                ctx.fillRect(left * u, ry * u, inner * u, 0.25 * em * u);
-                ry += 0.25 * em + 0.4 * em;
-            } else if (block.type === 'tools') {
-                // etiquetas das tecnologias (.gh-tools li), quebrando a linha quando não cabem
-                const size = 0.8 * em;
-                const ch = line * size + 0.3 * size + px(2);
-                let cx = left;
-                for (const item of block.items) {
-                    const w = textWidth(item, size, mono) + 1.4 * size + px(2);
-                    if (cx > left && cx + w > left + inner) {
-                        cx = left;
-                        ry += ch + 0.4 * em;
-                    }
-                    roundRect(ctx, cx * u, ry * u, w * u, ch * u, 0.4 * size * u);
-                    ctx.fillStyle = c.bar;
-                    ctx.fill();
+                ctx.fillRect(mx * u, (y + hair + imgH) * u, mw * u, hair * u);
+                ctx.strokeStyle = c.line;
+                ctx.lineWidth = hair * u;
+                roundRect(ctx, x * u, y * u, colW * u, cardH * u, 0.45 * em * u);
+                ctx.stroke();
+
+                // nome (cor de link), o selo "Em equipe" e a data à direita
+                const bx = mx + padL;
+                let by = y + hair + mediaH + em;
+                const headMid = (by + headH / 2) * u;
+                text(item.name, bx * u, headMid, titleSize, { weight: 600, color: c.link });
+                if (item.team) {
+                    const size = 0.8 * em;
+                    const lx = bx + textWidth(item.name, titleSize, { weight: 600 }) + 0.6 * em;
+                    const lw = textWidth(t.projects.team, size, { weight: 500 }) + 1.2 * size + 2 * hair;
+                    const lhh = 1.6 * size + 2 * hair;
+                    roundRect(ctx, lx * u, headMid - (lhh / 2) * u, lw * u, lhh * u, (lhh / 2) * u);
+                    ctx.strokeStyle = c.line;
                     ctx.stroke();
-                    text(item, (cx + 0.7 * size + px(1)) * u, (ry + ch / 2) * u, size, mono);
-                    cx += w + 0.4 * em;
+                    text(t.projects.team, (lx + hair + 0.6 * size) * u, headMid, size, { weight: 500, color: c.muted });
                 }
-                ry += ch;
-            } else if (block.type === 'pre') {
-                const size = 0.85 * em;
-                const rowH = 1.45 * size;
-                ctx.fillStyle = c.bar;
-                roundRect(ctx, left * u, ry * u, inner * u, (2 * size + block.lines.length * rowH) * u, 0.45 * em * u);
-                ctx.fill();
-                block.lines.forEach((l, i) => codeLine(l, left + size, ry + size + (i + 0.5) * rowH, size));
-                ry += 2 * size + block.lines.length * rowH;
-            }
-            ry += 0.8 * em; // gap do .gh-md
+                text(monthLabel(item.date, t), (bx + inner) * u, headMid, 0.85 * em, { color: c.muted, align: 'right' });
+                by += headH + gap;
+
+                // o que é, as tecnologias e os links (o rodapé fica preso embaixo do cartão)
+                for (const l of desc) {
+                    text(l, bx * u, (by + descLine / 2) * u, em);
+                    by += descLine;
+                }
+                by += gap;
+                for (const chip of chips) {
+                    const cy = by + chip.row * (chipH + chipGap);
+                    roundRect(ctx, (bx + chip.x) * u, cy * u, chip.w * u, chipH * u, (chipH / 2) * u);
+                    ctx.fillStyle = c.chip;
+                    ctx.fill();
+                    text(chip.tech, (bx + chip.x + chipPad) * u, (cy + chipH / 2) * u, chipSize, { weight: 500, color: c.link });
+                }
+                if (foot) {
+                    let fx = bx;
+                    const fy = y + cardH - hair - 1.1 * em - btnH;
+                    for (const link of item.links) {
+                        fx += linkButton(t.projects.links[link.kind], fx, fy) + 0.5 * em;
+                    }
+                }
+            });
+            y += cardH + 1.2 * em;
         }
 
         // barra de tarefas (.win-task): a dica do teclado à esquerda e as saídas à direita
@@ -555,8 +599,6 @@ export function monitorScreenTexture() {
         texture.needsUpdate = true;
     };
 
-    avatar.onload = () => texture.userData.t && draw(texture.userData.t);
-    avatar.src = github.user ? githubAvatar : profile.photo;
     texture.userData.redraw = draw;
     // Chamado pelo Scene.jsx antes do voo até a tela, com a largura (px) que ela vai ter na página
     texture.userData.fit = (width) => {

@@ -164,6 +164,9 @@ const PROJECTS = [
     }
 ];
 
+// Ordem da vitrine do monitor (aba Projetos): a mesma do currículo, os principais primeiro
+const SHOWCASE = ['djfinance', 'estudos', 'rota', 'portfolio', 'minhareceita', 'tse', 'loginpuc'];
+
 const EXPERIENCES = [
     {
         id: 'teknisa',
@@ -350,6 +353,10 @@ export const content = {
                 whatIDid: 'O que eu fiz',
                 built: 'Feito com',
                 profile: 'Ver perfil no GitHub',
+                // Aba Projetos (a vitrine com o print de cada um), a que abre primeiro
+                projects: 'Projetos',
+                showcaseIntro: 'Os principais primeiro. Clique num projeto para ver os detalhes.',
+                details: 'Ver detalhes de',
                 // "57 contribuições no último ano"
                 contributions: (n) => `${n} ${n === 1 ? 'contribuição' : 'contribuições'} no último ano`,
                 activity: (n) => `${n} ${n === 1 ? 'atividade pública' : 'atividades públicas'} no último ano`,
@@ -357,7 +364,8 @@ export const content = {
                 more: 'Mais',
                 day: (n, date) => `${n} em ${date}`
             },
-            items: localize(PROJECTS, 'pt')
+            items: localize(PROJECTS, 'pt'),
+            showcase: SHOWCASE
         },
         experience: {
             intro: 'Do mais recente ao mais antigo.',
@@ -545,13 +553,17 @@ export const content = {
                 whatIDid: 'What I did',
                 built: 'Built with',
                 profile: 'View profile on GitHub',
+                projects: 'Projects',
+                showcaseIntro: 'Main ones first. Click a project to see the details.',
+                details: 'See details of',
                 contributions: (n) => `${n} ${n === 1 ? 'contribution' : 'contributions'} in the last year`,
                 activity: (n) => `${n} public ${n === 1 ? 'activity' : 'activities'} in the last year`,
                 less: 'Less',
                 more: 'More',
                 day: (n, date) => `${n} on ${date}`
             },
-            items: localize(PROJECTS, 'en')
+            items: localize(PROJECTS, 'en'),
+            showcase: SHOWCASE
         },
         experience: {
             intro: 'Newest first.',

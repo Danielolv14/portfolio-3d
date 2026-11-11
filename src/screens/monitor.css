@@ -158,8 +158,7 @@
     font-size: 0.85em;
 }
 
-/* README do perfil (o cartão "Danielolv14 / README.md"). A textura do monitor em repouso desenha o
-   começo dele com estas mesmas medidas (room/textures.js) */
+/* README do perfil (o cartão "Danielolv14 / README.md"), na aba Visão geral */
 .gh-profile-readme {
     padding: 1.5em;
 }
@@ -442,6 +441,124 @@
     width: 0.9em;
 }
 
+/* Aba Projetos: a vitrine, com um cartão por projeto (print, nome, data, o que é, tecnologias e
+   links). A textura do monitor em repouso desenha os primeiros cartões com estas medidas
+   (`drawShowcase`, em room/textures.js): mudou aqui, mude lá. */
+.gh-showcase-wrap {
+    display: grid;
+    gap: 0.9em;
+}
+
+.gh-showcase-intro {
+    margin: 0;
+    color: var(--scr-muted);
+}
+
+.gh-showcase {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.gh-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: border-color 0.15s;
+}
+
+.gh-card:hover {
+    border-color: var(--scr-muted);
+}
+
+.gh-card-media {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-bottom: 1px solid var(--scr-line);
+    background: var(--scr-bar);
+    cursor: pointer;
+}
+
+.gh-card-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.35s ease;
+}
+
+.gh-card:hover .gh-card-media img {
+    transform: scale(1.03);
+}
+
+.gh-card-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    height: 100%;
+    color: var(--scr-muted);
+}
+
+.gh-card-empty svg {
+    width: 2em;
+    height: 2em;
+}
+
+.gh-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.65em;
+    padding: 1em 1.1em 1.1em;
+}
+
+.gh-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    margin: 0;
+}
+
+.gh-card-title {
+    font-size: 1.15em;
+}
+
+.gh-card-date {
+    margin-left: auto;
+    color: var(--scr-muted);
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
+.gh-card-desc {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.gh-card-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5em;
+    margin: auto 0 0;
+    padding-top: 0.2em;
+}
+
+.gh-card-foot .gh-btn {
+    padding: 0.3em 0.85em;
+    font-size: 0.9em;
+}
+
 /* Aba Repositórios: uma lista com uma linha entre os itens */
 .gh-repos {
     margin: 0;
@@ -559,7 +676,8 @@
         grid-row: span 3;
     }
 
-    .gh-pins {
+    .gh-pins,
+    .gh-showcase {
         grid-template-columns: 1fr;
     }
 }

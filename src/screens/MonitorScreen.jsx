@@ -1,13 +1,14 @@
-// Monitor = Projetos, no estilo do perfil do Daniel no GitHub, do jeito que ele está hoje: foto, nome,
-// bio e redes do perfil, o README do perfil, os repositórios fixados, o gráfico de contribuições e a
-// lista de repositórios (tudo buscado no build, scripts/github.mjs). Uma "janela" de navegador: barra
-// com o endereço, as abas do perfil, a página de um projeto (o README com a mídia e os links, para os
-// repositórios que têm projeto no content.js) e a barra de tarefas com as saídas. A textura do monitor
-// em repouso (monitorScreenTexture, em room/textures.js) desenha o começo da Visão geral.
+// Monitor = Projetos, no estilo do perfil do Daniel no GitHub. Abre na aba Projetos: a vitrine com o
+// print, o que é, as tecnologias e os links de cada projeto. As outras abas mostram o perfil do jeito
+// que ele está hoje: a Visão geral (foto, nome, bio e redes, o README do perfil, os fixados e o gráfico
+// de contribuições) e a lista de repositórios (tudo buscado no build, scripts/github.mjs). Uma "janela"
+// de navegador: barra com o endereço, as abas, a página de um projeto (o README com a mídia e os links)
+// e a barra de tarefas com as saídas. A textura do monitor em repouso (monitorScreenTexture, em
+// room/textures.js) desenha o começo da aba Projetos com as mesmas medidas.
 import { useMemo, useState } from 'react';
 
-import { channels, profile } from '../content/content';
-import { IconArrow, IconClose, IconList, IconLock, IconPin, IconUsers } from '../app/Icons';
+import { channels, monthLabel, profile } from '../content/content';
+import { IconArrow, IconClose, IconList, IconLock, IconPin, IconPlay, IconUsers } from '../app/Icons';
 import {
     GITHUB_LOGIN,
     contributionWeeks,
@@ -18,6 +19,7 @@ import {
     profileReadme,
     projectList,
     repoList,
+    showcaseList,
     socialList
 } from './github';
 import './monitor.css';
@@ -34,6 +36,15 @@ function IconRepo() {
     return (
         <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
             <path d="M3 1.5A1.5 1.5 0 0 1 4.5 0h9a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5H11v-1h2V1H4.5a.5.5 0 0 0-.5.5v9.6c.15-.06.32-.1.5-.1H9v1H4.5a.5.5 0 0 0 0 1H5v1h-.5A1.5 1.5 0 0 1 3 12.5zM6 12h4v4l-2-1.5L6 16z" />
+        </svg>
+    );
+}
+
+// Ícone da aba Projetos (o "table" do GitHub: um quadro com colunas)
+function IconBoard() {
+    return (
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M0 1.75C0 .78.78 0 1.75 0h12.5C15.22 0 16 .78 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25zM1.5 6.5v7.75c0 .14.11.25.25.25H5v-8zm5 8h7.75a.25.25 0 0 0 .25-.25V6.5h-8zm8-9.5V1.75a.25.25 0 0 0-.25-.25H1.75a.25.25 0 0 0-.25.25V5z" />
         </svg>
     );
 }
@@ -187,6 +198,70 @@ function Overview({ t, g, pins, open }) {
     );
 }
 
+// Aba Projetos: um cartão por projeto, com o print, o nome, a data, o que é, as tecnologias e os links.
+// O print e o nome abrem a página do projeto. A textura do monitor desenha os primeiros cartões com as
+// medidas do monitor.css (.gh-card...): mudou uma, mude a outra.
+function Showcase({ t, g, items, open }) {
+    const p = t.projects;
+    return (
+        <div className="gh-showcase-wrap">
+            <p className="gh-showcase-intro">{g.showcaseIntro}</p>
+            <ul className="gh-showcase">
+                {items.map((item) => (
+                    <li key={item.id} className="gh-box gh-card">
+                        <button
+                            type="button"
+                            className="gh-card-media"
+                            onClick={() => open(item.id)}
+                            aria-label={`${g.details} ${item.name}`}
+                        >
+                            {item.media ? (
+                                <img src={item.media} alt="" />
+                            ) : (
+                                <span className="gh-card-empty">
+                                    <IconPlay />
+                                    {p.gif}
+                                </span>
+                            )}
+                        </button>
+                        <div className="gh-card-body">
+                            <p className="gh-card-head">
+                                <button type="button" className="gh-link gh-card-title" onClick={() => open(item.id)}>
+                                    {item.name}
+                                </button>
+                                {item.team && <span className="gh-label">{p.team}</span>}
+                                <time className="gh-card-date" dateTime={item.date}>
+                                    {monthLabel(item.date, t)}
+                                </time>
+                            </p>
+                            <p className="gh-card-desc">{item.description}</p>
+                            <ul className="gh-topics">
+                                {item.tech.map((tech) => (
+                                    <li key={tech}>{tech}</li>
+                                ))}
+                            </ul>
+                            {(item.links.length > 0 || item.privateRepo) && (
+                                <p className="gh-card-foot">
+                                    {item.links.map((link) => (
+                                        <a key={link.url} className="gh-btn" href={link.url} target="_blank" rel="noreferrer">
+                                            {p.links[link.kind]} <IconArrow />
+                                        </a>
+                                    ))}
+                                    {item.privateRepo && (
+                                        <span className="gh-meta">
+                                            <IconLock /> {p.privateRepo}
+                                        </span>
+                                    )}
+                                </p>
+                            )}
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
 function Repositories({ t, g, repos, open }) {
     return (
         <ul className="gh-repos">
@@ -274,9 +349,11 @@ export default function MonitorScreen({ t, headingRef, onClose, onRead2d }) {
     const s = t.ui.screen;
     const g = t.projects.gh;
     const items = projectList(t);
+    const showcase = showcaseList(t);
     const pins = pinnedList(t);
     const repos = repoList(t);
-    const [tab, setTab] = useState('overview');
+    // abre na vitrine de projetos, que é o que a seção mostra (a textura em repouso desenha a mesma aba)
+    const [tab, setTab] = useState('projects');
     // projeto aberto (a página do repositório); ao voltar, fica a aba de onde ele foi aberto
     const [openId, setOpenId] = useState(null);
     const current = items.find((i) => i.id === openId);
@@ -291,7 +368,7 @@ export default function MonitorScreen({ t, headingRef, onClose, onRead2d }) {
                 </span>
                 <span className="win-path" aria-hidden="true">
                     {s.path.projects}
-                    {current ? `/${current.repoName}` : tab === 'repos' ? '?tab=repositories' : ''}
+                    {current ? `/${current.repoName}` : tab === 'repos' ? '?tab=repositories' : tab === 'projects' ? '?tab=projects' : ''}
                 </span>
                 <button type="button" className="win-close" onClick={onClose} aria-label={s.closeWindow} title={s.closeWindow}>
                     <IconClose />
@@ -304,10 +381,12 @@ export default function MonitorScreen({ t, headingRef, onClose, onRead2d }) {
                     {t.ui.nav.projects}
                 </h2>
                 <nav className="gh-tabs" aria-label={t.ui.nav.projects}>
+                    {/* a ordem e as contagens são as mesmas que a textura em repouso desenha */}
                     {[
-                        ['overview', g.overview],
-                        ['repos', g.repositories]
-                    ].map(([id, label]) => (
+                        ['projects', g.projects, <IconBoard key="i" />, showcase.length],
+                        ['overview', g.overview, <IconList key="i" />, null],
+                        ['repos', g.repositories, <IconRepo key="i" />, repos.length]
+                    ].map(([id, label, icon, count]) => (
                         <button
                             key={id}
                             type="button"
@@ -318,14 +397,16 @@ export default function MonitorScreen({ t, headingRef, onClose, onRead2d }) {
                                 setOpenId(null);
                             }}
                         >
-                            {id === 'repos' ? <IconRepo /> : <IconList />}
+                            {icon}
                             {label}
-                            {id === 'repos' && <span className="gh-count">{repos.length}</span>}
+                            {count !== null && <span className="gh-count">{count}</span>}
                         </button>
                     ))}
                 </nav>
                 {current ? (
                     <Repo t={t} g={g} item={current} back={() => setOpenId(null)} />
+                ) : tab === 'projects' ? (
+                    <Showcase t={t} g={g} items={showcase} open={setOpenId} />
                 ) : tab === 'overview' ? (
                     <Overview t={t} g={g} pins={pins} open={setOpenId} />
                 ) : (
