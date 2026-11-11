@@ -1,9 +1,11 @@
 import foto from './foto.jpg';
 import { linkedinEn, linkedinPt } from './linkedin';
 import printDjfinance from './projetos/djfinance.jpg';
+import printEstudos from './projetos/app-de-estudos.jpg';
 import printLoginPuc from './projetos/login-puc.jpg';
 import printMinhaReceita from './projetos/minhareceita.jpg';
 import printPortfolio from './projetos/portfolio-3d.jpg';
+import printRota from './projetos/rota.jpg';
 import printTse from './projetos/candidatos-tse.jpg';
 
 // Todo o texto e os dados do site.
@@ -22,7 +24,7 @@ const PROJECTS = [
         id: 'djfinance',
         date: '2026-03',
         // nomes de tecnologias são os mesmos em PT e EN (por isso "Google APIs", o nome do produto)
-        tech: ['Java', 'Spring Boot', 'PostgreSQL', 'React', 'Tailwind CSS', 'Google APIs'],
+        tech: ['Java', 'Spring Boot', 'PostgreSQL', 'React', 'Google Calendar API', 'Railway', 'Vercel'],
         media: printDjfinance,
         links: [
             { kind: 'back', url: 'https://github.com/Danielolv14/DJFinance-Back-End' },
@@ -32,14 +34,14 @@ const PROJECTS = [
         pt: {
             name: 'DJFinance',
             description:
-                'Sistema que facilita o fechamento financeiro mensal de um DJ: cadastro de shows, cálculo automático do fechamento e relatórios em PDF e Excel, com integração às APIs do Google.',
-            role: 'Projeto pessoal, feito do zero: API REST em Java e interface web em React.'
+                'O sistema que uso de verdade como produtor dos DJs DRUDS e Braichi: shows, agenda, itinerários, cadastro de contratantes, sincronização com o Google Agenda e o fechamento financeiro mensal em PDF e Excel.',
+            role: 'Projeto pessoal, feito sozinho e em produção. As regras de pagamento ficam na API e são cobertas por testes. Numa refatoração em fases, tirei cerca de 1.300 linhas de código morto, conferindo que os fechamentos saíam idênticos antes e depois.'
         },
         en: {
             name: 'DJFinance',
             description:
-                "A system that makes a DJ's monthly financial closing easier: show registration, automatic closing calculations and PDF and Excel reports, integrated with Google APIs.",
-            role: 'Personal project built from scratch: a Java REST API and a React web interface.'
+                'The system I actually use as the producer of DJs DRUDS and Braichi: shows, schedule, itineraries, a client directory, Google Calendar sync and the monthly financial closing in PDF and Excel.',
+            role: 'Personal project, built on my own and running in production. Payment rules live in the API and are covered by tests. In a phased refactor I removed about 1,300 lines of dead code, checking that every closing came out identical before and after.'
         }
     },
     {
@@ -67,22 +69,21 @@ const PROJECTS = [
     {
         id: 'minhareceita',
         date: '2026-08',
-        tech: ['Java 21', 'Spring Boot', 'MongoDB', 'HTML', 'CSS', 'JavaScript'],
+        tech: ['React', 'Vite', 'Next.js', 'MongoDB'],
         media: printMinhaReceita,
-        links: [],
-        privateRepo: true,
+        links: [{ kind: 'repo', url: 'https://github.com/Danielolv14/MinhaReceita' }],
         team: true,
         pt: {
             name: 'MinhaReceita',
             description:
                 'Receita médica digital para o SUS, com assinatura digital e um código único por receita. O médico emite, o paciente apresenta e o farmacêutico confere o código na hora de entregar o remédio.',
-            role: 'Trabalho Interdisciplinar do 4º período, em equipe de quatro pessoas. Minha parte: login e a área do farmacêutico.'
+            role: 'Trabalho Interdisciplinar do 4º período, em equipe de quatro pessoas. Minha parte: o login e as telas do paciente (receitas, detalhe, código e QR Code) e da farmácia.'
         },
         en: {
             name: 'MinhaReceita',
             description:
                 "A digital medical prescription for Brazil's public health system (SUS), with a digital signature and a unique code per prescription. The doctor issues it, the patient presents it and the pharmacist checks the code before handing over the medicine.",
-            role: 'Interdisciplinary project of the 4th semester, in a team of four. My part: login and the pharmacist area.'
+            role: 'Interdisciplinary project of the 4th semester, in a team of four. My part: login and the patient screens (prescriptions, details, code and QR Code) and the pharmacy screens.'
         }
     },
     {
@@ -107,18 +108,58 @@ const PROJECTS = [
     {
         id: 'portfolio',
         date: '2026-10',
-        tech: ['React', 'Three.js', 'React Three Fiber', 'Vite'],
+        tech: ['React', 'Three.js', 'React Three Fiber', 'Vite', 'Blender', 'Python'],
         media: printPortfolio,
         links: [{ kind: 'repo', url: 'https://github.com/Danielolv14/portfolio-3d' }],
         pt: {
             name: 'Portfólio 3D',
-            description: 'Este site: um quarto em 3D onde cada objeto abre uma seção do portfólio.',
-            role: ''
+            description:
+                'Este site: o meu quarto recriado em 3D, em que cada objeto abre uma seção (projetos no monitor, experiências na TV, contato no celular), em português e inglês.',
+            role: 'Feito sozinho. A luz é calculada no Blender por um pipeline em Python, e o JavaScript inicial caiu de 477 para 93 KB.'
         },
         en: {
             name: '3D Portfolio',
-            description: 'This website: a 3D room where each object opens a section of the portfolio.',
-            role: ''
+            description:
+                'This website: my bedroom recreated in 3D, where each object opens a section (projects on the monitor, experience on the TV, contact on the phone), in Portuguese and English.',
+            role: 'Built on my own. The lighting is baked in Blender by a Python pipeline, and the initial JavaScript went from 477 KB down to 93 KB.'
+        }
+    },
+    {
+        id: 'rota',
+        date: '2026-10',
+        tech: ['Java 25', 'Spring Boot 4', 'Spring Security', 'JWT', 'React', 'Supabase'],
+        media: printRota,
+        links: [{ kind: 'repo', url: 'https://github.com/Danielolv14/CarRentalApp' }],
+        pt: {
+            name: 'Rota: aluguel de carros',
+            description:
+                'Sistema web de aluguel de carros para clientes, locadoras e bancos: pedidos com acompanhamento de status, parecer financeiro, crédito bancário e contratos.',
+            role: 'Trabalho individual da PUC Minas. API REST em MVC com acesso por perfil (BCrypt e JWT), modelagem UML e 64 testes automatizados no back-end.'
+        },
+        en: {
+            name: 'Rota: car rental',
+            description:
+                'A car rental web system for customers, rental companies and banks: orders with status tracking, financial review, bank credit and contracts.',
+            role: 'Individual project at PUC Minas. An MVC REST API with role-based access (BCrypt and JWT), UML modeling and 64 automated back-end tests.'
+        }
+    },
+    {
+        id: 'estudos',
+        date: '2026-11',
+        tech: ['Electron', 'React', 'TypeScript', 'SQLite', 'Vitest', 'Canvas API'],
+        media: printEstudos,
+        links: [{ kind: 'repo', url: 'https://github.com/Danielolv14/app-de-estudos' }],
+        pt: {
+            name: 'App de Estudos',
+            description:
+                'App de desktop que organiza a minha rotina de estudos (plano do dia, provas e timer de foco) e bloqueia sites e jogos durante a sessão. Puxa matérias, prazos, notas e PDFs do Canvas da PUC, e uma IA monta aulas e simulados.',
+            role: 'Projeto pessoal, feito porque eu não conseguia focar. O bloqueio roda num serviço do Windows que falha fechado: se algo der errado, continua bloqueando. 111 testes.'
+        },
+        en: {
+            name: 'Study App',
+            description:
+                "A desktop app that organizes my study routine (daily plan, exams and a focus timer) and blocks websites and games during the session. It pulls courses, deadlines, grades and PDFs from PUC's Canvas, and an AI builds lessons and practice tests.",
+            role: "Personal project, built because I couldn't focus. Blocking runs in a Windows service that fails closed: if anything goes wrong, it keeps blocking. 111 tests."
         }
     }
 ];
@@ -130,33 +171,33 @@ const EXPERIENCES = [
         url: 'https://www.teknisa.com/',
         start: '2026-06',
         end: null,
-        tech: ['PHP', 'JavaScript', 'Vue.js', 'TypeScript', 'Zeedhi', 'SQL Server'],
+        tech: ['PHP', 'JavaScript', 'Vue.js', 'TypeScript', 'Zeedhi', 'SQL Server', 'PostgreSQL'],
         pt: {
-            role: 'Estagiário de desenvolvimento Full Stack',
+            role: 'Desenvolvedor Full Stack (estágio)',
             description:
-                'Atuo no módulo de Retail, na Frente de Caixa (PDV), desenvolvendo e mantendo sistemas em produção usados por operações de varejo e food service.',
+                'Desenvolvo do back-end à interface na Frente de Caixa (PDV) do módulo de Retail, um sistema em produção usado por operações de varejo e food service: mesa, comanda, balcão e delivery, com emissão de NFC-e e NF-e.',
             highlights: [
-                'Desenvolvimento full stack com PHP, JavaScript e os frameworks Zeedhi e Zeedhi Next (Vue.js + TypeScript)',
-                'Novas funcionalidades e regras de negócio para o PDV, do back-end à interface',
-                'Análise, investigação e correção de bugs em ambiente de produção',
-                'Consultas e manipulação de dados em SQL Server para diagnóstico e sustentação',
-                'Testes de sistemas e documentação técnica das entregas',
-                'Padrões de código da Teknisa: Fail Fast, reutilização de código, tratamento de exceções e nomenclatura padronizada',
-                'Treinamentos, reuniões e ritos do time de desenvolvimento'
+                'Troca de produto em mesa e comanda, com liberação por supervisor e log de auditoria',
+                'Desconto manual por produto na venda balcão',
+                'Escolha entre NF-e e NFC-e em vendas com CNPJ',
+                'XML da NFC-e adequado à NT 2026.008 da reforma tributária (IBS/CBS e valores líquidos), com vendas autorizadas na SEFAZ-SP',
+                'Investigação de bugs em produção com SQL, como um fuso horário errado na impressão de pedidos',
+                'PHP, JavaScript e os frameworks Zeedhi e Zeedhi Next (Vue.js + TypeScript), seguindo os padrões da Teknisa: Fail Fast, reutilização de código e tratamento de exceções',
+                'Documentação de cada entrega para o QA'
             ]
         },
         en: {
-            role: 'Full Stack Development Intern',
+            role: 'Full Stack Developer (intern)',
             description:
-                'I work on the Retail module, on the point of sale (POS), building and maintaining production systems used by retail and food service operations.',
+                'I work from back end to interface on the Retail module point of sale (POS), a production system used by retail and food service operations: tables, tabs, counter and delivery, issuing NFC-e and NF-e electronic invoices.',
             highlights: [
-                'Full stack development with PHP, JavaScript and the Zeedhi and Zeedhi Next frameworks (Vue.js + TypeScript)',
-                'New features and business rules for the POS, from back end to interface',
-                'Analyzing, investigating and fixing bugs in production',
-                'SQL Server queries and data handling for diagnostics and support',
-                'System testing and technical documentation of each delivery',
-                "Teknisa's coding standards: fail fast, code reuse, exception handling and consistent naming",
-                "Trainings, meetings and the development team's rituals"
+                'Product swap on tables and tabs, with supervisor approval and an audit log',
+                'Manual per-item discount on counter sales',
+                'Choosing between NF-e and NFC-e on sales to companies (CNPJ)',
+                "Updated the NFC-e XML to technical note 2026.008 of Brazil's tax reform (IBS/CBS and net values), with sales authorized by SEFAZ-SP",
+                'Investigating production bugs with SQL, such as a wrong time zone on printed orders',
+                "PHP, JavaScript and the Zeedhi and Zeedhi Next frameworks (Vue.js + TypeScript), following Teknisa's standards: fail fast, code reuse and exception handling",
+                'Documenting each delivery for QA'
             ]
         }
     }
@@ -218,36 +259,59 @@ export const content = {
             trademarks: 'As marcas que aparecem nos modelos pertencem aos seus donos e só retratam objetos do quarto.'
         },
         about: {
-            role: 'Estudante de Engenharia de Software, curioso e motivado',
+            role: 'Desenvolvedor Full Stack · Estudante de Engenharia de Software',
             readIn: 'Ler em',
             bio: [
-                'Sou estudante de Engenharia de Software na PUC Minas, no 4º período, e estagiário de desenvolvimento Full Stack na Teknisa, onde desenvolvo e mantenho a Frente de Caixa (PDV) do módulo de Retail.',
-                'No dia a dia lido com regras de negócio de varejo e food service, investigo e corrijo bugs em produção e crio novas funcionalidades, do back-end à interface. Fora do trabalho, é no back-end que me sinto em casa: Java com Spring Boot, PostgreSQL e APIs REST.'
+                'Sou estagiário Full Stack na Teknisa, no PDV de varejo e food service (um sistema em produção, com NFC-e e NF-e), e estudante de Engenharia de Software na PUC Minas, no 4º período.',
+                'Fora do estágio, construo projetos completos com Java, Spring Boot, React e TypeScript, do banco ao deploy: um sistema financeiro que uso de verdade, um app que bloqueia as distrações enquanto eu estudo e este quarto em 3D. É no back-end que me sinto em casa, e quero crescer em arquitetura e integração entre sistemas.'
             ],
-            educationTitle: 'Formação',
+            educationTitle: 'Formação e certificados',
             education: [
                 {
                     course: 'Engenharia de Software',
                     school: 'PUC Minas',
-                    detail: '4º período · jan 2025 – nov 2028 (previsão)'
+                    detail: '4º período · fev 2026 – nov 2028 (previsão)'
+                },
+                {
+                    course: 'Ciência da Computação',
+                    school: 'PUC Minas',
+                    detail: '2024 – 2026 · hackathons, maratonas de programação, projetos e monitoria. Me transferi para Engenharia de Software.'
+                },
+                {
+                    course: 'Banco de Dados SQL do Zero ao Avançado',
+                    school: 'Udemy',
+                    detail: 'Certificado · mai 2026'
+                },
+                {
+                    course: 'HTML, CSS e JavaScript Essencial',
+                    school: 'Udemy',
+                    detail: 'Certificado · abr 2026'
                 }
             ],
             stackTitle: 'Tecnologias',
             stack: [
                 'Java',
                 'Spring Boot',
+                'Spring Security',
+                'APIs REST',
                 'PHP',
                 'JavaScript',
                 'TypeScript',
-                'Vue.js',
                 'React',
+                'Vue.js',
+                'Electron',
+                'Three.js',
                 'HTML e CSS',
                 'PostgreSQL',
-                'MySQL',
                 'SQL Server',
+                'MySQL',
                 'MongoDB',
-                'C e C++',
-                'Git'
+                'SQLite',
+                'JUnit',
+                'Vitest',
+                'Git',
+                'Python',
+                'C e C++'
             ],
             interestsTitle: 'Interesses',
             interests: ['Back-end', 'Full stack', 'Arquitetura limpa', 'Performance', 'Integrações entre sistemas'],
@@ -391,36 +455,59 @@ export const content = {
             trademarks: 'Brands shown on the models belong to their owners and only portray objects in the room.'
         },
         about: {
-            role: 'A curious and driven Software Engineering student',
+            role: 'Full Stack Developer · Software Engineering student',
             readIn: 'Read in',
             bio: [
-                "I'm a Software Engineering student at PUC Minas, in my 4th semester, and a Full Stack Development Intern at Teknisa, where I build and maintain the Retail module's point of sale (POS).",
-                'Day to day I deal with retail and food service business rules, investigate and fix bugs in production and build new features, from back end to interface. Outside work, back end is where I feel at home: Java with Spring Boot, PostgreSQL and REST APIs.'
+                "I'm a Full Stack intern at Teknisa, working on a retail and food service point of sale (a production system that issues NFC-e and NF-e invoices), and a Software Engineering student at PUC Minas, in my 4th semester.",
+                'Outside the internship I build complete projects with Java, Spring Boot, React and TypeScript, from database to deploy: a financial system I actually use, an app that blocks distractions while I study and this 3D room. Back end is where I feel at home, and I want to grow in architecture and system integration.'
             ],
-            educationTitle: 'Education',
+            educationTitle: 'Education & certificates',
             education: [
                 {
                     course: 'Software Engineering',
                     school: 'PUC Minas',
-                    detail: '4th semester · Jan 2025 – Nov 2028 (expected)'
+                    detail: '4th semester · Feb 2026 – Nov 2028 (expected)'
+                },
+                {
+                    course: 'Computer Science',
+                    school: 'PUC Minas',
+                    detail: '2024 – 2026 · hackathons, programming contests, projects and teaching assistance. I transferred to Software Engineering.'
+                },
+                {
+                    course: 'SQL Databases from Zero to Advanced',
+                    school: 'Udemy',
+                    detail: 'Certificate · May 2026'
+                },
+                {
+                    course: 'HTML, CSS and JavaScript Essentials',
+                    school: 'Udemy',
+                    detail: 'Certificate · Apr 2026'
                 }
             ],
             stackTitle: 'Tech stack',
             stack: [
                 'Java',
                 'Spring Boot',
+                'Spring Security',
+                'REST APIs',
                 'PHP',
                 'JavaScript',
                 'TypeScript',
-                'Vue.js',
                 'React',
+                'Vue.js',
+                'Electron',
+                'Three.js',
                 'HTML & CSS',
                 'PostgreSQL',
-                'MySQL',
                 'SQL Server',
+                'MySQL',
                 'MongoDB',
-                'C & C++',
-                'Git'
+                'SQLite',
+                'JUnit',
+                'Vitest',
+                'Git',
+                'Python',
+                'C & C++'
             ],
             interestsTitle: 'Interests',
             interests: ['Back end', 'Full stack', 'Clean architecture', 'Performance', 'System integrations'],

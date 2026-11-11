@@ -29,7 +29,7 @@ export const GITHUB_LOGIN = gh.user?.login ?? 'Danielolv14';
 const repoByUrl = new Map((gh.repos ?? []).map((r) => [r.url.toLowerCase(), r]));
 
 // Projeto + dados reais dos repositórios dele (linguagem, estrelas, último envio).
-// O que não está no GitHub (MinhaReceita, privado) fica só com o content.js.
+// Projeto sem repositório público (`privateRepo` no content.js) fica só com o content.js.
 export function withRepoData(item) {
     const repos = item.links.map((l) => repoByUrl.get(l.url.toLowerCase())).filter(Boolean);
     const main = repos[0];

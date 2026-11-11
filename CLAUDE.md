@@ -141,7 +141,8 @@ Também: site responsivo, identidade visual coerente, hospedagem gratuita e READ
 3. **Sobre mim** fica no painel lateral.
 4. **No celular** as seções abrem na folha de baixo, e o modo tela vale só no computador (pelo menos 900×560) e fora do modo sem 3D.
 5. **Iluminação (decidido em 21/10): bake no Blender por script.** Um pipeline automático exporta o quarto feito em código, assa a luz (dia, noite e máscara dos LEDs) no Cycles e volta como GLB com texturas. O código continua sendo a fonte da verdade, e refazer o bake é um comando. Ver [`docs/plano/02-pipeline-blender.md`](docs/plano/02-pipeline-blender.md).
-6. **MinhaReceita** aparece sem link, porque o repositório da disciplina é privado. Os contatos não incluem o WhatsApp.
+6. **MinhaReceita** aponta para a cópia pública no GitHub do Daniel (`Danielolv14/MinhaReceita`, desde 11/11; o repositório da disciplina continua privado). Os contatos não incluem o WhatsApp.
+   - **Projetos e "Sobre mim" seguem o currículo** (refeito em 11/11, com a fonte em `Documents\04 Pessoal\Currículo\fonte\curriculo.html`): quando um mudar, conferir o outro. O `linkedin.js` (TV) é cópia do perfil do LinkedIn e só muda quando o perfil mudar.
 7. **Celular (Contato), decidido em 07/10:**
    - o celular é um iPhone 17 preto com a interface inspirada no iOS 26, sem nenhum recurso da Apple;
    - ele fica deitado na cama, e a câmera para olhando de cima;
