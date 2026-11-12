@@ -78,4 +78,4 @@ The first bake was the lightest, but everything in it was simple shapes in flat 
 
 **Stack:** React 18, Vite 6, three.js, React Three Fiber, drei, camera-controls, postprocessing, EmailJS, Blender 4.5 (Python and Cycles), Playwright and Vercel.
 
-**Daniel Oliveira de Menezes**: [LinkedIn](https://www.linkedin.com/in/daniel-oliveira14/) · [GitHub](https://github.com/Danielolv14) · [danielolv.dev](https://www.danielolv.dev)
+**Daniel Oliveira de Menezes**: [LinkedIn](https://www.linkedin.com/in/danielolvz/) · [GitHub](https://github.com/Danielolv14) · [danielolv.dev](https://www.danielolv.dev)

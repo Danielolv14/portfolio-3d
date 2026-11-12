@@ -241,7 +241,7 @@ export const content = {
             present: 'atual',
             // Seções que abrem dentro de uma tela do quarto (src/screens)
             screen: {
-                path: { projects: 'github.com/Danielolv14', experience: 'linkedin.com/in/daniel-oliveira14' },
+                path: { projects: 'github.com/Danielolv14', experience: 'linkedin.com/in/danielolvz' },
                 closeWindow: 'Fechar janela',
                 read2d: 'Ler em 2D',
                 escHint: 'Esc volta ao quarto',
@@ -442,7 +442,7 @@ export const content = {
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             present: 'present',
             screen: {
-                path: { projects: 'github.com/Danielolv14', experience: 'linkedin.com/in/daniel-oliveira14' },
+                path: { projects: 'github.com/Danielolv14', experience: 'linkedin.com/in/danielolvz' },
                 closeWindow: 'Close window',
                 read2d: 'Read in 2D',
                 escHint: 'Esc goes back to the room',
@@ -619,8 +619,8 @@ export const channels = [
     {
         id: 'linkedin',
         label: 'LinkedIn',
-        value: 'linkedin.com/in/daniel-oliveira14',
-        href: 'https://www.linkedin.com/in/daniel-oliveira14/'
+        value: 'linkedin.com/in/danielolvz',
+        href: 'https://www.linkedin.com/in/danielolvz/'
     },
     { id: 'github', label: 'GitHub', value: 'github.com/Danielolv14', href: 'https://github.com/Danielolv14' },
     { id: 'instagram', label: 'Instagram', value: '@danielolvz', href: 'https://www.instagram.com/danielolvz/' }

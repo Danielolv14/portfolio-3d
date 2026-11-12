@@ -110,6 +110,6 @@ O código está sob a [Licença MIT](LICENSE). Os modelos e texturas de terceiro
 ## Autor
 
 **Daniel Oliveira de Menezes**: estudante de Engenharia de Software na PUC Minas e estagiário de desenvolvimento Full Stack na Teknisa.
-[LinkedIn](https://www.linkedin.com/in/daniel-oliveira14/) · [GitHub](https://github.com/Danielolv14) · [danielolv.dev](https://www.danielolv.dev)
+[LinkedIn](https://www.linkedin.com/in/danielolvz/) · [GitHub](https://github.com/Danielolv14) · [danielolv.dev](https://www.danielolv.dev)
 
 O projeto começou como o LAB01 da disciplina Desenvolvimento e Integração de Aplicações Web, na PUC Minas, e virou o meu portfólio profissional.

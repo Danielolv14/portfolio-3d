@@ -110,6 +110,6 @@ The code is under the [MIT License](LICENSE). Third-party models and textures ke
 ## Author
 
 **Daniel Oliveira de Menezes**: Software Engineering student at PUC Minas and Full Stack Developer intern at Teknisa.
-[LinkedIn](https://www.linkedin.com/in/daniel-oliveira14/) · [GitHub](https://github.com/Danielolv14) · [danielolv.dev](https://www.danielolv.dev)
+[LinkedIn](https://www.linkedin.com/in/danielolvz/) · [GitHub](https://github.com/Danielolv14) · [danielolv.dev](https://www.danielolv.dev)
 
 This project started as LAB01 of the Web Application Development and Integration course at PUC Minas and grew into my professional portfolio.
