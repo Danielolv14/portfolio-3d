@@ -5,7 +5,7 @@
 import photo from './linkedin-foto.jpg';
 
 const HEADLINE =
-    'Software Engineering student at PUC Minas and Full Stack Developer at Teknisa, working on the Retail module. Mainly interested in back-end development, errors fix and new features.';
+    'Software Engineering - Full Stack Developer at Teknisa, working on the Retail module. Mainly interested in full stack development, AI applied to real products and integration between systems.';
 const TEKNISA_URL = 'https://www.teknisa.com/';
 const udemy = (id) => `https://www.udemy.com/certificate/${id}/`;
 

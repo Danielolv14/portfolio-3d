@@ -266,7 +266,7 @@ export const content = {
             readIn: 'Ler em',
             bio: [
                 'Sou estagiário Full Stack na Teknisa, no PDV de varejo e food service (um sistema em produção, com NFC-e e NF-e), e estudante de Engenharia de Software na PUC Minas, no 4º período.',
-                'Fora do estágio, construo projetos completos com Java, Spring Boot, React e TypeScript, do banco ao deploy: um sistema financeiro que uso de verdade, um app que bloqueia as distrações enquanto eu estudo e este quarto em 3D. É no back-end que me sinto em casa, e quero crescer em arquitetura e integração entre sistemas.'
+                'Fora do estágio, construo projetos completos com Java, Spring Boot, React e TypeScript, do banco ao deploy: um sistema financeiro que uso de verdade, um app que bloqueia as distrações enquanto eu estudo e este quarto em 3D. Me considero full stack, sou curioso por IA e quero levá-la cada vez mais para produtos de verdade.'
             ],
             educationTitle: 'Formação e certificados',
             education: [
@@ -317,9 +317,9 @@ export const content = {
                 'C e C++'
             ],
             interestsTitle: 'Interesses',
-            interests: ['Back-end', 'Full stack', 'Arquitetura limpa', 'Performance', 'Integrações entre sistemas'],
+            interests: ['Full stack', 'IA aplicada', 'Integrações entre sistemas', 'Arquitetura limpa', 'Performance'],
             goalTitle: 'Objetivo',
-            goal: 'Crescer na carreira como desenvolvedor, me aprofundando em back-end, arquitetura e integrações entre sistemas.',
+            goal: 'Crescer como desenvolvedor full stack e levar IA para produtos de verdade.',
             languagesTitle: 'Idiomas',
             languages: 'Português (nativo) · Inglês (intermediário)',
             offTitle: 'Fora do código',
@@ -390,7 +390,7 @@ export const content = {
             noteLines: [
                 'Estudante de Engenharia de Software na',
                 'PUC Minas e estagiário Full Stack na',
-                'Teknisa. Me sinto em casa no back-end.'
+                'Teknisa. Full stack e curioso por IA.'
             ],
             search: 'Pesquisar',
             copyEmail: 'Copiar e-mail',
@@ -467,7 +467,7 @@ export const content = {
             readIn: 'Read in',
             bio: [
                 "I'm a Full Stack intern at Teknisa, working on a retail and food service point of sale (a production system that issues NFC-e and NF-e invoices), and a Software Engineering student at PUC Minas, in my 4th semester.",
-                'Outside the internship I build complete projects with Java, Spring Boot, React and TypeScript, from database to deploy: a financial system I actually use, an app that blocks distractions while I study and this 3D room. Back end is where I feel at home, and I want to grow in architecture and system integration.'
+                'Outside the internship I build complete projects with Java, Spring Boot, React and TypeScript, from database to deploy: a financial system I actually use, an app that blocks distractions while I study and this 3D room. I see myself as full stack, I am curious about AI and I want to bring it into real products more and more.'
             ],
             educationTitle: 'Education & certificates',
             education: [
@@ -518,9 +518,9 @@ export const content = {
                 'C & C++'
             ],
             interestsTitle: 'Interests',
-            interests: ['Back end', 'Full stack', 'Clean architecture', 'Performance', 'System integrations'],
+            interests: ['Full stack', 'Applied AI', 'System integrations', 'Clean architecture', 'Performance'],
             goalTitle: 'Goal',
-            goal: 'Grow my career as a developer, going deeper into back end, architecture and system integrations.',
+            goal: 'Grow as a full stack developer and bring AI into real products.',
             languagesTitle: 'Languages',
             languages: 'Portuguese (native) · English (intermediate)',
             offTitle: 'Off the keyboard',
@@ -583,7 +583,7 @@ export const content = {
             noteLines: [
                 'Software Engineering student at PUC',
                 'Minas and Full Stack intern at Teknisa.',
-                'Back end is where I feel at home.'
+                'Full stack and curious about AI.'
             ],
             search: 'Search',
             copyEmail: 'Copy email',
